@@ -86,7 +86,7 @@ def an_owners_repositories():
                                 "html_url": "https://github.com/the-cascade-protocol/cascade-a/actions/runs/5"}]}
     workflows = {"workflows": [{"id": 1, "name": "nightly", "path": ".github/workflows/nightly.yml", "state": "active"}]}
     answers = {
-        "/user/repos": [
+        "/orgs/the-cascade-protocol/repos": [
             {"full_name": "the-cascade-protocol/cascade-a", "name": "cascade-a", "archived": False},
             {"full_name": "the-cascade-protocol/cascade-b", "name": "cascade-b", "archived": False},
             {"full_name": "the-cascade-protocol/cascade-old", "name": "cascade-old", "archived": True},
@@ -106,7 +106,7 @@ def an_owners_repositories():
 def a_red_repository(annotations):
     answers = an_owners_repositories()
     base = "/repos/the-cascade-protocol/cascade-a"
-    answers["/user/repos"] = answers["/user/repos"][:1]
+    answers["/orgs/the-cascade-protocol/repos"] = answers["/orgs/the-cascade-protocol/repos"][:1]
     answers[f"{base}/actions/runs/5/jobs"] = {"jobs": [
         {"id": 50, "name": "ok", "conclusion": "success", "steps": []},
         {"id": 51, "name": "watch", "conclusion": "failure", "steps": [{"name": "echo", "conclusion": "failure"}]},
