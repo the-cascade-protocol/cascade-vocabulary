@@ -267,7 +267,7 @@ def visit(api, repo):
 def run(api, say=print):
     """Visits every repository; a refusal in one is a line in the returned errors and the others are still visited."""
     errors = []
-    for repo in api.pages("/user/repos", affiliation="owner"):
+    for repo in api.pages(f"/orgs/{OWNER}/repos"):
         if repo["archived"] or repo["full_name"].split("/")[0] != OWNER or not repo["name"].startswith("cascade-"):
             continue
         try:
