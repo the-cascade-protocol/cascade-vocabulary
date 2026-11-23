@@ -85,6 +85,35 @@ CREATE TABLE variant_interpretation_source (
   PRIMARY KEY (entry, line)
 ) STRICT, WITHOUT ROWID;
 
+-- The statements the view makes, as s, p and o in N-Triples, the entries and the nodes named after them as the
+-- derived state names them.
+CREATE VIEW variant_interpretation_triples (s, p, o) AS
+WITH
+  entries (s, entry) AS (SELECT e.nt, c.entry FROM variant_interpretation c JOIN term e ON e.id = c.entry),
+  members (s, node, entry, member) AS (SELECT mv.node, mv.node, mv.entry, mv.member FROM variant_interpretation_member_values mv),
+  said (s, p, o) AS (
+    SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#acmgClassification>', c.classification FROM entries e JOIN variant_interpretation c ON c.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#variantInterpretationDate>', c.date FROM entries e JOIN variant_interpretation c ON c.entry = e.entry
+    UNION ALL SELECT e.s, '<http://www.w3.org/ns/prov#wasAttributedTo>', c.lab FROM entries e JOIN variant_interpretation c ON c.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#workflowStatus>', c.status FROM entries e JOIN variant_interpretation c ON c.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#leadMember>', c.lead FROM entries e JOIN variant_interpretation c ON c.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#statusFrom>', c.status_from FROM entries e JOIN variant_interpretation c ON c.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#entryMember>', m.record FROM entries e JOIN variant_interpretation_member m ON m.entry = e.entry
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#valuesOfMember>', mv.member FROM members mv
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#acmgClassification>', v.classification FROM members mv JOIN variant_interpretation_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#variantInterpretationDate>', v.date FROM members mv JOIN variant_interpretation_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#subjectVariant>', v.variant FROM members mv JOIN variant_interpretation_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<http://www.w3.org/ns/prov#wasAttributedTo>', v.lab FROM members mv JOIN variant_interpretation_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#workflowStatus>', v.status FROM members mv JOIN variant_interpretation_member_values v USING (entry, member)
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#subjectVariant>', x.variant_entry FROM entries e JOIN variant_interpretation_variant x ON x.entry = e.entry),
+  made (s, p, o) AS (
+    SELECT s, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<https://ns.cascadeprotocol.org/cascade#VariantInterpretation>'
+    FROM entries
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#memberCurrentValues>', mv.node
+      FROM members mv JOIN entries e ON e.entry = mv.entry)
+SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
+UNION ALL SELECT s, p, o FROM made;
+
 INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('variant_interpretation', 'sqlite_autoindex_variant_interpretation_1', '112 1'),
   ('variant_interpretation', 'sqlite_autoindex_variant_interpretation_2', '112 1'),
@@ -195,6 +224,12 @@ UPDATE variant_interpretation SET label = (
   WHERE l.s = (SELECT id FROM term WHERE nt = variant_interpretation.iri) AND l.p = k.label)
 WHERE entry IN (SELECT entry FROM variant_interpretation_filled);
 
+DELETE FROM shown_in_entry WHERE type = '<https://ns.cascadeprotocol.org/cascade#VariantInterpretation>' AND source IN (SELECT entry FROM variant_interpretation_filled);
+INSERT INTO shown_in_entry (file, type, entry, label, record, source)
+SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#VariantInterpretation>', e.iri, e.label, m.record, e.entry
+FROM variant_interpretation_terms k CROSS JOIN variant_interpretation e CROSS JOIN variant_interpretation_member m ON m.entry = e.entry
+WHERE e.entry IN (SELECT entry FROM variant_interpretation_filled);
+
 DELETE FROM variant_interpretation_source WHERE entry IN (SELECT entry FROM variant_interpretation_filled);
 INSERT OR IGNORE INTO variant_interpretation_source (entry, line, shown)
 WITH
@@ -268,28 +303,4 @@ SELECT named.entry, named.variant_entry, named.variant_iri,
 FROM named JOIN variant_interpretation i ON i.entry = named.entry LEFT JOIN term d ON d.id = named.date;
 
 -- part: triples
-WITH
-  entries (s, entry) AS (SELECT e.nt, c.entry FROM variant_interpretation c JOIN term e ON e.id = c.entry),
-  members (s, node, entry, member) AS (SELECT mv.node, mv.node, mv.entry, mv.member FROM variant_interpretation_member_values mv),
-  said (s, p, o) AS (
-    SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#acmgClassification>', c.classification FROM entries e JOIN variant_interpretation c ON c.entry = e.entry
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#variantInterpretationDate>', c.date FROM entries e JOIN variant_interpretation c ON c.entry = e.entry
-    UNION ALL SELECT e.s, '<http://www.w3.org/ns/prov#wasAttributedTo>', c.lab FROM entries e JOIN variant_interpretation c ON c.entry = e.entry
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#workflowStatus>', c.status FROM entries e JOIN variant_interpretation c ON c.entry = e.entry
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#leadMember>', c.lead FROM entries e JOIN variant_interpretation c ON c.entry = e.entry
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#statusFrom>', c.status_from FROM entries e JOIN variant_interpretation c ON c.entry = e.entry
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#entryMember>', m.record FROM entries e JOIN variant_interpretation_member m ON m.entry = e.entry
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#valuesOfMember>', mv.member FROM members mv
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#acmgClassification>', v.classification FROM members mv JOIN variant_interpretation_member_values v USING (entry, member)
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#variantInterpretationDate>', v.date FROM members mv JOIN variant_interpretation_member_values v USING (entry, member)
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#subjectVariant>', v.variant FROM members mv JOIN variant_interpretation_member_values v USING (entry, member)
-    UNION ALL SELECT mv.node, '<http://www.w3.org/ns/prov#wasAttributedTo>', v.lab FROM members mv JOIN variant_interpretation_member_values v USING (entry, member)
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#workflowStatus>', v.status FROM members mv JOIN variant_interpretation_member_values v USING (entry, member)
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#subjectVariant>', x.variant_entry FROM entries e JOIN variant_interpretation_variant x ON x.entry = e.entry),
-  made (s, p, o) AS (
-    SELECT s, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<https://ns.cascadeprotocol.org/cascade#VariantInterpretation>'
-    FROM entries
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#memberCurrentValues>', mv.node
-      FROM members mv JOIN entries e ON e.entry = mv.entry)
-SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
-UNION ALL SELECT s, p, o FROM made
+SELECT s, p, o FROM variant_interpretation_triples

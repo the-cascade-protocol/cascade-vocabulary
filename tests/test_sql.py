@@ -22,6 +22,7 @@ UNPORTED = ROOT / "tests" / "sql-unported.txt"
 PINS = ROOT / "tests" / "sql-pins.json"
 VECTORS = json.loads((QUERIES / "sql-functions.json").read_text(encoding="utf-8"))
 STRICTEST_SQLITE = "3.54.1"
+SCHEMA_SCREEN_TABLES = {"shown_in_entry"}
 SCOPE = [path.relative_to(ROOT).as_posix() for path in sorted(QUERIES.rglob("*.rq"))
          if not path.relative_to(QUERIES).as_posix().startswith("matcher/")]
 
@@ -138,14 +139,76 @@ def engine_ran(engine):
 
 
 def question_plans(engine):
-    """The plan of each ported question's `.sql`, by its path, as screen_plans gives a statement's: its EXPLAIN QUERY
-    PLAN rows and the b-trees it scans. It is planned on a pod as empty as theirs, asked for no page size after no key,
-    and its plans do not depend on what the pod holds."""
+    """The plan of each statement of each ported question's `.sql`, as (label, path, plan, scans): the label its path, or
+    its path and the place of the statement in its prepare part; the plan the statement's EXPLAIN QUERY PLAN rows and
+    scans the b-trees it scans, as screen_plans gives a statement's. The answer is planned after its prepare part has
+    run on a pod as empty as theirs, asked for no page size after no key, and its plans do not depend on what the pod
+    holds."""
     _, run, _ = planning_pod(engine)
     asking = lambda text: run(text, {"page_size": None, "after": None})
-    return {relative: ([(row[0], row[1], row[3]) for row in asking("EXPLAIN QUERY PLAN " + sql_text(relative))],
-                       whole_scans(asking, sql_text(relative)))
-            for relative in ported() if relative.startswith("queries/questions/")}
+    found = []
+    for relative in ported():
+        if not relative.startswith("queries/questions/"):
+            continue
+        text = sql_text(relative)
+        for place, each in enumerate(sql.prepared(text)):
+            found.append((f"{relative}, prepare statement {place + 1}", relative,
+                          [(row[0], row[1], row[3]) for row in run("EXPLAIN QUERY PLAN " + each)], whole_scans(run, each)))
+            run(each)
+        answer = sql.statement(text)
+        found.append((relative, relative, [(row[0], row[1], row[3]) for row in asking("EXPLAIN QUERY PLAN " + answer)],
+                      whole_scans(asking, answer)))
+    return found
+
+
+VIEW_STATEMENTS = re.compile(r"\bCREATE TEMP TABLE view_statements\b")
+LOOP_STEP = re.compile(r"^(?:SCAN|SEARCH|CO-ROUTINE|MATERIALIZE) ")
+
+
+def made_by_views(entries=400):
+    """The rows of `view_statements` that a pod of `entries` entries gives, as the twelve views' triples make them: for each
+    entry its member and lead, the node of its current values, whose member owns it, and six values of the node and six of
+    the entry, each in a predicate of its own."""
+    cascade = "<https://ns.cascadeprotocol.org/cascade#"
+    rows = []
+    for i in range(entries):
+        entry, node, member = f"<urn:cascade:entry:{i:08d}>", f"_:n{i}", f"<urn:x:member-{i}>"
+        rows += [("a", entry, cascade + "entryMember>", member), ("a", entry, cascade + "leadMember>", member),
+                 ("a", entry, cascade + "memberCurrentValues>", node), ("a", node, cascade + "valuesOfMember>", member)]
+        for k in range(6):
+            rows += [("a", node, f"<urn:x:node-{k}>", f'"v{i}"'), ("a", entry, f"<urn:x:entry-{k}>", f'"w{i}"')]
+    return rows
+
+
+def unindexed_loops(plan):
+    """The steps, of one statement's EXPLAIN QUERY PLAN given as (id, parent, detail) rows, that SCAN a table or a CTE in a
+    loop another loop runs once for each row of: not the first loop of its select. A SQLite that joins a table it
+    expects to be small with no index gives one."""
+    firsts = {}
+    for step, parent, detail in plan:
+        if LOOP_STEP.match(detail) and not detail.startswith(("MATERIALIZE ", "CO-ROUTINE ")):
+            firsts.setdefault(parent, step)
+    return [detail for step, parent, detail in plan if detail.startswith("SCAN ") and firsts.get(parent) != step]
+
+
+def answer_plans_over_rows(engine):
+    """The plan of the answer of each question in parts, as (path, plan), after its prepare part has run on an empty pod
+    with the rows of made_by_views put into its temporary table of the views' statements when it is made, so that
+    what the prepare part does to that table's statistics is in the plan."""
+    _, run, _ = planning_pod(engine)
+    found = []
+    for relative in ported():
+        if not relative.startswith("queries/questions/") or "prepare" not in sql.parts(sql_text(relative)):
+            continue
+        text = sql_text(relative)
+        for each in sql.prepared(text):
+            run(each)
+            if VIEW_STATEMENTS.search(each):
+                for row in made_by_views():
+                    run("INSERT INTO view_statements (address, s, p, o) VALUES (?, ?, ?, ?)", row)
+        found.append((relative, [(row[0], row[1], row[3]) for row in
+                                 run("EXPLAIN QUERY PLAN " + sql.statement(text), {"page_size": None, "after": None})]))
+    return found
 
 
 def screen_plans(engine):
@@ -406,6 +469,13 @@ def binds_a_record(rq):
     return re.search(r"[?$]record\b", "".join(outer)) is not None
 
 
+def answers_with_a_record(rq):
+    """Whether the `.rq` gives a `?record` column, which a binding would not choose: an entry's review names the records
+    a finding is about, and a `?record` bound to one adds it to each row that names none."""
+    stripped = TOKEN.sub(lambda token: "{" if token.group() == "{" else " ", rq)
+    return re.search(r"[?$]record\b", stripped[:stripped.index("{")]) is not None
+
+
 def records_a_list_question_is_bound_to(connection, text):
     """Each record of the member table a list question matches `asked` against, as its IRI, and the first record the
     pod puts in an entry that table does not hold, so the question is bound to a record of another kind too; a `.sql`
@@ -424,7 +494,8 @@ def failures(fixture, lens, relative, text):
     whole run, in its order when it has one; for a question bound to a record, the `.rq` bound to it and the `.sql`
     with `asked` holding it alone, for each record a manifest entry of the fixture binds, for a list question each
     record of its own screen's members and one record of another kind, and a record the
-    pod lacks; for a SELECT the `.rq` does not bind, the `.rq` bound to a record the pod lacks and the `.sql` whole; and, through the `.sql`,
+    pod lacks; for a SELECT the `.rq` does not bind and that gives no `?record` column, the `.rq` bound to a record the pod
+    lacks and the `.sql` whole; and, through the `.sql`,
     the rows of each manifest entry under that lens that runs it. A CONSTRUCT's rows are compared as a set of
     triples. labels.rq is run on the pod before the labels are made, as it is written."""
     rq = query(Path(relative).relative_to("queries").as_posix())
@@ -453,6 +524,8 @@ def failures(fixture, lens, relative, text):
         if ":page_size" in text:
             bound |= set(records_a_list_question_is_bound_to(connection, text))
         bound.add(NO_SUCH_RECORD)
+    elif question and not construct and answers_with_a_record(rq):
+        bound = set()
     elif question and not construct:
         lines += against(f"bound to {NO_SUCH_RECORD}, against the .rq", oxigraph_answer(store, rq, NO_SUCH_RECORD)[1], found)
     for record in sorted(bound):
@@ -630,7 +703,7 @@ class TestSqlBesideEachQuery:
             rows through the `.sql` too.
             """
             found = [line for lens in LENSES for relative in ported()
-                     for line in failures(fixture, lens, relative, sql.statement(sql_text(relative)))]
+                     for line in failures(fixture, lens, relative, sql.answering(sql_text(relative)))]
             assert not found, "\n".join(found)
 
         @every_fixture
@@ -787,7 +860,7 @@ class TestSqlBesideEachQuery:
             ("medications", "medications-view"), ("medication-dispenses", "medication-dispenses-view"),
             ("immunizations", "immunizations-view"), ("procedures", "procedures-view"), ("reports", "reports-view"),
             ("notes-and-documents", "notes-and-documents-view"), ("variants", "variants-view"),
-            ("variant-interpretations", "variant-interpretations-view")])
+            ("variant-interpretations", "variant-interpretations-view"), ("patient-profile", "patient-profile-view")])
         def test_refuses_to_fill_a_screen_whose_view_the_layout_places_at_two_addresses(self, view, fixture):
             """refuses to fill a screen whose view the pod's layout places at two addresses
 
@@ -825,7 +898,7 @@ class TestSqlBesideEachQuery:
             connection = sql.copied(built)
             filled = sql.screen_tables(connection)
             for table in filled:
-                connection.execute(f"DROP TABLE {table}")
+                connection.execute(f"DELETE FROM {table}" if table in SCHEMA_SCREEN_TABLES else f"DROP TABLE {table}")
             for (view,) in connection.execute("SELECT name FROM sqlite_schema WHERE type = 'view'").fetchall():
                 connection.execute(f"DROP VIEW {view}")
             connection.commit()
@@ -1019,9 +1092,25 @@ class TestPlansOfTheQuestions:
         roots a statement reads before it reads the files under them, is no loop.
         """
         ran = engine_ran(engine)
-        found = [f"{relative}: {detail}" for relative, (plan, scans) in question_plans(engine).items()
+        found = [f"{label}: {detail}" for label, relative, plan, scans in question_plans(engine)
                  for detail in [f"scans {name}" for name in scans]
                  + whole_searches(plan, storage_roots(sql_text(relative)))]
+        assert found == [], f"on SQLite {ran}"
+
+    @pytest.mark.parametrize("engine", ["sqlite3", "apsw", "apsw-floor"])
+    def test_plans_each_answer_that_reads_a_temporary_table_its_prepare_part_makes_with_the_table_holding_rows(self, engine):
+        """plans each answer that reads a table its prepare part makes with that table holding rows, and no scan in a loop of a table or a CTE it reads
+
+        A pod with no rows gives no statistic for a temporary table, so the plan of an answer over one says nothing of the
+        plan at 15,000 records, where the table's own row counts decide whether the answer joins the CTEs it reads through
+        an index or scans each once for each row of another. The rows a pod of 400 entries gives the views are put into the
+        table `view_statements` when its prepare part makes it, and the answer, planned after the rest of that part has
+        run, SCANs no table or CTE in a loop another loop runs once for each row of.
+        """
+        ran = engine_ran(engine)
+        plans = answer_plans_over_rows(engine)
+        assert [relative for relative, _ in plans] == ["queries/questions/entry/What it shows.rq"]
+        found = [f"{relative}: {detail}" for relative, plan in plans for detail in unindexed_loops(plan)]
         assert found == [], f"on SQLite {ran}"
 
 
@@ -1269,6 +1358,46 @@ class TestTheSqlCheck:
         digest = hashlib.sha256(changed).hexdigest()
         found = pin_failures({self.JUDGMENTS: pins()[self.JUDGMENTS]}, {self.JUDGMENTS: changed})
         assert len(found) == 1 and found[0].startswith(f"{self.JUDGMENTS}: ") and digest in found[0]
+
+    def test_runs_the_prepare_part_of_a_question_before_its_answer_and_refuses_the_parts_in_another_order(self):
+        """makes what a question's prepare part makes before it gives the rows of its answer part, each time it is asked
+
+        A `.sql` in the parts prepare and answer, whose prepare makes a temporary table of two rows, is asked twice and
+        gives the two rows each time, none made twice; one in the parts answer and prepare is refused.
+        """
+        connection = sqlite3.connect(":memory:")
+        text = """-- part: prepare
+DROP TABLE IF EXISTS temp.said;
+CREATE TEMP TABLE said (k TEXT) STRICT;
+INSERT INTO said VALUES ('"a"'), ('"b"');
+-- part: answer
+SELECT k AS shown FROM said ORDER BY k
+"""
+        expected = (["shown"], [(sql.Term(sql.LITERAL, "a", XSD + "string"),), (sql.Term(sql.LITERAL, "b", XSD + "string"),)])
+        assert sql.answer(connection, text) == expected
+        assert sql.answer(connection, text) == expected
+        with pytest.raises(ValueError, match="the parts"):
+            sql.answer(connection, "-- part: answer\nSELECT 1\n-- part: prepare\nSELECT 2\n")
+
+    def test_runs_the_cleanup_part_of_a_question_after_its_answer_also_when_the_answer_fails(self):
+        """drops what a question's prepare part made, by its cleanup part, once its answer has given its rows or has failed
+
+        A `.sql` in the parts prepare, answer and cleanup, whose prepare makes a temporary table and whose cleanup drops
+        it, gives its rows and leaves no such table; one whose answer fails leaves none either, and one whose cleanup
+        comes before its answer is refused.
+        """
+        connection = sqlite3.connect(":memory:")
+        prepare = "-- part: prepare\nDROP TABLE IF EXISTS temp.said;\nCREATE TEMP TABLE said (k TEXT) STRICT;\nINSERT INTO said VALUES ('\"a\"');\n"
+        cleanup = "-- part: cleanup\nDROP TABLE IF EXISTS temp.said;\n"
+        temporary = "SELECT name FROM sqlite_temp_schema WHERE name = 'said'"
+        assert sql.answer(connection, f"{prepare}-- part: answer\nSELECT k AS shown FROM said\n{cleanup}") == (
+            ["shown"], [(sql.Term(sql.LITERAL, "a", XSD + "string"),)])
+        assert connection.execute(temporary).fetchall() == []
+        with pytest.raises(sqlite3.Error):
+            sql.answer(connection, f"{prepare}-- part: answer\nSELECT k AS shown FROM said WHERE abs('x') = 1 AND no_such_column\n{cleanup}")
+        assert connection.execute(temporary).fetchall() == []
+        with pytest.raises(ValueError, match="the parts"):
+            sql.answer(connection, f"{prepare}{cleanup}-- part: answer\nSELECT 1\n")
 
     def test_refuses_pages_that_ignore_the_key_to_continue_after_or_the_page_size(self):
         """refuses a list question whose pages ignore the key to continue after, or the page size

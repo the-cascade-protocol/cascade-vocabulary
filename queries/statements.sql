@@ -7,6 +7,13 @@
 -- the variable is unbound; a `.sql` beside a CONSTRUCT gives the columns s, p and o, one row for each triple. It may
 -- call the six functions queries/sql-functions.json gives the vectors of, registered under those names.
 --
+-- A question that reads more of the screens' views than one statement may nest, as one reading each screen's
+-- `<name>_triples` does, is in parts, each opened by a line `-- part: NAME`: `prepare`, statements that each read
+-- fewer of them and make the temporary tables the answer reads, run in order each time the question is asked, and
+-- `answer`, the one statement that gives the rows, and, where the prepare part makes temporary tables, `cleanup`, the
+-- statements that drop them, run in order once the rows are read and also when the answer fails. A question in no part is
+-- one statement.
+--
 -- `quad` holds the named graphs of a query's default graph, and a query's default graph is their union, a set: a
 -- statement in two graphs is in it once, so a `.sql` reads it through EXISTS, or DISTINCT, and never counts a
 -- statement once for each graph holding it. A graph outside the default graph, as a table version's rows are, is not
@@ -14,7 +21,8 @@
 --
 -- Screens. A view's `.sql` holds its screen: the view as tables a list question reads a page of. It is in four parts,
 -- each opened by a line `-- part: NAME`, and each but triples run as a script:
---   tables   makes the screen's tables, once, after this file.
+--   tables   makes the screen's tables, once, after this file, and a view of them that questions read in place of
+--            the view's file: `<name>_triples`, the statements the view makes, as s, p and o.
 --   fill     works out the entries the run fills, once, into a temporary table of its own, then deletes their rows
 --            and gives them again from the kept and derived statements alone. The entries a run fills are each in
 --            scope; each a record in scope is in now; each one was in when the screen was last filled, which the
@@ -40,10 +48,12 @@
 --            any view's finish, and keeps its rows as rdfs:label statements of the labels file's graph in `quad`, in
 --            place of those of its last run, which a finish reads from there; the check here does so. A runtime that
 --            does not yet loads the labels file labels.rq writes, whose rdfs:label statements are the same rows. The
---            labels are of the whole pod, never of the entries a run fills alone.
---   triples  one statement giving the triples the view's CONSTRUCT gives, as s, p and o, from the screen's tables
---            alone. An entry is named as the derived state names it; a runtime writing the view's file names it as
---            N13 says.
+--            labels are of the whole pod, never of the entries a run fills alone. A finish also gives, for the same
+--            entries, the rows of `shown_in_entry` they are shown in, which no question reads a screen's tables for.
+--   triples  one statement giving the triples the view's CONSTRUCT gives, as s, p and o: a read of `<name>_triples`,
+--            from the screen's tables alone. An entry is named as the derived state names it; a runtime writing the
+--            view's file names it as N13 says, and a question that reads the view's statements, as What it shows does,
+--            names an entry and the nodes after it under the address of the view that gives the entry its members.
 -- A screen table has one row per entry. A column holds a term's id, or the N-Triples text of a value the view makes,
 -- such as the entry as its view names it, from the layout's address for the view; a fill fails, by that column's NOT
 -- NULL, where the layout gives the view no address or two. A column takes min() of a property only where the shapes
@@ -76,7 +86,9 @@
 -- them does, without running the `.sql`, which would read the empty `asked` as the whole pod. A question whose `.rq`
 -- binds no ?record in its outermost group, as the reports and notes, variants, variant interpretations and person
 -- questions, reads no `asked`: a runtime never binds it to a record nor short-circuits it, and always runs it whole,
--- as the `.rq` bound to any record, one the pod lacks too, gives the rows it gives unbound.
+-- as the `.rq` bound to any record, one the pod lacks too, gives the rows it gives unbound, unless the `.rq` gives a
+-- ?record column, as an entry's review does for the records a finding names: a binding would add the record to each row
+-- that names none, so a runtime never binds it either.
 
 -- Each term the pod's statements use, once. `nt` is its N-Triples form as Oxigraph writes it, a literal in its
 -- canonical form, so two terms are one exactly when their `nt` is. `kind` ranks it as SPARQL's ORDER BY does, after
@@ -124,6 +136,23 @@ CREATE TABLE asked (
   term INTEGER PRIMARY KEY
 ) STRICT;
 
+-- A row for each record a screen shows in an entry: `file` the view's address, `type` the entry's class, `entry` as the
+-- view's file names it, `label` its label's term id and `record`; `source` is the key the screen holds the entry by, which
+-- its finish deletes the rows of, and gives again, for each entry it fills. A question that asks which entry shows a
+-- record reads this, never the twelve screens' tables: a statement that reads each of them in turn nests one subquery
+-- for each, and the same ones again in each place it reads them, deeper than a runtime's SQLite allows.
+CREATE TABLE shown_in_entry (
+  file TEXT NOT NULL,
+  type TEXT NOT NULL,
+  entry TEXT NOT NULL,
+  label INTEGER,
+  record INTEGER NOT NULL,
+  source INTEGER NOT NULL
+) STRICT;
+CREATE INDEX shown_in_entry_record ON shown_in_entry (record);
+CREATE INDEX shown_in_entry_entry ON shown_in_entry (entry);
+CREATE INDEX shown_in_entry_source ON shown_in_entry (type, source);
+
 -- What the tables were built from: one row, `built` 'pod', with the fingerprint of the files the whole was built from.
 -- A row for each table built apart may take its place.
 CREATE TABLE ledger (
@@ -157,5 +186,8 @@ INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('quad', 'quad_osp', '986560 5 2 1 1'),
   ('quad', 'quad_pos', '986560 7769 3 1 1'),
   ('scope', NULL, '1'),
+  ('shown_in_entry', 'shown_in_entry_entry', '15637 2'),
+  ('shown_in_entry', 'shown_in_entry_record', '15637 1'),
+  ('shown_in_entry', 'shown_in_entry_source', '15637 1300 2'),
   ('term', 'sqlite_autoindex_term_1', '306736 1');
 ANALYZE sqlite_schema;

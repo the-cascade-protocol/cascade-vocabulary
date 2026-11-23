@@ -111,6 +111,38 @@ CREATE TABLE procedure_source (
   PRIMARY KEY (entry, line)
 ) STRICT, WITHOUT ROWID;
 
+-- The statements the view makes, as s, p and o in N-Triples, the entries and the nodes named after them as the
+-- derived state names them.
+CREATE VIEW procedure_triples (s, p, o) AS
+WITH
+  entries (s, entry) AS (SELECT e.nt, c.entry FROM procedure c JOIN term e ON e.id = c.entry),
+  members (s, node, entry, member) AS (SELECT mv.node, mv.node, mv.entry, mv.member FROM procedure_member_values mv),
+  said (s, p, o) AS (
+    SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#procedureName>', c.name FROM entries e JOIN procedure c ON c.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#narrativeText>', c.narrative FROM entries e JOIN procedure c ON c.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#workflowStatus>', c.status FROM entries e JOIN procedure c ON c.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#procedureDate>', c.date FROM entries e JOIN procedure c ON c.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#procedureCode>', x.code FROM entries e JOIN procedure_code x ON x.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#leadMember>', c.lead FROM entries e JOIN procedure c ON c.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#statusFrom>', c.status_from FROM entries e JOIN procedure c ON c.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#entryMember>', m.record FROM entries e JOIN procedure_member m ON m.entry = e.entry
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#valuesOfMember>', mv.member FROM members mv
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#procedureName>', v.name FROM members mv JOIN procedure_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#narrativeText>', v.narrative FROM members mv JOIN procedure_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#workflowStatus>', v.status FROM members mv JOIN procedure_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#procedureDate>', v.date FROM members mv JOIN procedure_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#procedureCode>', x.code FROM members mv JOIN procedure_member_values_code x USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCondition>', x.record FROM members mv JOIN procedure_member_values_reason_condition x USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCode>', x.code FROM members mv JOIN procedure_member_values_reason_code x USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCodeInOtherSystem>', x.code FROM members mv JOIN procedure_member_values_reason_other_system x USING (entry, member)),
+  made (s, p, o) AS (
+    SELECT s, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<https://ns.cascadeprotocol.org/cascade#MedicalProcedure>'
+    FROM entries
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#memberCurrentValues>', mv.node
+      FROM members mv JOIN entries e ON e.entry = mv.entry)
+SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
+UNION ALL SELECT s, p, o FROM made;
+
 INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('procedure', 'sqlite_autoindex_procedure_1', '675 1'),
   ('procedure', 'sqlite_autoindex_procedure_2', '675 1'),
@@ -242,6 +274,12 @@ UPDATE procedure SET label = (
   WHERE l.s = (SELECT id FROM term WHERE nt = procedure.iri) AND l.p = k.label)
 WHERE entry IN (SELECT entry FROM procedure_filled);
 
+DELETE FROM shown_in_entry WHERE type = '<https://ns.cascadeprotocol.org/cascade#MedicalProcedure>' AND source IN (SELECT entry FROM procedure_filled);
+INSERT INTO shown_in_entry (file, type, entry, label, record, source)
+SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#MedicalProcedure>', e.iri, e.label, m.record, e.entry
+FROM procedure_terms k CROSS JOIN procedure e CROSS JOIN procedure_member m ON m.entry = e.entry
+WHERE e.entry IN (SELECT entry FROM procedure_filled);
+
 DELETE FROM procedure_source WHERE entry IN (SELECT entry FROM procedure_filled);
 INSERT OR IGNORE INTO procedure_source (entry, line, shown)
 WITH
@@ -296,31 +334,4 @@ SELECT records.entry,
 FROM records CROSS JOIN stated ON stated.record = records.record JOIN term r ON r.id = records.record;
 
 -- part: triples
-WITH
-  entries (s, entry) AS (SELECT e.nt, c.entry FROM procedure c JOIN term e ON e.id = c.entry),
-  members (s, node, entry, member) AS (SELECT mv.node, mv.node, mv.entry, mv.member FROM procedure_member_values mv),
-  said (s, p, o) AS (
-    SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#procedureName>', c.name FROM entries e JOIN procedure c ON c.entry = e.entry
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#narrativeText>', c.narrative FROM entries e JOIN procedure c ON c.entry = e.entry
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#workflowStatus>', c.status FROM entries e JOIN procedure c ON c.entry = e.entry
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#procedureDate>', c.date FROM entries e JOIN procedure c ON c.entry = e.entry
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#procedureCode>', x.code FROM entries e JOIN procedure_code x ON x.entry = e.entry
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#leadMember>', c.lead FROM entries e JOIN procedure c ON c.entry = e.entry
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#statusFrom>', c.status_from FROM entries e JOIN procedure c ON c.entry = e.entry
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#entryMember>', m.record FROM entries e JOIN procedure_member m ON m.entry = e.entry
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#valuesOfMember>', mv.member FROM members mv
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#procedureName>', v.name FROM members mv JOIN procedure_member_values v USING (entry, member)
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#narrativeText>', v.narrative FROM members mv JOIN procedure_member_values v USING (entry, member)
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#workflowStatus>', v.status FROM members mv JOIN procedure_member_values v USING (entry, member)
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#procedureDate>', v.date FROM members mv JOIN procedure_member_values v USING (entry, member)
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#procedureCode>', x.code FROM members mv JOIN procedure_member_values_code x USING (entry, member)
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCondition>', x.record FROM members mv JOIN procedure_member_values_reason_condition x USING (entry, member)
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCode>', x.code FROM members mv JOIN procedure_member_values_reason_code x USING (entry, member)
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCodeInOtherSystem>', x.code FROM members mv JOIN procedure_member_values_reason_other_system x USING (entry, member)),
-  made (s, p, o) AS (
-    SELECT s, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<https://ns.cascadeprotocol.org/cascade#MedicalProcedure>'
-    FROM entries
-    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#memberCurrentValues>', mv.node
-      FROM members mv JOIN entries e ON e.entry = mv.entry)
-SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
-UNION ALL SELECT s, p, o FROM made
+SELECT s, p, o FROM procedure_triples
