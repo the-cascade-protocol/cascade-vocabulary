@@ -183,11 +183,6 @@ WITH
       FROM entries e JOIN condition c ON c.entry = e.entry WHERE c.abatement_written IS NOT NULL)
 SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
 UNION ALL SELECT s, p, o FROM made;
--- Each record the view shows in an entry, `file` the view's address, `entry` as the view names it, `label` the
--- entry's label's term id.
-CREATE VIEW condition_shown (file, type, entry, label, record) AS
-SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#ProblemOrDiagnosis>', e.iri, e.label, m.record
-FROM condition_terms k CROSS JOIN condition e CROSS JOIN condition_member m ON m.entry = e.entry;
 
 INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('condition', 'sqlite_autoindex_condition_1', '1350 1'),
@@ -334,6 +329,12 @@ UPDATE condition SET label = (
   SELECT min(l.o) FROM condition_terms k CROSS JOIN quad l
   WHERE l.s = (SELECT id FROM term WHERE nt = condition.iri) AND l.p = k.label)
 WHERE entry IN (SELECT entry FROM condition_filled);
+
+DELETE FROM shown_in_entry WHERE type = '<https://ns.cascadeprotocol.org/cascade#ProblemOrDiagnosis>' AND source IN (SELECT entry FROM condition_filled);
+INSERT INTO shown_in_entry (file, type, entry, label, record, source)
+SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#ProblemOrDiagnosis>', e.iri, e.label, m.record, e.entry
+FROM condition_terms k CROSS JOIN condition e CROSS JOIN condition_member m ON m.entry = e.entry
+WHERE e.entry IN (SELECT entry FROM condition_filled);
 
 DELETE FROM condition_for WHERE entry IN (SELECT entry FROM condition_filled);
 INSERT OR IGNORE INTO condition_for (entry, line, shown, name_key, for_entry)

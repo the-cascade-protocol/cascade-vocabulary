@@ -10,22 +10,9 @@ WITH
       (SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/prov#wasAttributedTo>'),
       (SELECT id FROM term WHERE nt = '<http://purl.org/pav/hasCurrentVersion>'),
       (SELECT id FROM term WHERE nt = '<http://xmlns.com/foaf/0.1/name>')),
-  shown (file, entry, label, record) AS NOT MATERIALIZED (
-    SELECT file, entry, label, record FROM allergy_shown
-    UNION ALL SELECT file, entry, label, record FROM condition_shown
-    UNION ALL SELECT file, entry, label, record FROM immunization_shown
-    UNION ALL SELECT file, entry, label, record FROM lab_result_shown
-    UNION ALL SELECT file, entry, label, record FROM medication_dispense_shown
-    UNION ALL SELECT file, entry, label, record FROM medication_shown
-    UNION ALL SELECT file, entry, label, record FROM note_shown
-    UNION ALL SELECT file, entry, label, record FROM patient_profile_shown
-    UNION ALL SELECT file, entry, label, record FROM procedure_shown
-    UNION ALL SELECT file, entry, label, record FROM report_shown
-    UNION ALL SELECT file, entry, label, record FROM variant_interpretation_shown
-    UNION ALL SELECT file, entry, label, record FROM variant_shown),
   chosen (entry, label, record) AS (
-    SELECT entry, label, record FROM shown WHERE record IN (SELECT term FROM asked)
-    UNION ALL SELECT entry, label, record FROM shown WHERE NOT EXISTS (SELECT 1 FROM asked)),
+    SELECT entry, label, record FROM shown_in_entry shown WHERE record IN (SELECT term FROM asked)
+    UNION ALL SELECT entry, label, record FROM shown_in_entry shown WHERE NOT EXISTS (SELECT 1 FROM asked)),
   arrivals (entry, entry_label, record, revision, arrived) AS (
     SELECT DISTINCT chosen.entry, chosen.label, chosen.record, cr.o, a.o
     FROM chosen CROSS JOIN k CROSS JOIN quad cr ON cr.s = chosen.record AND cr.p = k.current_revision

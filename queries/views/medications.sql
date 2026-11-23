@@ -238,11 +238,6 @@ WITH
       FROM entries e JOIN medication c ON c.entry = e.entry WHERE c.ended_written IS NOT NULL)
 SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
 UNION ALL SELECT s, p, o FROM made;
--- Each record the view shows in an entry, `file` the view's address, `entry` as the view names it, `label` the
--- entry's label's term id.
-CREATE VIEW medication_shown (file, type, entry, label, record) AS
-SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#PrescribedOrReportedMedication>', e.iri, e.label, m.record
-FROM medication_terms k CROSS JOIN medication e CROSS JOIN medication_member m ON m.entry = e.entry;
 
 INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('medication', 'sqlite_autoindex_medication_1', '1500 1'),
@@ -428,6 +423,12 @@ UPDATE medication SET label = (
   SELECT min(l.o) FROM medication_terms k CROSS JOIN quad l
   WHERE l.s = (SELECT id FROM term WHERE nt = medication.iri) AND l.p = k.label)
 WHERE entry IN (SELECT entry FROM medication_filled);
+
+DELETE FROM shown_in_entry WHERE type = '<https://ns.cascadeprotocol.org/cascade#PrescribedOrReportedMedication>' AND source IN (SELECT entry FROM medication_filled);
+INSERT INTO shown_in_entry (file, type, entry, label, record, source)
+SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#PrescribedOrReportedMedication>', e.iri, e.label, m.record, e.entry
+FROM medication_terms k CROSS JOIN medication e CROSS JOIN medication_member m ON m.entry = e.entry
+WHERE e.entry IN (SELECT entry FROM medication_filled);
 
 DELETE FROM medication_source WHERE entry IN (SELECT entry FROM medication_filled);
 INSERT OR IGNORE INTO medication_source (entry, line, shown)

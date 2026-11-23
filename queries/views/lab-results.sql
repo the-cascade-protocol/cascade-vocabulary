@@ -241,11 +241,6 @@ WITH
       JOIN lab_result_member_values v USING (entry, member) WHERE v.high_written IS NOT NULL)
 SELECT said.s AS s, said.p AS p, o.nt AS o FROM said CROSS JOIN term o ON o.id = said.o
 UNION ALL SELECT s, p, o FROM made;
--- Each record the view shows in an entry, `file` the view's address, `entry` as the view names it, `label` the
--- entry's label's term id.
-CREATE VIEW lab_result_shown (file, type, entry, label, record) AS
-SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#LaboratoryTestResult>', e.iri, e.label, m.record
-FROM lab_result_terms k CROSS JOIN lab_result e CROSS JOIN lab_result_member m ON m.entry = e.entry;
 
 INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('lab_result', 'sqlite_autoindex_lab_result_1', '8100 1'),
@@ -484,6 +479,12 @@ UPDATE lab_result SET label = (
   SELECT min(l.o) FROM lab_result_terms k CROSS JOIN quad l
   WHERE l.s = (SELECT id FROM term WHERE nt = lab_result.iri) AND l.p = k.label)
 WHERE entry IN (SELECT entry FROM lab_result_filled);
+
+DELETE FROM shown_in_entry WHERE type = '<https://ns.cascadeprotocol.org/cascade#LaboratoryTestResult>' AND source IN (SELECT entry FROM lab_result_filled);
+INSERT INTO shown_in_entry (file, type, entry, label, record, source)
+SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#LaboratoryTestResult>', e.iri, e.label, m.record, e.entry
+FROM lab_result_terms k CROSS JOIN lab_result e CROSS JOIN lab_result_member m ON m.entry = e.entry
+WHERE e.entry IN (SELECT entry FROM lab_result_filled);
 
 DELETE FROM lab_result_source WHERE entry IN (SELECT entry FROM lab_result_filled);
 INSERT OR IGNORE INTO lab_result_source (entry, line, shown)

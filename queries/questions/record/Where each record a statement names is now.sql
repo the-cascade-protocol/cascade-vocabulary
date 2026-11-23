@@ -10,19 +10,6 @@ WITH
       (SELECT id FROM term WHERE nt = '<http://www.w3.org/2000/01/rdf-schema#label>'),
       (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#leftOutFor>'),
       (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#leftOutReason>')),
-  shown (entry, label, record) AS (
-    SELECT entry, label, record FROM allergy_shown
-    UNION ALL SELECT entry, label, record FROM condition_shown
-    UNION ALL SELECT entry, label, record FROM immunization_shown
-    UNION ALL SELECT entry, label, record FROM lab_result_shown
-    UNION ALL SELECT entry, label, record FROM medication_dispense_shown
-    UNION ALL SELECT entry, label, record FROM medication_shown
-    UNION ALL SELECT entry, label, record FROM note_shown
-    UNION ALL SELECT entry, label, record FROM patient_profile_shown
-    UNION ALL SELECT entry, label, record FROM procedure_shown
-    UNION ALL SELECT entry, label, record FROM report_shown
-    UNION ALL SELECT entry, label, record FROM variant_interpretation_shown
-    UNION ALL SELECT entry, label, record FROM variant_shown),
   base (statement, statement_label, counted, record, record_label, entry, entry_label) AS (
     SELECT DISTINCT j.s, jl.o, cu.o, hm.o, rl.o, sh.entry, sh.label
     FROM k CROSS JOIN quad j ON j.p = k.type AND j.o = k.judgment_class
@@ -30,7 +17,7 @@ WITH
     LEFT JOIN quad cu ON cu.s = j.s AND cu.p = k.counts
     LEFT JOIN quad jl ON jl.s = j.s AND jl.p = k.label
     LEFT JOIN quad rl ON rl.s = hm.o AND rl.p = k.label
-    LEFT JOIN shown sh ON sh.record = hm.o
+    LEFT JOIN shown_in_entry sh ON sh.record = hm.o
     WHERE NOT EXISTS (SELECT 1 FROM quad r WHERE r.s = j.s AND r.p = k.matcher_rule)
       AND (NOT EXISTS (SELECT 1 FROM asked) OR hm.o IN (SELECT term FROM asked))),
   pairs (statement, record) AS (SELECT DISTINCT statement, record FROM base),
@@ -38,13 +25,13 @@ WITH
     SELECT b.statement, count(DISTINCT sh.entry)
     FROM (SELECT DISTINCT statement FROM base) b CROSS JOIN k
     LEFT JOIN quad sib ON sib.s = b.statement AND sib.p = k.member
-    LEFT JOIN shown sh ON sh.record = sib.o
+    LEFT JOIN shown_in_entry sh ON sh.record = sib.o
     GROUP BY b.statement),
   of_entry (statement, record, other, grew) AS (
     SELECT DISTINCT pairs.statement, pairs.record, s2.record,
       CASE WHEN EXISTS (SELECT 1 FROM quad n WHERE n.s = pairs.statement AND n.p = k.member AND n.o = s2.record) THEN 0 ELSE 1 END
-    FROM pairs CROSS JOIN k CROSS JOIN shown s1 ON s1.record = pairs.record
-    CROSS JOIN shown s2 ON s2.entry = s1.entry AND s2.record <> s1.record),
+    FROM pairs CROSS JOIN k CROSS JOIN shown_in_entry s1 ON s1.record = pairs.record
+    CROSS JOIN shown_in_entry s2 ON s2.entry = s1.entry AND s2.record <> s1.record),
   others (statement, record, list, grew) AS (
     SELECT pairs.statement, pairs.record,
       (SELECT group_concat(ot.lex, '\u001F' ORDER BY ot.kind, ot.lex)
@@ -54,8 +41,8 @@ WITH
   of_statements (statement, record, other, unnamed) AS (
     SELECT DISTINCT pairs.statement, pairs.record, om.s,
       CASE WHEN EXISTS (SELECT 1 FROM quad n WHERE n.s = pairs.statement AND n.p = k.member AND n.o = s2.record) THEN 0 ELSE 1 END
-    FROM pairs CROSS JOIN k CROSS JOIN shown s1 ON s1.record = pairs.record
-    CROSS JOIN shown s2 ON s2.entry = s1.entry
+    FROM pairs CROSS JOIN k CROSS JOIN shown_in_entry s1 ON s1.record = pairs.record
+    CROSS JOIN shown_in_entry s2 ON s2.entry = s1.entry
     CROSS JOIN quad om ON om.o = s2.record AND om.p = k.member
     CROSS JOIN quad oc ON oc.s = om.s AND oc.p = k.counts AND oc.o = k.yes
     WHERE om.s <> pairs.statement

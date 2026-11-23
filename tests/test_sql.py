@@ -22,6 +22,7 @@ UNPORTED = ROOT / "tests" / "sql-unported.txt"
 PINS = ROOT / "tests" / "sql-pins.json"
 VECTORS = json.loads((QUERIES / "sql-functions.json").read_text(encoding="utf-8"))
 STRICTEST_SQLITE = "3.54.1"
+SCHEMA_SCREEN_TABLES = {"shown_in_entry"}
 SCOPE = [path.relative_to(ROOT).as_posix() for path in sorted(QUERIES.rglob("*.rq"))
          if not path.relative_to(QUERIES).as_posix().startswith("matcher/")]
 
@@ -138,14 +139,26 @@ def engine_ran(engine):
 
 
 def question_plans(engine):
-    """The plan of each ported question's `.sql`, by its path, as screen_plans gives a statement's: its EXPLAIN QUERY
-    PLAN rows and the b-trees it scans. It is planned on a pod as empty as theirs, asked for no page size after no key,
-    and its plans do not depend on what the pod holds."""
+    """The plan of each statement of each ported question's `.sql`, as (label, path, plan, scans): the label its path, or
+    its path and the place of the statement in its prepare part; the plan the statement's EXPLAIN QUERY PLAN rows and
+    scans the b-trees it scans, as screen_plans gives a statement's. The answer is planned after its prepare part has
+    run on a pod as empty as theirs, asked for no page size after no key, and its plans do not depend on what the pod
+    holds."""
     _, run, _ = planning_pod(engine)
     asking = lambda text: run(text, {"page_size": None, "after": None})
-    return {relative: ([(row[0], row[1], row[3]) for row in asking("EXPLAIN QUERY PLAN " + sql_text(relative))],
-                       whole_scans(asking, sql_text(relative)))
-            for relative in ported() if relative.startswith("queries/questions/")}
+    found = []
+    for relative in ported():
+        if not relative.startswith("queries/questions/"):
+            continue
+        text = sql_text(relative)
+        for place, each in enumerate(sql.prepared(text)):
+            found.append((f"{relative}, prepare statement {place + 1}", relative,
+                          [(row[0], row[1], row[3]) for row in run("EXPLAIN QUERY PLAN " + each)], whole_scans(run, each)))
+            run(each)
+        answer = sql.statement(text)
+        found.append((relative, relative, [(row[0], row[1], row[3]) for row in asking("EXPLAIN QUERY PLAN " + answer)],
+                      whole_scans(asking, answer)))
+    return found
 
 
 def screen_plans(engine):
@@ -640,7 +653,7 @@ class TestSqlBesideEachQuery:
             rows through the `.sql` too.
             """
             found = [line for lens in LENSES for relative in ported()
-                     for line in failures(fixture, lens, relative, sql.statement(sql_text(relative)))]
+                     for line in failures(fixture, lens, relative, sql.answering(sql_text(relative)))]
             assert not found, "\n".join(found)
 
         @every_fixture
@@ -835,7 +848,7 @@ class TestSqlBesideEachQuery:
             connection = sql.copied(built)
             filled = sql.screen_tables(connection)
             for table in filled:
-                connection.execute(f"DROP TABLE {table}")
+                connection.execute(f"DELETE FROM {table}" if table in SCHEMA_SCREEN_TABLES else f"DROP TABLE {table}")
             for (view,) in connection.execute("SELECT name FROM sqlite_schema WHERE type = 'view'").fetchall():
                 connection.execute(f"DROP VIEW {view}")
             connection.commit()
@@ -1029,7 +1042,7 @@ class TestPlansOfTheQuestions:
         roots a statement reads before it reads the files under them, is no loop.
         """
         ran = engine_ran(engine)
-        found = [f"{relative}: {detail}" for relative, (plan, scans) in question_plans(engine).items()
+        found = [f"{label}: {detail}" for label, relative, plan, scans in question_plans(engine)
                  for detail in [f"scans {name}" for name in scans]
                  + whole_searches(plan, storage_roots(sql_text(relative)))]
         assert found == [], f"on SQLite {ran}"
@@ -1279,6 +1292,26 @@ class TestTheSqlCheck:
         digest = hashlib.sha256(changed).hexdigest()
         found = pin_failures({self.JUDGMENTS: pins()[self.JUDGMENTS]}, {self.JUDGMENTS: changed})
         assert len(found) == 1 and found[0].startswith(f"{self.JUDGMENTS}: ") and digest in found[0]
+
+    def test_runs_the_prepare_part_of_a_question_before_its_answer_and_refuses_the_parts_in_another_order(self):
+        """makes what a question's prepare part makes before it gives the rows of its answer part, each time it is asked
+
+        A `.sql` in the parts prepare and answer, whose prepare makes a temporary table of two rows, is asked twice and
+        gives the two rows each time, none made twice; one in the parts answer and prepare is refused.
+        """
+        connection = sqlite3.connect(":memory:")
+        text = """-- part: prepare
+DROP TABLE IF EXISTS temp.said;
+CREATE TEMP TABLE said (k TEXT) STRICT;
+INSERT INTO said VALUES ('"a"'), ('"b"');
+-- part: answer
+SELECT k AS shown FROM said ORDER BY k
+"""
+        expected = (["shown"], [(sql.Term(sql.LITERAL, "a", XSD + "string"),), (sql.Term(sql.LITERAL, "b", XSD + "string"),)])
+        assert sql.answer(connection, text) == expected
+        assert sql.answer(connection, text) == expected
+        with pytest.raises(ValueError, match="the parts"):
+            sql.answer(connection, "-- part: answer\nSELECT 1\n-- part: prepare\nSELECT 2\n")
 
     def test_refuses_pages_that_ignore_the_key_to_continue_after_or_the_page_size(self):
         """refuses a list question whose pages ignore the key to continue after, or the page size

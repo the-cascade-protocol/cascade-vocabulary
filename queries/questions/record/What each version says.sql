@@ -1,14 +1,15 @@
 WITH
-  k (revision_of, version, specialization_of, label, display_name, display_date) AS (
+  k (revision_of, version, specialization_of, label, display_name, display_date, whole) AS (
     SELECT (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#revisionOf>'),
       (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#version>'),
       coalesce((SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/prov#specializationOf>'), 0),
       coalesce((SELECT id FROM term WHERE nt = '<http://www.w3.org/2000/01/rdf-schema#label>'), 0),
       coalesce((SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#displayName>'), 0),
-      coalesce((SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#displayDate>'), 0)),
+      coalesce((SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#displayDate>'), 0),
+      NOT EXISTS (SELECT 1 FROM asked)),
   asking (record) AS (
     SELECT term FROM asked
-    UNION ALL SELECT DISTINCT q.o FROM k CROSS JOIN quad q ON q.p = k.revision_of WHERE NOT EXISTS (SELECT 1 FROM asked)),
+    UNION ALL SELECT DISTINCT q.o FROM k CROSS JOIN quad q ON q.p = k.revision_of WHERE k.whole),
   versions (record, version) AS (
     SELECT DISTINCT asking.record, v.o
     FROM asking CROSS JOIN k CROSS JOIN quad r ON r.o = asking.record AND r.p = k.revision_of

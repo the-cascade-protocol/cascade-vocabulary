@@ -113,11 +113,6 @@ WITH
       FROM members mv JOIN entries e ON e.entry = mv.entry)
 SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
 UNION ALL SELECT s, p, o FROM made;
--- Each record the view shows in an entry, `file` the view's address, `entry` as the view names it, `label` the
--- entry's label's term id.
-CREATE VIEW variant_interpretation_shown (file, type, entry, label, record) AS
-SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#VariantInterpretation>', e.iri, e.label, m.record
-FROM variant_interpretation_terms k CROSS JOIN variant_interpretation e CROSS JOIN variant_interpretation_member m ON m.entry = e.entry;
 
 INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('variant_interpretation', 'sqlite_autoindex_variant_interpretation_1', '112 1'),
@@ -228,6 +223,12 @@ UPDATE variant_interpretation SET label = (
   SELECT min(l.o) FROM variant_interpretation_terms k CROSS JOIN quad l
   WHERE l.s = (SELECT id FROM term WHERE nt = variant_interpretation.iri) AND l.p = k.label)
 WHERE entry IN (SELECT entry FROM variant_interpretation_filled);
+
+DELETE FROM shown_in_entry WHERE type = '<https://ns.cascadeprotocol.org/cascade#VariantInterpretation>' AND source IN (SELECT entry FROM variant_interpretation_filled);
+INSERT INTO shown_in_entry (file, type, entry, label, record, source)
+SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#VariantInterpretation>', e.iri, e.label, m.record, e.entry
+FROM variant_interpretation_terms k CROSS JOIN variant_interpretation e CROSS JOIN variant_interpretation_member m ON m.entry = e.entry
+WHERE e.entry IN (SELECT entry FROM variant_interpretation_filled);
 
 DELETE FROM variant_interpretation_source WHERE entry IN (SELECT entry FROM variant_interpretation_filled);
 INSERT OR IGNORE INTO variant_interpretation_source (entry, line, shown)

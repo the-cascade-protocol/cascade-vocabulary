@@ -9,23 +9,10 @@ WITH
       (SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/prov#wasAttributedTo>'),
       (SELECT id FROM term WHERE nt = '<http://purl.org/pav/hasCurrentVersion>'),
       (SELECT id FROM term WHERE nt = '<http://xmlns.com/foaf/0.1/name>')),
-  shown (entry, label, record) AS (
-    SELECT entry, label, record FROM allergy_shown
-    UNION ALL SELECT entry, label, record FROM condition_shown
-    UNION ALL SELECT entry, label, record FROM immunization_shown
-    UNION ALL SELECT entry, label, record FROM lab_result_shown
-    UNION ALL SELECT entry, label, record FROM medication_dispense_shown
-    UNION ALL SELECT entry, label, record FROM medication_shown
-    UNION ALL SELECT entry, label, record FROM note_shown
-    UNION ALL SELECT entry, label, record FROM patient_profile_shown
-    UNION ALL SELECT entry, label, record FROM procedure_shown
-    UNION ALL SELECT entry, label, record FROM report_shown
-    UNION ALL SELECT entry, label, record FROM variant_interpretation_shown
-    UNION ALL SELECT entry, label, record FROM variant_shown),
   arrivals (entry, label, record, revision, is_record) AS (
     SELECT DISTINCT shown.entry, shown.label, shown.record, cr.o,
       EXISTS (SELECT 1 FROM quad t WHERE t.s = shown.record AND t.p = k.type AND t.o = k.record_class)
-    FROM shown CROSS JOIN k CROSS JOIN quad cr ON cr.s = shown.record AND cr.p = k.current_revision),
+    FROM shown_in_entry shown CROSS JOIN k CROSS JOIN quad cr ON cr.s = shown.record AND cr.p = k.current_revision),
   imports (revision, place) AS (
     SELECT DISTINCT arrivals.revision, l.o FROM arrivals CROSS JOIN k
     CROSS JOIN quad g ON g.s = arrivals.revision AND g.p = k.generated_by

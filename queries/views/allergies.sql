@@ -183,11 +183,6 @@ WITH
       FROM entries e JOIN allergy c ON c.entry = e.entry WHERE c.onset_written IS NOT NULL)
 SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
 UNION ALL SELECT s, p, o FROM made;
--- Each record the view shows in an entry, `file` the view's address, `entry` as the view names it, `label` the
--- entry's label's term id.
-CREATE VIEW allergy_shown (file, type, entry, label, record) AS
-SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#AllergyOrIntolerance>', e.iri, e.label, m.record
-FROM allergy_terms k CROSS JOIN allergy e CROSS JOIN allergy_member m ON m.entry = e.entry;
 
 INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('allergy', 'sqlite_autoindex_allergy_1', '675 1'),
@@ -347,6 +342,12 @@ UPDATE allergy SET label = (
   SELECT min(l.o) FROM allergy_terms k CROSS JOIN quad l
   WHERE l.s = (SELECT id FROM term WHERE nt = allergy.iri) AND l.p = k.label)
 WHERE entry IN (SELECT entry FROM allergy_filled);
+
+DELETE FROM shown_in_entry WHERE type = '<https://ns.cascadeprotocol.org/cascade#AllergyOrIntolerance>' AND source IN (SELECT entry FROM allergy_filled);
+INSERT INTO shown_in_entry (file, type, entry, label, record, source)
+SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#AllergyOrIntolerance>', e.iri, e.label, m.record, e.entry
+FROM allergy_terms k CROSS JOIN allergy e CROSS JOIN allergy_member m ON m.entry = e.entry
+WHERE e.entry IN (SELECT entry FROM allergy_filled);
 
 DELETE FROM allergy_source WHERE entry IN (SELECT entry FROM allergy_filled);
 INSERT OR IGNORE INTO allergy_source (entry, line, shown)

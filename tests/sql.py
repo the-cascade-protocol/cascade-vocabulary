@@ -666,15 +666,16 @@ def screen_tables(connection):
 PART = re.compile(r"^-- part: (\w+)[ \t]*$", re.MULTILINE)
 PARTS = ("tables", "fill", "finish", "triples")
 LABELS_PARTS = ("fill", "triples")
+QUESTION_PARTS = ("prepare", "answer")
 
 
 def parts(text):
-    """A view's `.sql` by its parts, each the text after its `-- part: NAME` line up to the next, as
+    """A `.sql` by its parts, each the text after its `-- part: NAME` line up to the next, as
     queries/statements.sql orders them; empty for a `.sql` in no parts."""
     found = PART.split(text)[1:]
     named = dict(zip(found[::2], found[1::2]))
-    if named and list(named) not in (list(PARTS), list(LABELS_PARTS)):
-        raise ValueError(f"a .sql has the parts {list(named)}, not {list(PARTS)} or {list(LABELS_PARTS)}")
+    if named and list(named) not in (list(PARTS), list(LABELS_PARTS), list(QUESTION_PARTS)):
+        raise ValueError(f"a .sql has the parts {list(named)}, not {list(PARTS)}, {list(LABELS_PARTS)} or {list(QUESTION_PARTS)}")
     return named
 
 
@@ -693,8 +694,23 @@ def statements(script):
 
 
 def statement(text):
-    """What a `.sql` gives its `.rq`'s rows by: a view's triples part, or the whole text of any other."""
-    return parts(text).get("triples", text)
+    """What a `.sql` gives its `.rq`'s rows by: a view's triples part, a question's answer part, or the whole text of any
+    other."""
+    found = parts(text)
+    return found.get("triples", found.get("answer", text))
+
+
+def answering(text):
+    """What the check gives `keyed`: a question's whole `.sql`, whose prepare part it runs, a view's triples part, or the
+    whole text of any other."""
+    found = parts(text)
+    return text if "answer" in found else found.get("triples", text)
+
+
+def prepared(text):
+    """The statements a question's `.sql` runs before its answer, in order: those of its prepare part, none for a `.sql`
+    with none."""
+    return statements(parts(text).get("prepare", ""))
 
 
 def screened(connection, views):
@@ -763,7 +779,9 @@ def keyed(connection, text, page_size=None, after=None):
     """A `.sql`'s columns and its rows, each value the term its N-Triples text writes, or None where it is unbound, and
     each row's page key: a list question's last column, dropped from its columns, or None for any other `.sql`. A
     list question is given the page size and the key to continue after; any other `.sql` names neither."""
-    cursor = connection.execute(text, {"page_size": page_size, "after": after})
+    for each in prepared(text):
+        connection.execute(each)
+    cursor = connection.execute(statement(text), {"page_size": page_size, "after": after})
     names = [column[0] for column in cursor.description]
     rows = cursor.fetchall()
     if names[-1:] == [PAGE_KEY]:

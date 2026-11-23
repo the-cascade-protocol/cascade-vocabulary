@@ -166,11 +166,6 @@ WITH
       FROM entries e JOIN immunization c ON c.entry = e.entry WHERE c.date_written IS NOT NULL)
 SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
 UNION ALL SELECT s, p, o FROM made;
--- Each record the view shows in an entry, `file` the view's address, `entry` as the view names it, `label` the
--- entry's label's term id.
-CREATE VIEW immunization_shown (file, type, entry, label, record) AS
-SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#Vaccination>', e.iri, e.label, m.record
-FROM immunization_terms k CROSS JOIN immunization e CROSS JOIN immunization_member m ON m.entry = e.entry;
 
 INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('immunization', 'sqlite_autoindex_immunization_1', '1350 1'),
@@ -312,6 +307,12 @@ UPDATE immunization SET label = (
   SELECT min(l.o) FROM immunization_terms k CROSS JOIN quad l
   WHERE l.s = (SELECT id FROM term WHERE nt = immunization.iri) AND l.p = k.label)
 WHERE entry IN (SELECT entry FROM immunization_filled);
+
+DELETE FROM shown_in_entry WHERE type = '<https://ns.cascadeprotocol.org/cascade#Vaccination>' AND source IN (SELECT entry FROM immunization_filled);
+INSERT INTO shown_in_entry (file, type, entry, label, record, source)
+SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#Vaccination>', e.iri, e.label, m.record, e.entry
+FROM immunization_terms k CROSS JOIN immunization e CROSS JOIN immunization_member m ON m.entry = e.entry
+WHERE e.entry IN (SELECT entry FROM immunization_filled);
 
 DELETE FROM immunization_source WHERE entry IN (SELECT entry FROM immunization_filled);
 INSERT OR IGNORE INTO immunization_source (entry, line, shown)

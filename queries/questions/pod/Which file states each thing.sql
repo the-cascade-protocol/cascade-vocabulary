@@ -12,7 +12,7 @@ WITH
     SELECT DISTINCT f.id, EXISTS (SELECT 1 FROM quad v WHERE v.s = f.id AND v.p = k.type AND v.o = k.view_class)
     FROM k CROSS JOIN roots
     CROSS JOIN term f ON f.nt >= '<' || roots.root AND f.nt < '<' || roots.root || char(1114111)
-    WHERE f.kind = 2 AND EXISTS (SELECT 1 FROM quad q WHERE q.g = f.id)),
+    WHERE +f.kind = 2 AND EXISTS (SELECT 1 FROM quad q WHERE q.g = f.id)),
   pairs (thing, file, named) AS (
     SELECT DISTINCT q.s, files.file, 0
     FROM files CROSS JOIN quad q ON q.g = files.file CROSS JOIN term t ON t.id = q.s AND t.kind = 2

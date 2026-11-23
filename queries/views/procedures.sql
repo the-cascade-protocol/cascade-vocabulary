@@ -142,11 +142,6 @@ WITH
       FROM members mv JOIN entries e ON e.entry = mv.entry)
 SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
 UNION ALL SELECT s, p, o FROM made;
--- Each record the view shows in an entry, `file` the view's address, `entry` as the view names it, `label` the
--- entry's label's term id.
-CREATE VIEW procedure_shown (file, type, entry, label, record) AS
-SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#MedicalProcedure>', e.iri, e.label, m.record
-FROM procedure_terms k CROSS JOIN procedure e CROSS JOIN procedure_member m ON m.entry = e.entry;
 
 INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('procedure', 'sqlite_autoindex_procedure_1', '675 1'),
@@ -278,6 +273,12 @@ UPDATE procedure SET label = (
   SELECT min(l.o) FROM procedure_terms k CROSS JOIN quad l
   WHERE l.s = (SELECT id FROM term WHERE nt = procedure.iri) AND l.p = k.label)
 WHERE entry IN (SELECT entry FROM procedure_filled);
+
+DELETE FROM shown_in_entry WHERE type = '<https://ns.cascadeprotocol.org/cascade#MedicalProcedure>' AND source IN (SELECT entry FROM procedure_filled);
+INSERT INTO shown_in_entry (file, type, entry, label, record, source)
+SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#MedicalProcedure>', e.iri, e.label, m.record, e.entry
+FROM procedure_terms k CROSS JOIN procedure e CROSS JOIN procedure_member m ON m.entry = e.entry
+WHERE e.entry IN (SELECT entry FROM procedure_filled);
 
 DELETE FROM procedure_source WHERE entry IN (SELECT entry FROM procedure_filled);
 INSERT OR IGNORE INTO procedure_source (entry, line, shown)

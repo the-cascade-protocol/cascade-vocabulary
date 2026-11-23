@@ -93,11 +93,6 @@ WITH
 SELECT s, p, o FROM said
 UNION ALL SELECT entry, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>',
   '<https://ns.cascadeprotocol.org/cascade#PatientProfile>' FROM entries;
--- Each record the view shows in an entry, `file` the view's address, `entry` as the view names it, `label` the
--- entry's label's term id.
-CREATE VIEW patient_profile_shown (file, type, entry, label, record) AS
-SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#PatientProfile>', m.iri, m.label, m.profile
-FROM patient_profile_terms k CROSS JOIN patient_profile_member m;
 
 INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('patient_profile_member', 'patient_profile_member', '1 1 1 1'),
@@ -149,6 +144,11 @@ WHERE held.version IS NOT NULL;
 UPDATE patient_profile_member SET label = (
   SELECT min(l.o) FROM patient_profile_terms k CROSS JOIN quad l
   WHERE l.s = (SELECT id FROM term WHERE nt = patient_profile_member.iri) AND l.p = k.label);
+
+DELETE FROM shown_in_entry WHERE type = '<https://ns.cascadeprotocol.org/cascade#PatientProfile>';
+INSERT INTO shown_in_entry (file, type, entry, label, record, source)
+SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#PatientProfile>', m.iri, m.label, m.profile, m.subject
+FROM patient_profile_terms k CROSS JOIN patient_profile_member m;
 
 DELETE FROM patient_profile_source;
 INSERT OR IGNORE INTO patient_profile_source (profile, line, shown)

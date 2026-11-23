@@ -38,12 +38,13 @@ WITH
   candidates (file, thing, place, is_file, fan_out) AS (
     -- A thing that states a filing property, filed with the container of the class of the value.
     SELECT DISTINCT q.g, q.s, v.place, 0, filings.fan_out
-    FROM filings CROSS JOIN quad q ON q.p = filings.with_p
+    FROM quad q CROSS JOIN filings ON filings.with_p = q.p
     CROSS JOIN term th ON th.id = q.s AND th.kind = 2
     CROSS JOIN k CROSS JOIN quad vt ON vt.s = q.o AND vt.p = k.type
     CROSS JOIN containers v ON v.class = vt.o
     CROSS JOIN term pt ON pt.id = v.place
-    WHERE EXISTS (SELECT 1 FROM views_at WHERE substr(pt.lex, 1, length(views_at.folder)) <> views_at.folder)
+    WHERE q.p IN (SELECT with_p FROM filings)
+      AND EXISTS (SELECT 1 FROM views_at WHERE substr(pt.lex, 1, length(views_at.folder)) <> views_at.folder)
       AND NOT EXISTS (SELECT 1 FROM quad w WHERE w.s = q.g AND w.p = k.type AND w.o = k.view_class)
     UNION
     -- A thing of a class the layout narrows to the things that state a property, and that states it in the file.

@@ -1,7 +1,7 @@
 WITH
   k (revision_of, version, generated_at, current_revision, observed_as_of, last_update, label, was_revision_of,
      derived_from, retrieved_on, answered_as_of, attributed, current_version, foaf_name, generated_by, association,
-     had_role, agent, transmitter_role, started_at) AS (
+     had_role, agent, transmitter_role, started_at, whole) AS (
     SELECT (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#revisionOf>'),
       (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#version>'),
       (SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/prov#generatedAtTime>'),
@@ -21,10 +21,11 @@ WITH
       (SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/prov#hadRole>'),
       (SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/prov#agent>'),
       (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#TransmitterRole>'),
-      (SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/prov#startedAtTime>')),
+      (SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/prov#startedAtTime>'),
+      NOT EXISTS (SELECT 1 FROM asked)),
   asking (record) AS (
     SELECT term FROM asked
-    UNION ALL SELECT DISTINCT q.o FROM k CROSS JOIN quad q ON q.p = k.revision_of WHERE NOT EXISTS (SELECT 1 FROM asked)),
+    UNION ALL SELECT DISTINCT q.o FROM k CROSS JOIN quad q ON q.p = k.revision_of WHERE k.whole),
   -- A version is first received when its earliest arrival, in any record's revision, was.
   revisions (record, revision, version, arrived, first) AS (
     SELECT DISTINCT asking.record, r.s, v.o, a.o,

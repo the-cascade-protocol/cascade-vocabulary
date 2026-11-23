@@ -52,8 +52,8 @@ WITH RECURSIVE
     FROM k CROSS JOIN quad e ON e.p = k.same_record_before
     CROSS JOIN quad r ON r.s = e.s AND r.p = k.revision_of
     CROSS JOIN term a ON a.id = e.s CROSS JOIN term b ON b.id = e.o
-    WHERE EXISTS (SELECT 1 FROM reach WHERE reach.src = e.o AND reach.dst = e.s)
-      AND (a.lex < b.lex OR NOT EXISTS (SELECT 1 FROM quad back WHERE back.s = e.o AND back.p = k.same_record_before AND back.o = e.s))
+    CROSS JOIN reach ON reach.src = e.o AND reach.dst = e.s
+    WHERE (a.lex < b.lex OR NOT EXISTS (SELECT 1 FROM quad back WHERE back.s = e.o AND back.p = k.same_record_before AND back.o = e.s))
       AND (NOT EXISTS (SELECT 1 FROM asked) OR r.o IN (SELECT term FROM asked))),
   -- A finding that a source reported older states, one row for each revision it names.
   older_targets (finding, target) AS (

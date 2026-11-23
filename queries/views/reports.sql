@@ -221,11 +221,6 @@ WITH
       FROM entries e JOIN report c ON c.entry = e.entry WHERE c.date_written IS NOT NULL)
 SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
 UNION ALL SELECT s, p, o FROM made;
--- Each record the view shows in an entry, `file` the view's address, `entry` as the view names it, `label` the
--- entry's label's term id.
-CREATE VIEW report_shown (file, type, entry, label, record) AS
-SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#DiagnosticReport>', e.iri, e.label, m.record
-FROM report_terms k CROSS JOIN report e CROSS JOIN report_member m ON m.entry = e.entry;
 
 INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('report', 'sqlite_autoindex_report_1', '150 1'),
@@ -428,6 +423,12 @@ UPDATE report SET label = (
   SELECT min(l.o) FROM report_terms k CROSS JOIN quad l
   WHERE l.s = (SELECT id FROM term WHERE nt = report.iri) AND l.p = k.label)
 WHERE entry IN (SELECT entry FROM report_filled);
+
+DELETE FROM shown_in_entry WHERE type = '<https://ns.cascadeprotocol.org/cascade#DiagnosticReport>' AND source IN (SELECT entry FROM report_filled);
+INSERT INTO shown_in_entry (file, type, entry, label, record, source)
+SELECT '<' || k.address || '>', '<https://ns.cascadeprotocol.org/cascade#DiagnosticReport>', e.iri, e.label, m.record, e.entry
+FROM report_terms k CROSS JOIN report e CROSS JOIN report_member m ON m.entry = e.entry
+WHERE e.entry IN (SELECT entry FROM report_filled);
 
 DELETE FROM report_source WHERE entry IN (SELECT entry FROM report_filled);
 INSERT OR IGNORE INTO report_source (entry, line, shown)

@@ -33,20 +33,7 @@ WITH
       (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#DifferentResultValuesAtOneInstant>'),
       (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#DifferentResultUnitsAtOneInstant>'),
       (SELECT id FROM term WHERE nt = '<http://www.w3.org/2000/01/rdf-schema#label>')),
-  shown (entry, label, record) AS (
-    SELECT entry, label, record FROM allergy_shown
-    UNION ALL SELECT entry, label, record FROM condition_shown
-    UNION ALL SELECT entry, label, record FROM immunization_shown
-    UNION ALL SELECT entry, label, record FROM lab_result_shown
-    UNION ALL SELECT entry, label, record FROM medication_dispense_shown
-    UNION ALL SELECT entry, label, record FROM medication_shown
-    UNION ALL SELECT entry, label, record FROM note_shown
-    UNION ALL SELECT entry, label, record FROM patient_profile_shown
-    UNION ALL SELECT entry, label, record FROM procedure_shown
-    UNION ALL SELECT entry, label, record FROM report_shown
-    UNION ALL SELECT entry, label, record FROM variant_interpretation_shown
-    UNION ALL SELECT entry, label, record FROM variant_shown),
-  entry_labels (entry, label) AS (SELECT DISTINCT entry, label FROM shown),
+  entry_labels (entry, label) AS (SELECT DISTINCT entry, label FROM shown_in_entry),
   periods (record, entry, code, dated, begins, ends, open) AS (
     SELECT DISTINCT sh.record, sh.entry, cc.o, ds.o IS NOT NULL,
       CASE WHEN ds.o IS NULL THEN NULL WHEN dst.datatype = 'http://www.w3.org/2001/XMLSchema#gYear' THEN substr(dst.lex, 1, 4) || '-01-01'
@@ -61,7 +48,7 @@ WITH
            WHEN coalesce(ends.reach, '') <> '' AND ends.reach >= CASE WHEN dst.datatype = 'http://www.w3.org/2001/XMLSchema#gYear' THEN substr(dst.lex, 1, 4) || '-01-01'
                 WHEN dst.datatype = 'http://www.w3.org/2001/XMLSchema#gYearMonth' THEN substr(dst.lex, 1, 7) || '-01' ELSE substr(dst.lex, 1, 10) END THEN 0
            WHEN st.nt IN ('"active"', '"recurrence"', '"relapse"') THEN 0 ELSE 1 END
-    FROM k CROSS JOIN shown sh
+    FROM k CROSS JOIN shown_in_entry sh
     CROSS JOIN quad rk ON rk.s = sh.record AND rk.p = k.record_kind AND rk.o = (SELECT id FROM term WHERE nt = '"Condition"')
     CROSS JOIN quad cv ON cv.s = sh.record AND cv.p = k.current_version
     CROSS JOIN quad cc ON cc.s = cv.o AND cc.p = k.condition_code
@@ -71,13 +58,13 @@ WITH
                  CASE WHEN at.kind = 3 AND at.datatype IN ('http://www.w3.org/2001/XMLSchema#date', 'http://www.w3.org/2001/XMLSchema#dateTime') THEN substr(at.lex, 1, 10)
                       WHEN at.kind = 3 AND at.datatype = 'http://www.w3.org/2001/XMLSchema#gYearMonth' THEN substr(at.lex, 1, 7) || '-31'
                       WHEN at.kind = 3 AND at.datatype = 'http://www.w3.org/2001/XMLSchema#gYear' THEN substr(at.lex, 1, 4) || '-12-31' ELSE '' END AS reach
-               FROM k k2 CROSS JOIN quad ab ON ab.p = k2.abatement_date CROSS JOIN term at ON at.id = ab.o) ends ON ends.version = cv.o
+               FROM k CROSS JOIN quad ab ON ab.p = k.abatement_date CROSS JOIN term at ON at.id = ab.o) ends ON ends.version = cv.o
     LEFT JOIN quad cs ON cs.s = cv.o AND cs.p = k.clinical_status
     LEFT JOIN term st ON st.id = cs.o),
   needing (entry, needs, finding, judgment, record, other) AS (
     -- Members that disagree on how severe an allergy is.
     SELECT sh.entry, 'members disagree on criticality', NULL, NULL, NULL, NULL
-    FROM k CROSS JOIN shown sh
+    FROM k CROSS JOIN shown_in_entry sh
     CROSS JOIN quad cv ON cv.s = sh.record AND cv.p = k.current_version
     CROSS JOIN quad cr ON cr.s = cv.o AND cr.p = k.allergy_criticality
     GROUP BY sh.entry HAVING count(DISTINCT cr.o) > 1
@@ -88,7 +75,7 @@ WITH
     CROSS JOIN quad c ON c.s = same.s AND c.p = k.counts AND c.o = k.yes
     CROSS JOIN quad why ON why.s = same.s AND why.p = k.justification AND why.o IS NOT k.business_identifier_same
     CROSS JOIN quad hm ON hm.s = same.s AND hm.p = k.member
-    CROSS JOIN shown sh ON sh.record = hm.o
+    CROSS JOIN shown_in_entry sh ON sh.record = hm.o
     WHERE EXISTS (SELECT 1 FROM quad a CROSS JOIN quad t ON t.s = a.o AND t.p = k.type AND t.o = k.software_agent
                   WHERE a.s = same.s AND a.p = k.attributed)
     GROUP BY sh.entry
@@ -102,12 +89,12 @@ WITH
     SELECT DISTINCT s1.entry, 'judged different, still joined', NULL, jj.j, cd.s, cd.o
     FROM k CROSS JOIN quad cd ON cd.p = k.currently_different
     CROSS JOIN term a ON a.id = cd.s CROSS JOIN term b ON b.id = cd.o AND a.lex < b.lex
-    CROSS JOIN shown s1 ON s1.record = cd.s CROSS JOIN shown s2 ON s2.record = cd.o AND s2.entry = s1.entry
+    CROSS JOIN shown_in_entry s1 ON s1.record = cd.s CROSS JOIN shown_in_entry s2 ON s2.record = cd.o AND s2.entry = s1.entry
     LEFT JOIN (SELECT h1.s AS j, h1.o AS r, h2.o AS o
-               FROM k k2 CROSS JOIN quad h1 ON h1.p = k2.member
-               CROSS JOIN quad h2 ON h2.s = h1.s AND h2.p = k2.member
-               CROSS JOIN quad c ON c.s = h1.s AND c.p = k2.counts AND c.o = k2.yes
-               CROSS JOIN quad v ON v.s = h1.s AND v.p = k2.verdict AND v.o = k2.different) jj ON jj.r = cd.s AND jj.o = cd.o
+               FROM k CROSS JOIN quad h1 ON h1.p = k.member
+               CROSS JOIN quad h2 ON h2.s = h1.s AND h2.p = k.member
+               CROSS JOIN quad c ON c.s = h1.s AND c.p = k.counts AND c.o = k.yes
+               CROSS JOIN quad v ON v.s = h1.s AND v.p = k.verdict AND v.o = k.different) jj ON jj.r = cd.s AND jj.o = cd.o
     UNION
     -- A matcher's Same of two records now in two entries, which has lapsed, by the least judgment that names both.
     SELECT DISTINCT s1.entry, 'joined before, apart under newer tables or rules', NULL, first.j, first.r, first.o
@@ -121,7 +108,7 @@ WITH
                             WHERE n.p = k.has_target AND n.o = l.s)
           GROUP BY h1.o, h2.o) first
     CROSS JOIN k
-    CROSS JOIN shown s1 ON s1.record = first.r CROSS JOIN shown s2 ON s2.record = first.o AND s2.entry <> s1.entry
+    CROSS JOIN shown_in_entry s1 ON s1.record = first.r CROSS JOIN shown_in_entry s2 ON s2.record = first.o AND s2.entry <> s1.entry
     WHERE NOT EXISTS (SELECT 1 FROM quad d WHERE d.s = first.r AND d.p = k.currently_different AND d.o = first.o)
     UNION
     -- A finding of matcher judgments a rule list version no longer reaches, with each pair it names.
@@ -136,7 +123,7 @@ WITH
           CROSS JOIN term ja ON ja.id = t.o
           GROUP BY b.s, h1.o, h2.o) first
     CROSS JOIN k
-    CROSS JOIN shown s1 ON s1.record = first.r CROSS JOIN shown s2 ON s2.record = first.o AND s2.entry <> s1.entry
+    CROSS JOIN shown_in_entry s1 ON s1.record = first.r CROSS JOIN shown_in_entry s2 ON s2.record = first.o AND s2.entry <> s1.entry
     WHERE NOT EXISTS (SELECT 1 FROM quad d WHERE d.s = first.r AND d.p = k.currently_different AND d.o = first.o)
       AND NOT EXISTS (
         SELECT 1 FROM quad a1 CROSS JOIN quad a2 ON a2.s = a1.s AND a2.p = k.member AND a2.o = first.o
@@ -163,7 +150,7 @@ WITH
     CROSS JOIN quad v2 ON v2.o = c2.s AND v2.p = k.current_version
     CROSS JOIN quad r2 ON r2.s = v2.s AND r2.p = k.record_kind AND r2.o = r1.o
     CROSS JOIN term a ON a.id = r1.s CROSS JOIN term b ON b.id = r2.s AND a.lex < b.lex
-    CROSS JOIN shown s1 ON s1.record = r1.s CROSS JOIN shown s2 ON s2.record = r2.s AND s2.entry <> s1.entry
+    CROSS JOIN shown_in_entry s1 ON s1.record = r1.s CROSS JOIN shown_in_entry s2 ON s2.record = r2.s AND s2.entry <> s1.entry
     WHERE NOT EXISTS (SELECT 1 FROM quad d WHERE d.s = r1.s AND d.p = k.currently_different AND d.o = r2.s)
       AND NOT EXISTS (SELECT 1 FROM quad l CROSS JOIN quad h1 ON h1.s = l.s AND h1.p = k.member AND h1.o = r1.s
                       CROSS JOIN quad h2 ON h2.s = l.s AND h2.p = k.member AND h2.o = r2.s
@@ -175,7 +162,7 @@ WITH
     CROSS JOIN quad c ON c.s = same.s AND c.p = k.counts AND c.o = k.yes
     CROSS JOIN quad v ON v.s = same.s AND v.p = k.verdict AND v.o = k.same
     CROSS JOIN quad hm ON hm.s = same.s AND hm.p = k.member
-    CROSS JOIN shown sh ON sh.record = hm.o
+    CROSS JOIN shown_in_entry sh ON sh.record = hm.o
     UNION
     -- A finding of two results of one test at one instant that differ in value or in unit.
     SELECT DISTINCT s1.entry, CASE b.o WHEN k.different_values THEN 'one test at one instant, two values'
@@ -189,7 +176,7 @@ WITH
     CROSS JOIN quad d2 ON d2.s = b.s AND d2.p = k.derived_from
     CROSS JOIN quad cv1 ON cv1.s = t1.o AND cv1.p = k.current_version AND cv1.o = d1.o
     CROSS JOIN quad cv2 ON cv2.s = t2.o AND cv2.p = k.current_version AND cv2.o = d2.o
-    CROSS JOIN shown s1 ON s1.record = t1.o
+    CROSS JOIN shown_in_entry s1 ON s1.record = t1.o
     WHERE NOT EXISTS (SELECT 1 FROM quad d WHERE d.s = t1.o AND d.p = k.currently_different AND d.o = t2.o)
       AND NOT EXISTS (
         SELECT 1 FROM quad a1 CROSS JOIN quad a2 ON a2.s = a1.s AND a2.p = k.member AND a2.o = t2.o

@@ -13,7 +13,7 @@ WITH
       '/' || sparql_replace(substr(f.lex, length(roots.root) + 1), '([0-9a-f]{2}/)?[^/]*$', '', '')
     FROM k CROSS JOIN roots
     CROSS JOIN term f ON f.nt >= '<' || roots.root AND f.nt < '<' || roots.root || char(1114111)
-    WHERE f.kind = 2 AND EXISTS (SELECT 1 FROM quad q WHERE q.g = f.id)),
+    WHERE +f.kind = 2 AND EXISTS (SELECT 1 FROM quad q WHERE q.g = f.id)),
   things (file, folder, rebuilt, thing) AS (
     SELECT DISTINCT files.file, files.folder, files.rebuilt, q.s
     FROM files CROSS JOIN quad q ON q.g = files.file CROSS JOIN term t ON t.id = q.s AND t.kind = 2
