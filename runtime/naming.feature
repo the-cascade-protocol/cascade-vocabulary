@@ -42,7 +42,7 @@ Feature: Naming
   Rule: N3. A version is named from its content
     decisions/naming.md, row "version"; decisions/variant-interpretation.md, row "reclassification"; decisions/variant-record.md, row "content".
     cascade:VersionNamingRule, the Bridge's VersioningTest in
-    https://github.com/jayostis/cascade-bridge-spec/blob/main/vocab/bridge.ttl. An entry's versions are named by the
+    https://github.com/the-cascade-protocol/cascade-bridge-spec/blob/main/vocab/bridge.ttl. An entry's versions are named by the
     same rule, with a reference to a draft record replaced by that record's name.
 
     Example: an entry's versions are named from their content, a draft's reference replaced by its record's name
@@ -124,9 +124,9 @@ Feature: Naming
     urn:uuid:, version 4, new on every run. An entry's session is minted once by the app that took the entry, and the
     entry carries it, so its records' names (N2) are the same on every run. Nothing else is random. Each act says
     prov:wasAssociatedWith the runtime that performed it, a prov:SoftwareAgent named as N8 names a checkout:
-    https://github.com/jayostis/cascade-runtime-js/tree/<commit>/ for the reference runtime, written
-    https://github.com/jayostis/cascade-runtime-js/tree/<commit>/#uncommitted for a build with uncommitted changes and
-    https://github.com/jayostis/cascade-runtime-js#unidentified for one whose commit it cannot read. A matcher run is a
+    https://github.com/the-cascade-protocol/cascade-runtime-js/tree/<commit>/ for the reference runtime, written
+    https://github.com/the-cascade-protocol/cascade-runtime-js/tree/<commit>/#uncommitted for a build with uncommitted changes and
+    https://github.com/the-cascade-protocol/cascade-runtime-js#unidentified for one whose commit it cannot read. A matcher run is a
     cascade:MatcherRun and a prov:Activity, prov:wasInformedBy the import or entry session whose records it takes, and is
     written only when it writes something else. A rule list version migration is a new random UUID too, a
     cascade:RuleListVersionMigration and a prov:Activity, written only when it writes a retraction (N15). The kit's
@@ -192,9 +192,18 @@ Feature: Naming
     cascade-bridge-spec and the runtime's Bridge interface use it, and their own tests check it.
 
   Rule: N9. A file's name comes from the name of what it holds
-    No note rules this.
+    decisions/files-held-in-archives.md, rows "an archive's name" and "what reading a pod requires", rule its second and third paragraphs; no note rules the rest.
     For a urn:uuid: name, the UUID; for an ni:///sha-256; name, the hash in lowercase hex. An RDF file adds .ttl; a stored
     document adds nothing. The folder and the fan-out are the layout's, pod-layout.ttl.
+
+    An archive (X1) holds files and is named by none of them: its name is the SHA-256 of its own bytes in lowercase hex,
+    adding .zip, in the folder pod-layout.ttl gives cascade:holdsFilesInArchivesOfMediaType, with no fan-out. A host
+    checks that an archive's bytes hash to its name when it receives the archive (S1) and when a clean-up merges it, and
+    refuses one that does not: the receive writes nothing. Reading an archive needs only its end of central directory
+    record; an archive with none, which is a torn one, fails the open, naming the archive, and nothing is read from it.
+
+    A requirement's file (O4) is named by its requirement: the SHA-256 of the requirement's IRI, in UTF-8, in lowercase
+    hex, adding .ttl, in the folder pod-layout.ttl gives cascade:holdsRequirementsForReadingAPod, with no fan-out.
 
     Every example shows this rule, because each graph is named by its file's path.
 

@@ -32,8 +32,8 @@ Adopt the standard wherever it fits, and say which. Where the vocabulary diverge
 the reason is research, not opinion. A note that diverges from a standard with no reason in Why is not done.
 
 Research is cited with its numbers and lives where a reader can reach it: an issue comment, as research 1 to 5 on
-[#130](https://github.com/jayostis/cascade-vocabulary/issues/130); or an evidence issue that keeps the counts and the
-scripts, as [#201](https://github.com/jayostis/cascade-vocabulary/issues/201). A folder on one machine is not
+[#130](https://github.com/the-cascade-protocol/cascade-vocabulary/issues/130); or an evidence issue that keeps the counts and the
+scripts, as [#201](https://github.com/the-cascade-protocol/cascade-vocabulary/issues/201). A folder on one machine is not
 reachable. A claim that rests on measurement says whether it was verified, inferred or unverified: "ids survive
 (inferred, not observed)".
 
@@ -103,3 +103,4 @@ brought to it on 2026-10-22 under #202:
 - [`the-person.md`](the-person.md): what a version of the person's profile holds for gender and death, and why sex waits for the rule that reads it.
 - [`consent-tiers.md`](consent-tiers.md): what a model offered a person's pods may do through a tool, what waits for the person's yes, and what no tool does.
 - [`model-proposed-writes.md`](model-proposed-writes.md): what a write a model proposed and the person said yes to records of the model and of the person.
+- [`files-held-in-archives.md`](files-held-in-archives.md): where a host keeps a pod's files, at their own paths or in ZIP archives, with every path, byte and name unchanged, and how a pod makes a runtime that cannot read archives refuse it.
