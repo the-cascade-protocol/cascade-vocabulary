@@ -362,13 +362,24 @@ SELECT thing, label FROM (
   WHERE NOT EXISTS (SELECT 1 FROM quad l WHERE l.s = docs.doc AND l.p = k.label AND l.g IS NOT k.file)
   GROUP BY st.nt) WHERE label IS NOT NULL;
 
+-- The name of each agent a judgment is attributed to, the least of its rdfs:labels outside the labels file.
+DROP TABLE IF EXISTS temp.label_attributed_names;
+CREATE TEMP TABLE label_attributed_names (
+  agent INTEGER PRIMARY KEY,
+  name TEXT
+) STRICT;
+INSERT INTO label_attributed_names (agent)
+SELECT DISTINCT o FROM quad WHERE p = (SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/prov#wasAttributedTo>');
+UPDATE label_attributed_names SET name = (
+  SELECT min(mn.lex) FROM label_terms k CROSS JOIN quad ml CROSS JOIN term mn ON mn.id = ml.o
+  WHERE ml.s = label_attributed_names.agent AND ml.p = k.label AND ml.g IS NOT k.file);
+
 -- a judgment
 INSERT OR IGNORE INTO label_named
 SELECT thing, label FROM (
   SELECT st.nt AS thing, min(
       sparql_replace(vd.lex, '^.*#', '') || ' · ' ||
-      coalesce((SELECT min(mn.lex) FROM quad ml CROSS JOIN term mn ON mn.id = ml.o
-                WHERE ml.s = w.o AND ml.p = k.label AND ml.g IS NOT k.file),
+      coalesce(an.name,
                CASE WHEN ro.o IS NULL THEN NULL WHEN ro.o = k.patient_role THEN 'the patient' ELSE 'a person' END) || ' · ' ||
       CASE WHEN t.lex IS NOT NULL THEN substr(t.lex, 1, 10)
            ELSE substr(sparql_replace(st.lex, '^.*[:/#]', ''), 1, 8) END || ' · ' ||
@@ -376,6 +387,7 @@ SELECT thing, label FROM (
   FROM label_terms k CROSS JOIN quad j
   CROSS JOIN term st ON st.id = j.s
   CROSS JOIN quad w ON w.s = j.s AND w.p = k.attributed_to
+  LEFT JOIN label_attributed_names an ON an.agent = w.o
   LEFT JOIN quad gt ON gt.s = j.s AND gt.p = k.generated_at_time
   LEFT JOIN term t ON t.id = gt.o
   LEFT JOIN quad vq ON vq.s = j.s AND vq.p = k.verdict
