@@ -1,0 +1,31 @@
+@prefix : <urn:x:> .
+@prefix cascade: <https://ns.cascadeprotocol.org/cascade#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:subject a cascade:Subject .
+
+:chlorideFirst a cascade:LaboratoryTestResult .
+<urn:x:chlorideFirstVersion> prov:specializationOf :chlorideFirst ; cascade:patient :subject ; cascade:testName "Chloride" ;
+    cascade:testCode <http://loinc.org/rdf/2075-0> ; cascade:resultClinicallyRelevantTime "2025-03-27T12:00:00Z"^^xsd:dateTime ;
+    cascade:resultValueKind cascade:QuantityResultValue ; cascade:resultQuantity <urn:x:chlorideFirstVersion#value> .
+<urn:x:chlorideFirstVersion#value> cascade:decimalValue "98"^^xsd:decimal ; cascade:writtenValue "98" ; cascade:ucumUnit "mmol/L" .
+:chlorideFirstRevision a cascade:Revision ; cascade:revisionOf :chlorideFirst ; cascade:version <urn:x:chlorideFirstVersion> ;
+    prov:generatedAtTime "2026-01-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:00Z"^^xsd:dateTime .
+
+:chlorideSecond a cascade:LaboratoryTestResult .
+<urn:x:chlorideSecondVersion> prov:specializationOf :chlorideSecond ; cascade:patient :subject ; cascade:testName "Chloride, other channel" ;
+    cascade:testCode <http://loinc.org/rdf/2075-0> ; cascade:resultClinicallyRelevantTime "2025-03-27T12:00:00Z"^^xsd:dateTime ;
+    cascade:resultValueKind cascade:QuantityResultValue ; cascade:resultQuantity <urn:x:chlorideSecondVersion#value> .
+<urn:x:chlorideSecondVersion#value> cascade:decimalValue "101"^^xsd:decimal ; cascade:writtenValue "101" ; cascade:ucumUnit "mmol/L" .
+:chlorideSecondRevision a cascade:Revision ; cascade:revisionOf :chlorideSecond ; cascade:version <urn:x:chlorideSecondVersion> ;
+    prov:generatedAtTime "2026-01-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:00Z"^^xsd:dateTime .
+
+:chlorideCorrected a cascade:LaboratoryTestResult .
+<urn:x:chlorideCorrectedVersion> prov:specializationOf :chlorideCorrected ; cascade:patient :subject ; cascade:testName "Chloride, corrected" ;
+    cascade:workflowStatus "corrected" ;
+    cascade:testCode <http://loinc.org/rdf/2075-0> ; cascade:resultClinicallyRelevantTime "2025-03-27T12:00:00Z"^^xsd:dateTime ;
+    cascade:resultValueKind cascade:QuantityResultValue ; cascade:resultQuantity <urn:x:chlorideCorrectedVersion#value> .
+<urn:x:chlorideCorrectedVersion#value> cascade:decimalValue "99"^^xsd:decimal ; cascade:writtenValue "99" ; cascade:ucumUnit "mmol/L" .
+:chlorideCorrectedRevision a cascade:Revision ; cascade:revisionOf :chlorideCorrected ; cascade:version <urn:x:chlorideCorrectedVersion> ;
+    prov:generatedAtTime "2026-01-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:00Z"^^xsd:dateTime .

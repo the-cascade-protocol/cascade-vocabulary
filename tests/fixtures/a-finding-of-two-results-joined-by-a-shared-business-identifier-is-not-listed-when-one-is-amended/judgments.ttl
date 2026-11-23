@@ -1,0 +1,30 @@
+@prefix : <urn:x:> .
+@prefix cascade: <https://ns.cascadeprotocol.org/cascade#> .
+@prefix oa: <http://www.w3.org/ns/oa#> .
+@prefix pav: <http://purl.org/pav/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:person a prov:Person .
+cascade:CascadeMatcher a prov:SoftwareAgent ; rdfs:label "Cascade matcher" .
+
+:rules a cascade:ReferenceSeries ; rdfs:label "Rules" .
+:rules11 prov:specializationOf :rules ; pav:version "11" .
+:rules11SameBusinessIdentifierRule cascade:rowOfRuleListVersion :rules11 ;
+    cascade:matcherRule cascade:SameBusinessIdentifierAndTestCodeWithinOneOrganizationRule ;
+    cascade:queryHash :sameBusinessIdentifierQuery .
+
+:byIdentifier a cascade:Judgment ; cascade:verdict cascade:Same ;
+    cascade:justification cascade:SameBusinessIdentifierAndTestCodeWithinOneOrganization ;
+    prov:hadMember :identifiedFirst , :identifiedAmended ;
+    prov:wasDerivedFrom <urn:x:identifiedFirstVersion> , <urn:x:identifiedAmendedVersion> ;
+    cascade:matcherRule cascade:SameBusinessIdentifierAndTestCodeWithinOneOrganizationRule ;
+    prov:wasAttributedTo cascade:CascadeMatcher .
+
+:byIdentifierUnderrules11 a cascade:MatcherJudgmentAssertion ; cascade:assertedJudgment :byIdentifier ;
+    cascade:assertedUnderRuleListVersion :rules11 .
+
+:differentValues a cascade:FindingForReview ; oa:hasBody cascade:DifferentResultValuesAtOneInstant ;
+    oa:motivatedBy oa:classifying ; oa:hasTarget :identifiedFirst , :identifiedAmended ;
+    prov:wasDerivedFrom <urn:x:identifiedFirstVersion> , <urn:x:identifiedAmendedVersion> .

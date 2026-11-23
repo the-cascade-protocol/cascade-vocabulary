@@ -1,0 +1,18 @@
+@prefix ctm: <https://ns.cascadeprotocol.org/test-manifest#> .
+@prefix mf: <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
+@prefix qt: <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<> a mf:Manifest ;
+  rdfs:label "an-activity-stating-a-filing-property-and-a-narrowing-one-is-filed-by-the-filing-one" ;
+  rdfs:comment "A prov:Activity that used a document and is a specialization of an allergy record, filed in the allergies folder beside the record, and the document in the documents folder: the layout places an activity that states prov:used in the imports folder, and a thing that states prov:specializationOf with the folder of its value's class." ;
+  mf:entries (
+    <#which-files-are-out-of-place>
+  ) .
+
+<#which-files-are-out-of-place> a mf:QueryEvaluationTest ;
+  mf:name "which-files-are-out-of-place" ;
+  rdfs:comment "The activity goes where the entry filing by prov:specializationOf puts it, not where the entry for an activity that states prov:used does, so no file is out of place." ;
+  mf:action [ qt:query <../../../queries/questions/pod/Which%20files%20are%20out%20of%20place.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <which-files-are-out-of-place.srj> .

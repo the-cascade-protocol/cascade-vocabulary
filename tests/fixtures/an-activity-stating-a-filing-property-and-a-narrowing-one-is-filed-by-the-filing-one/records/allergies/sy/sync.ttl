@@ -1,0 +1,4 @@
+@prefix : <urn:x:> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+:sync a prov:Activity ; prov:used :document ; prov:specializationOf :record .

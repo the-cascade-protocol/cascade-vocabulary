@@ -1,0 +1,23 @@
+@prefix : <urn:x:> .
+@prefix cascade: <https://ns.cascadeprotocol.org/cascade#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:subject a cascade:Subject .
+
+:identifiedFirst a cascade:LaboratoryTestResult .
+<urn:x:identifiedFirstVersion> prov:specializationOf :identifiedFirst ; cascade:patient :subject ; cascade:testName "Sodium" ;
+    cascade:testCode <http://loinc.org/rdf/2951-2> ; cascade:resultClinicallyRelevantTime "2025-03-27T12:00:00Z"^^xsd:dateTime ;
+    cascade:resultValueKind cascade:QuantityResultValue ; cascade:resultQuantity <urn:x:identifiedFirstVersion#value> .
+<urn:x:identifiedFirstVersion#value> cascade:decimalValue "139"^^xsd:decimal ; cascade:writtenValue "139" ; cascade:ucumUnit "mmol/L" .
+:identifiedFirstRevision a cascade:Revision ; cascade:revisionOf :identifiedFirst ; cascade:version <urn:x:identifiedFirstVersion> ;
+    prov:generatedAtTime "2026-01-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:00Z"^^xsd:dateTime .
+
+:identifiedAmended a cascade:LaboratoryTestResult .
+<urn:x:identifiedAmendedVersion> prov:specializationOf :identifiedAmended ; cascade:patient :subject ; cascade:testName "Sodium" ;
+    cascade:workflowStatus "amended" ;
+    cascade:testCode <http://loinc.org/rdf/2951-2> ; cascade:resultClinicallyRelevantTime "2025-03-27T12:00:00Z"^^xsd:dateTime ;
+    cascade:resultValueKind cascade:QuantityResultValue ; cascade:resultQuantity <urn:x:identifiedAmendedVersion#value> .
+<urn:x:identifiedAmendedVersion#value> cascade:decimalValue "141"^^xsd:decimal ; cascade:writtenValue "141" ; cascade:ucumUnit "mmol/L" .
+:identifiedAmendedRevision a cascade:Revision ; cascade:revisionOf :identifiedAmended ; cascade:version <urn:x:identifiedAmendedVersion> ;
+    prov:generatedAtTime "2026-01-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:00Z"^^xsd:dateTime .
