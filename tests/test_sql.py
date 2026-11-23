@@ -823,6 +823,41 @@ class TestSqlBesideEachQuery:
                      for detail in [f"scans {name}" for name in scans] + whole_searches(plan)]
             assert found == [], f"on SQLite {ran}"
 
+        def test_makes_the_labels_in_steps_that_grow_with_the_judgments_and_not_with_their_square(self):
+            """makes the labels of judgments that one agent made, each file holding the agent's name, in steps that grow in proportion to them
+
+            A name the agent has is held in the file of each judgment it made, the same statement once for each file. The
+            labels' fill is run, after the screens', on a pod of 100 judgments and on one of 400, and the virtual machine's
+            steps are counted: a fill that reads all of an agent's names for each judgment takes sixteen times the steps for
+            four times the judgments, one that reads them once for each agent about four times.
+            """
+            cascade = "https://ns.cascadeprotocol.org/cascade#"
+            prov = "http://www.w3.org/ns/prov#"
+
+            def steps(judgments):
+                store = pyoxigraph.Store()
+                agent, label = pyoxigraph.NamedNode(cascade + "CascadeMatcher"), sql.LABEL
+                for i in range(judgments):
+                    judgment, file = pyoxigraph.NamedNode(f"urn:x:judgment:{i}"), pyoxigraph.NamedNode(f"urn:x:file:{i}")
+                    for triple in [(judgment, pyoxigraph.NamedNode(sql.RDF_TYPE), pyoxigraph.NamedNode(cascade + "Judgment")),
+                                   (judgment, pyoxigraph.NamedNode(prov + "wasAttributedTo"), agent),
+                                   (judgment, pyoxigraph.NamedNode(cascade + "verdict"), pyoxigraph.NamedNode(cascade + "Same")),
+                                   (agent, label, pyoxigraph.Literal("Cascade matcher"))]:
+                        store.add(pyoxigraph.Quad(*triple, file))
+                        store.add(pyoxigraph.Quad(*triple, pyoxigraph.DefaultGraph()))
+                connection = sql.screened(sql.loaded(store, "test"), screens())
+                counted = []
+                connection.set_progress_handler(lambda: counted.append(1), 1000)
+                for each in sql.statements(sql.parts(sql.LABELS.read_text(encoding="utf-8"))["fill"]):
+                    connection.execute(each)
+                connection.set_progress_handler(None, 0)
+                named = connection.execute("SELECT count(*) FROM label_named WHERE label LIKE '%Cascade matcher%'")
+                assert named.fetchone()[0] == judgments
+                return len(counted)
+
+            few, many = steps(100), steps(400)
+            assert many < 6 * few, f"{few} thousand steps for 100 judgments, {many} for 400"
+
         def test_ships_a_statistics_row_for_each_index_of_the_schema_and_for_each_of_its_tables_with_none(self):
             """ships a statistics row for each index queries/statements.sql makes, and for each table of it with none
 
