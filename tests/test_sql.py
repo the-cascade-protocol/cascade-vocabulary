@@ -161,6 +161,56 @@ def question_plans(engine):
     return found
 
 
+VIEW_STATEMENTS = re.compile(r"\bCREATE TEMP TABLE view_statements\b")
+LOOP_STEP = re.compile(r"^(?:SCAN|SEARCH|CO-ROUTINE|MATERIALIZE) ")
+
+
+def made_by_views(entries=400):
+    """The rows of `view_statements` that a pod of `entries` entries gives, as the twelve views' triples make them: for each
+    entry its member and lead, the node of its current values, whose member owns it, and six values of the node and six of
+    the entry, each in a predicate of its own."""
+    cascade = "<https://ns.cascadeprotocol.org/cascade#"
+    rows = []
+    for i in range(entries):
+        entry, node, member = f"<urn:cascade:entry:{i:08d}>", f"_:n{i}", f"<urn:x:member-{i}>"
+        rows += [("a", entry, cascade + "entryMember>", member), ("a", entry, cascade + "leadMember>", member),
+                 ("a", entry, cascade + "memberCurrentValues>", node), ("a", node, cascade + "valuesOfMember>", member)]
+        for k in range(6):
+            rows += [("a", node, f"<urn:x:node-{k}>", f'"v{i}"'), ("a", entry, f"<urn:x:entry-{k}>", f'"w{i}"')]
+    return rows
+
+
+def unindexed_loops(plan):
+    """The steps, of one statement's EXPLAIN QUERY PLAN given as (id, parent, detail) rows, that SCAN a table or a CTE in a
+    loop another loop runs once for each row of: not the first loop of its select. A SQLite that joins a table it
+    expects to be small with no index gives one."""
+    firsts = {}
+    for step, parent, detail in plan:
+        if LOOP_STEP.match(detail) and not detail.startswith(("MATERIALIZE ", "CO-ROUTINE ")):
+            firsts.setdefault(parent, step)
+    return [detail for step, parent, detail in plan if detail.startswith("SCAN ") and firsts.get(parent) != step]
+
+
+def answer_plans_over_rows(engine):
+    """The plan of the answer of each question in parts, as (path, plan), after its prepare part has run on an empty pod
+    with the rows of made_by_views put into its temporary table of the views' statements when it is made, so that
+    what the prepare part does to that table's statistics is in the plan."""
+    _, run, _ = planning_pod(engine)
+    found = []
+    for relative in ported():
+        if not relative.startswith("queries/questions/") or "prepare" not in sql.parts(sql_text(relative)):
+            continue
+        text = sql_text(relative)
+        for each in sql.prepared(text):
+            run(each)
+            if VIEW_STATEMENTS.search(each):
+                for row in made_by_views():
+                    run("INSERT INTO view_statements (address, s, p, o) VALUES (?, ?, ?, ?)", row)
+        found.append((relative, [(row[0], row[1], row[3]) for row in
+                                 run("EXPLAIN QUERY PLAN " + sql.statement(text), {"page_size": None, "after": None})]))
+    return found
+
+
 def screen_plans(engine):
     """The plan of each statement of each screen's fill and finish, and of each screen's triples, by the screen, the
     part and the statement's place in it, each as its EXPLAIN QUERY PLAN rows and the b-trees it scans, as whole_scans
@@ -1047,6 +1097,22 @@ class TestPlansOfTheQuestions:
                  + whole_searches(plan, storage_roots(sql_text(relative)))]
         assert found == [], f"on SQLite {ran}"
 
+    @pytest.mark.parametrize("engine", ["sqlite3", "apsw", "apsw-floor"])
+    def test_plans_each_answer_that_reads_a_temporary_table_its_prepare_part_makes_with_the_table_holding_rows(self, engine):
+        """plans each answer that reads a table its prepare part makes with that table holding rows, and no scan in a loop of a table or a CTE it reads
+
+        A pod with no rows gives no statistic for a temporary table, so the plan of an answer over one says nothing of the
+        plan at 15,000 records, where the table's own row counts decide whether the answer joins the CTEs it reads through
+        an index or scans each once for each row of another. The rows a pod of 400 entries gives the views are put into the
+        table `view_statements` when its prepare part makes it, and the answer, planned after the rest of that part has
+        run, SCANs no table or CTE in a loop another loop runs once for each row of.
+        """
+        ran = engine_ran(engine)
+        plans = answer_plans_over_rows(engine)
+        assert [relative for relative, _ in plans] == ["queries/questions/entry/What it shows.rq"]
+        found = [f"{relative}: {detail}" for relative, plan in plans for detail in unindexed_loops(plan)]
+        assert found == [], f"on SQLite {ran}"
+
 
 class TestTheSqlCheck:
     """Checks of the SQL check · tests/test_sql.py, tests/sql.py
@@ -1312,6 +1378,26 @@ SELECT k AS shown FROM said ORDER BY k
         assert sql.answer(connection, text) == expected
         with pytest.raises(ValueError, match="the parts"):
             sql.answer(connection, "-- part: answer\nSELECT 1\n-- part: prepare\nSELECT 2\n")
+
+    def test_runs_the_cleanup_part_of_a_question_after_its_answer_also_when_the_answer_fails(self):
+        """drops what a question's prepare part made, by its cleanup part, once its answer has given its rows or has failed
+
+        A `.sql` in the parts prepare, answer and cleanup, whose prepare makes a temporary table and whose cleanup drops
+        it, gives its rows and leaves no such table; one whose answer fails leaves none either, and one whose cleanup
+        comes before its answer is refused.
+        """
+        connection = sqlite3.connect(":memory:")
+        prepare = "-- part: prepare\nDROP TABLE IF EXISTS temp.said;\nCREATE TEMP TABLE said (k TEXT) STRICT;\nINSERT INTO said VALUES ('\"a\"');\n"
+        cleanup = "-- part: cleanup\nDROP TABLE IF EXISTS temp.said;\n"
+        temporary = "SELECT name FROM sqlite_temp_schema WHERE name = 'said'"
+        assert sql.answer(connection, f"{prepare}-- part: answer\nSELECT k AS shown FROM said\n{cleanup}") == (
+            ["shown"], [(sql.Term(sql.LITERAL, "a", XSD + "string"),)])
+        assert connection.execute(temporary).fetchall() == []
+        with pytest.raises(sqlite3.Error):
+            sql.answer(connection, f"{prepare}-- part: answer\nSELECT k AS shown FROM said WHERE abs('x') = 1 AND no_such_column\n{cleanup}")
+        assert connection.execute(temporary).fetchall() == []
+        with pytest.raises(ValueError, match="the parts"):
+            sql.answer(connection, f"{prepare}{cleanup}-- part: answer\nSELECT 1\n")
 
     def test_refuses_pages_that_ignore_the_key_to_continue_after_or_the_page_size(self):
         """refuses a list question whose pages ignore the key to continue after, or the page size
