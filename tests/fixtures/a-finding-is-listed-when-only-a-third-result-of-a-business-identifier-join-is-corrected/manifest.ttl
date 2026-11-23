@@ -4,7 +4,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 <> a mf:Manifest ;
-  rdfs:label "a-finding-of-two-results-is-listed-when-only-a-third-result-joined-with-them-by-a-shared-business-identifier-is-corrected" ;
+  rdfs:label "a-finding-is-listed-when-only-a-third-result-of-a-business-identifier-join-is-corrected" ;
   rdfs:comment "Two chlorides of 98 and 101 at one instant with a finding of their values, and a third chloride of 99 marked as corrected, which the matcher joined to both by a shared business identifier in one judgment." ;
   mf:entries (
     <#listed-for-review>
