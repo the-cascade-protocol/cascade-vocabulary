@@ -17,8 +17,6 @@ INSERT INTO view_statements SELECT k.address, x.s, x.p, x.o FROM variant_interpr
 INSERT INTO view_statements SELECT k.address, x.s, x.p, x.o FROM variant_terms k CROSS JOIN variant_triples x;
 CREATE INDEX temp.view_statements_p ON view_statements (p);
 CREATE INDEX temp.view_statements_s ON view_statements (s);
--- Without its row counts the answer's plan joins the tables it reads from this one with no index, which takes minutes
--- at 15,000 records; with them it takes 18 seconds.
 ANALYZE temp.view_statements;
 -- part: answer
 WITH
@@ -69,3 +67,5 @@ ORDER BY entry_label.kind, entry_label.lex, substr(labelled.entry, 2, length(lab
   CASE WHEN substr(labelled.value, 1, 1) = '<' THEN substr(labelled.value, 2, length(labelled.value) - 2)
        ELSE (SELECT lex FROM term WHERE nt = labelled.value) END,
   substr(labelled.from_member, 2, length(labelled.from_member) - 2)
+-- part: cleanup
+DROP TABLE IF EXISTS temp.view_statements;

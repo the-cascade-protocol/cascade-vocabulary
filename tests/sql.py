@@ -666,7 +666,7 @@ def screen_tables(connection):
 PART = re.compile(r"^-- part: (\w+)[ \t]*$", re.MULTILINE)
 PARTS = ("tables", "fill", "finish", "triples")
 LABELS_PARTS = ("fill", "triples")
-QUESTION_PARTS = ("prepare", "answer")
+QUESTION_PARTS = (("prepare", "answer"), ("prepare", "answer", "cleanup"))
 
 
 def parts(text):
@@ -674,8 +674,9 @@ def parts(text):
     queries/statements.sql orders them; empty for a `.sql` in no parts."""
     found = PART.split(text)[1:]
     named = dict(zip(found[::2], found[1::2]))
-    if named and list(named) not in (list(PARTS), list(LABELS_PARTS), list(QUESTION_PARTS)):
-        raise ValueError(f"a .sql has the parts {list(named)}, not {list(PARTS)}, {list(LABELS_PARTS)} or {list(QUESTION_PARTS)}")
+    if named and list(named) not in (list(PARTS), list(LABELS_PARTS)) and tuple(named) not in QUESTION_PARTS:
+        raise ValueError(f"a .sql has the parts {list(named)}, not {list(PARTS)}, {list(LABELS_PARTS)}, "
+                         f"{list(QUESTION_PARTS[0])} or {list(QUESTION_PARTS[1])}")
     return named
 
 
@@ -711,6 +712,12 @@ def prepared(text):
     """The statements a question's `.sql` runs before its answer, in order: those of its prepare part, none for a `.sql`
     with none."""
     return statements(parts(text).get("prepare", ""))
+
+
+def cleaned(text):
+    """The statements a question's `.sql` runs after its answer, also when the answer fails: those of its cleanup part,
+    none for a `.sql` with none."""
+    return statements(parts(text).get("cleanup", ""))
 
 
 def screened(connection, views):
@@ -781,9 +788,13 @@ def keyed(connection, text, page_size=None, after=None):
     list question is given the page size and the key to continue after; any other `.sql` names neither."""
     for each in prepared(text):
         connection.execute(each)
-    cursor = connection.execute(statement(text), {"page_size": page_size, "after": after})
-    names = [column[0] for column in cursor.description]
-    rows = cursor.fetchall()
+    try:
+        cursor = connection.execute(statement(text), {"page_size": page_size, "after": after})
+        names = [column[0] for column in cursor.description]
+        rows = cursor.fetchall()
+    finally:
+        for each in cleaned(text):
+            connection.execute(each)
     if names[-1:] == [PAGE_KEY]:
         return names[:-1], [(tuple(parsed(value) for value in found[:-1]), found[-1]) for found in rows]
     return names, [(tuple(parsed(value) for value in found), None) for found in rows]

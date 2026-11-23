@@ -8,9 +8,11 @@
 -- call the six functions queries/sql-functions.json gives the vectors of, registered under those names.
 --
 -- A question that reads more of the screens' views than one statement may nest, as one reading each screen's
--- `<name>_triples` does, is in two parts, each opened by a line `-- part: NAME`: `prepare`, statements that each read
+-- `<name>_triples` does, is in parts, each opened by a line `-- part: NAME`: `prepare`, statements that each read
 -- fewer of them and make the temporary tables the answer reads, run in order each time the question is asked, and
--- `answer`, the one statement that gives the rows. A question in no part is one statement.
+-- `answer`, the one statement that gives the rows, and, where the prepare part makes temporary tables, `cleanup`, the
+-- statements that drop them, run in order once the rows are read and also when the answer fails. A question in no part is
+-- one statement.
 --
 -- `quad` holds the named graphs of a query's default graph, and a query's default graph is their union, a set: a
 -- statement in two graphs is in it once, so a `.sql` reads it through EXISTS, or DISTINCT, and never counts a
