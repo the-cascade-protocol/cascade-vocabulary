@@ -20,8 +20,11 @@ The contract a Cascade pod is built and read by; [`README.md`](README.md) names 
 - **A kit's `expected/` and its examples come from [the scenario](https://github.com/the-cascade-protocol/cascade-vocabulary/issues/4)**,
   and a rule's examples under `runtime/` from the rule they sit under, never from a runtime's output.
 - **A query is tested on fixtures under [`tests/fixtures/`](tests/fixtures), one per behaviour, never on an
-  example.** Its expected rows are written from what the query says it does. A check true of any pod runs over every
-  fixture, with `every_fixture` from [`tests/pods.py`](tests/pods.py). A derivation's table of codes is the exception: its
+  example.** Its expected rows are written from what the query says it does. A query is run on the fixtures written for
+  it, those whose manifest names it, and on a few rich ones named in the test (`RICH` in [`tests/test_sql.py`](tests/test_sql.py)),
+  never on every fixture; each gives rows on at least one fixture it is run on, and a test names a query that gives none.
+  A check true of any pod, not of one query, runs over every fixture, with `every_fixture` from
+  [`tests/pods.py`](tests/pods.py). A derivation's table of codes is the exception: its
   test builds one record for each code of the list pinned under `tests/terminology/`, and one stating none, so a code the
   list gains fails without a fixture to copy it into.
 - **A change here is tried against the reference runtime** by the `compatibility` check, on each pull request and

@@ -99,6 +99,23 @@ def holds_a_judgment(fixture):
     return built_once(fixture, "oxigraph", LENSES[0]).store.ask(f"ASK {{ ?j a <{JUDGMENT}> }}")
 
 
+BOTH_ENGINES = (
+    "every-row-names-its-sources", "medications-possibly-the-same", "every-reason-a-record-is-in-no-view",
+    "my-reports-notes-and-documents", "matcher-same-business-identifier-and-test-code-within-one-organization-bound-per-side",
+    "two-dispenses-from-a-retrieved-document-judged-the-same", "a-before-outranks-the-clocks", "a-clock-found-behind",
+    "a-profiles-hospital-is-its-organizations-current-name", "a-table-revised-elsewhere-keeps-the-matcher-judgment",
+    "allergies-view", "variant-classifications-agreement")
+assert set(BOTH_ENGINES) <= {fixture.name for fixture in FIXTURES}
+
+
+def steps_that_add(build):
+    """Each derivation, lens and query that writes a view, that adds a triple to the build's derived state or makes a view
+    file hold a subject of its own."""
+    return {step for step, added in build.added_by_step.items() if added} | {
+        built()[path] for path, triples in build.files.items()
+        if any(subject != URIRef(ADDRESS + path) for subject, _, _ in triples)}
+
+
 SYMMETRIC = sorted(Graph().parse(ROOT / "ontologies" / "cascade.ttl").subjects(RDF.type, OWL.SymmetricProperty))
 
 
@@ -246,9 +263,7 @@ class TestWhatEachQueryGives:
                 differing = lenses_that_differ(fixture) if judged else LENSES[:1]
                 for lens in LENSES if judged else LENSES[:1]:
                     build = built_once(fixture, "oxigraph", lens)
-                    quiet -= {step for step, added in build.added_by_step.items() if added}
-                    quiet -= {built()[path] for path, triples in build.files.items()
-                              if any(subject != URIRef(ADDRESS + path) for subject, _, _ in triples)}
+                    quiet -= steps_that_add(build)
                     if lens in differing:
                         quiet -= {relative for relative in set(ASKED.values()) & quiet if build.store.gives_a_row(query(relative))}
             assert quiet == set()
@@ -286,16 +301,36 @@ class TestDerivedStateOnTwoEngines:
     """Derived state two engines build alike · queries/derivations/, queries/lenses/, queries/views/
 
     A pod's derived state is what the derivations and a lens add to it, and the views are written from it. The suite builds
-    every fixture on Oxigraph and on rdflib, so a query that only one engine reads as written shows here.
+    every fixture on Oxigraph, and on rdflib under the lens of each entry its manifest lists; a few are built on both
+    under each lens and compared in full, so a query that only one engine reads as written shows here.
     """
 
+    class TestGivenTheFixturesChosenForBothEngines:
+        def test_leaves_no_derivation_lens_or_view_that_adds_nothing_over_them(self):
+            """leaves no derivation, lens or query that writes a view without a fixture chosen for both engines over which it adds a triple
+
+            Takes every derivation, lens and query that writes a view, and strikes off each that, over some fixture chosen
+            for both engines, adds a triple to the derived state or makes a view file hold a subject of its own, under
+            every lens if the fixture holds a judgment and under the first otherwise; any left would be compared between
+            the engines over a pod it does nothing to.
+            """
+            quiet = {*derivations(LENSES[0]), *named("lenses").values(), *built().values()}
+            for fixture in FIXTURES:
+                if fixture.name in BOTH_ENGINES:
+                    for lens in LENSES if holds_a_judgment(fixture) else LENSES[:1]:
+                        quiet -= steps_that_add(built_once(fixture, "oxigraph", lens))
+            assert quiet == set()
+
     class TestGivenAnyFixture:
-        @every_fixture
+        @pytest.mark.parametrize("fixture", [on_its_worker(fixture, id=fixture.name) for fixture in FIXTURES
+                                             if fixture.name in BOTH_ENGINES])
         def test_builds_the_same_derived_state_and_the_same_files_on_both_engines(self, fixture):
             """builds the same derived state and the same files on both engines
 
-            Each fixture is built on Oxigraph and on rdflib, under every lens if it holds a judgment and under the first
-            otherwise; the triples each derivation adds, and the files written, are compared between the two builds.
+            Each of the few fixtures chosen for both engines is built on Oxigraph and on rdflib, under every lens if it
+            holds a judgment and under the first otherwise; the triples each derivation adds, and the files written, are
+            compared between the two builds. Every other fixture is built on both engines under the lens of each manifest
+            entry, which compares the rows that entry pins.
             """
             judged = holds_a_judgment(fixture)
             for lens in LENSES if judged else LENSES[:1]:
