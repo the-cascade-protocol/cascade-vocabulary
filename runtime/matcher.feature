@@ -81,8 +81,8 @@ Feature: The matcher's procedure
         }
         """
       Then it answers:
-        | causeStep                |
-        | <urn:cascade:step:entry> |
+        | causeStep                      |
+        | <urn:cascade:step:third-entry> |
 
     Example: running again on an entry whose run filed nothing writes nothing
       Given a new pod for Cleo on 2026-03-01 at 09:00
