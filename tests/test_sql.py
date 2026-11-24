@@ -1453,3 +1453,17 @@ SELECT k AS shown FROM said ORDER BY k
                      f"{rows} WHERE k > coalesce(:after, '') ORDER BY k"):
             with pytest.raises(ValueError, match="a page of 2 after"):
                 sql.paged(connection, text, 2)
+
+    def test_names_each_query_that_gives_no_row_on_any_fixture_it_is_compared_on(self):
+        """names each query that gives no row on any fixture and lens it is compared on, whether it is compared on none or on some that give it none
+
+        Of four queries, one is compared on no fixture, one on two fixtures that give it no row, one on a fixture that
+        gives it a row under one of its two lenses, and one on every fixture it is given; the first two are named, in
+        order, and the others are not, however many fixtures give them rows.
+        """
+        rows = {("a", "two", "queries/seen.rq"), ("a", "one", "queries/everywhere.rq"), ("b", "one", "queries/everywhere.rq")}
+        compared = {"queries/unchosen.rq": [], "queries/silent.rq": [("a", "one"), ("b", "one")],
+                    "queries/seen.rq": [("a", "one"), ("a", "two")],
+                    "queries/everywhere.rq": [("a", "one"), ("b", "one")]}
+        assert uncovered(compared, lambda fixture, lens, relative: (fixture, lens, relative) in rows) \
+            == ["queries/silent.rq", "queries/unchosen.rq"]
