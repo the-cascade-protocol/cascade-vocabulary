@@ -3,7 +3,7 @@
   "capabilities": [
     "Named questions an app asks a pod · queries/questions/",
     "What each query gives over a small pod · tests/fixtures/*/manifest.ttl",
-    "SQL beside each query, giving its rows on every fixture · queries/**/*.sql, queries/statements.sql, queries/sql-functions.json",
+    "SQL beside each query, giving its rows on the fixtures chosen for it · queries/**/*.sql, queries/statements.sql, queries/sql-functions.json",
     "What is true of any pod once its derivations have run · queries/derivations/, ontologies/cascade.ttl",
     "Medication status codes the lifecycle derivations class · queries/derivations/medication-lifecycles.rq, queries/derivations/medication-dispense-lifecycles.rq",
     "Code systems and the IRI a code gets · ontologies/cascade.ttl",

@@ -4,6 +4,7 @@ gives over a store."""
 import json
 from collections import Counter
 from dataclasses import dataclass
+from functools import cache
 from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import url2pathname
@@ -40,6 +41,7 @@ def path(iri):
     return Path(url2pathname(parts.path)) if parts.scheme == "file" else None
 
 
+@cache
 def entries(manifest):
     """Each entry the manifest at `manifest` lists, in its order."""
     graph = Graph().parse(Path(manifest), format="turtle")
