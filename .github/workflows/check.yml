@@ -55,7 +55,8 @@ jobs:
           if-no-files-found: error
 
   # The reference runtime, at its default branch or the pull request a Depends-On: line names, run over this checkout,
-  # before a merge and nightly: a pair of pull requests is proven together before either merges.
+  # before a merge and nightly: a pair of pull requests is proven together before either merges. The runtime runs its
+  # conformance on Oxigraph's native build here, as its own compatibility.json says.
   compatibility:
     name: compatibility
     if: ${{ github.event_name != 'push' }}
