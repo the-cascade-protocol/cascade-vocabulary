@@ -161,7 +161,7 @@ Feature: Priya Natarajan's pod
     kestrel-harbor-health-summary-2.xml (E4) has a new document id and time, and every narrative ID renamed and two rows
     reordered; its entries say what the first download's said.
 
-    Example: E4 revises no record and the matcher finds nothing new
+    Example: E4 revises no record and the matcher files nothing new but its act
       When the pod is read as it stood after "M3"
       Then the records have these revisions:
         | record             | arrived                | version | after |
@@ -170,7 +170,7 @@ Feature: Priya Natarajan's pod
         | KHC-MED-LISINOPRIL | 2025-04-03 at 09:20:04 | 1       |       |
         | KHC-MED-AMLODIPINE | 2025-04-03 at 09:20:04 | 1       |       |
         | KHC-LAB-K-0327     | 2025-04-03 at 09:20:04 | 1       |       |
-      And "M3" wrote no file
+      And "M3" wrote 1 file
 
   Rule: P8. A download again with one entry changed adds one version of that record
     kestrel-harbor-health-summary-3.xml (E5) is the second download with the aspirin reaction's severity moderate, not
