@@ -38,6 +38,13 @@ Feature: The matcher's procedure
     Two runs compare the whole pod, with ?record unbound, and no other: a recheck (M7), which follows a new version of a
     table or of the rule list, and an open (O1), which then takes the records of the pairs its tables newly join.
 
+    A run given an activity writes its act, prov:wasInformedBy that activity, whether or not it files anything else, unless
+    a run informed by that activity is already in the pod and finds nothing new (M9): the pod then says that arrival was
+    taken, and queries/questions/pod/Which arrivals has the matcher not taken.rq lists each import, entry session, connect
+    and sync that brought a record the matcher takes (M2) and that no run is informed by, as one is after a stop between
+    the arrival and its run. A recheck and an open's run are informed by no activity and take none, so one that finds
+    nothing new writes nothing, and clears nothing.
+
     No example can tell this from taking the records whose first revision's file the step wrote, since in a pod that
     follows these rules the two always agree. Each runtime tests it itself.
 
@@ -54,6 +61,36 @@ Feature: The matcher's procedure
         | same code     | allergy RxNorm 1191 "Bayer aspirin", allergy RxNorm 1191 "Ecotrin"                                              |
         | same code     | allergy RxNorm 7980 "Penicillin G", allergy RxNorm 7980 "Bicillin"                                              |
         | same code     | allergy RxNorm 2670 from codeine-1, allergy RxNorm 2670 from codeine-2, allergy RxNorm 2670 "Codeine phosphate" |
+
+    Example: a run given an entry whose records need no judgment writes its act, informed by the entry, and files nothing else
+      Cleo's third entry holds one allergy, which no other record of the pod joins.
+
+      Given a new pod for Cleo on 2026-03-01 at 09:00
+      And Cleo files the judgment "about-r" on 2026-03-04 at 07:00
+      And Cleo enters "third-entry" on 2026-03-04 at 08:00
+      When the matcher runs on the records of that entry on 2026-03-04 at 08:01
+      Then that step wrote these matcher judgments:
+        | justification | members |
+      And "matcher" wrote 1 file
+      When the query is:
+        """
+        SELECT ?causeStep WHERE {
+          GRAPH <urn:cascade:steps> { <urn:cascade:step:matcher> prov:generated ?file . ?causeStep prov:generated ?causeFile }
+          GRAPH ?file { ?run a cascade:MatcherRun ; prov:wasInformedBy ?cause }
+          GRAPH ?causeFile { ?cause a cascade:HandEntrySession }
+        }
+        """
+      Then it answers:
+        | causeStep                      |
+        | <urn:cascade:step:third-entry> |
+
+    Example: running again on an entry whose run filed nothing writes nothing
+      Given a new pod for Cleo on 2026-03-01 at 09:00
+      And Cleo files the judgment "about-r" on 2026-03-04 at 07:00
+      And Cleo enters "third-entry" on 2026-03-04 at 08:00
+      And the matcher runs on the records of that entry on 2026-03-04 at 08:01
+      When the matcher runs on the records of "third-entry" on 2026-03-04 at 09:00 (again)
+      Then that step wrote no file
 
     Example: a sync's run takes the records the sync brought, so it joins a pair neither writer held together
       Dev's first writer enters Principen, and the second Ampicillin, both RxNorm 733; the second writer receives the

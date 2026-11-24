@@ -669,8 +669,8 @@ Feature: Alex Rivera's pod
         | CVX vaccine group table                 |
         | CVX vaccine group table version 2026-08 |
 
-    Example: the other matcher runs write nothing
-      Then "M5", "M6", "M7", "M3" and "M8" wrote no file
+    Example: the other matcher runs write their acts alone, each informed by the import or entry it took (M1)
+      Then "M5", "M6", "M7", "M3" and "M8" wrote 1 file
 
     Example: each import and entry writes the scenario's numbers of records, versions, revisions, documents and activities
       When the query is:

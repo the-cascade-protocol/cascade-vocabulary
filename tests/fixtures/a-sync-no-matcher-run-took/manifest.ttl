@@ -1,0 +1,18 @@
+@prefix ctm: <https://ns.cascadeprotocol.org/test-manifest#> .
+@prefix mf: <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
+@prefix qt: <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<> a mf:Manifest ;
+  rdfs:label "a sync no matcher run took" ;
+  rdfs:comment "Another writer imported a record of the subject and a matcher run of its own took that import; this writer received both in a sync, which no matcher run is informed by." ;
+  mf:entries (
+    <#which-arrivals-has-the-matcher-not-taken>
+  ) .
+
+<#which-arrivals-has-the-matcher-not-taken> a mf:QueryEvaluationTest ;
+  mf:name "which-arrivals-has-the-matcher-not-taken" ;
+  rdfs:comment "The import its writer's run took is not a row; the sync that brought it here is." ;
+  mf:action [ qt:query <../../../queries/questions/pod/Which%20arrivals%20has%20the%20matcher%20not%20taken.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <which-arrivals-has-the-matcher-not-taken.srj> .

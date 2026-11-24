@@ -396,7 +396,9 @@ the join and the removal.
 - **The release hashed into the judgment's name.** The strongest case: nothing is ever lost. A judgment per release
   for one pair, views that dedupe, and a retraction per copy.
 - **An assertion per run.** The strongest case: a full record of every time the matcher agreed. A file per matcher judgment
-  per day; the run's act and its snapshot already say which run wrote each assertion, and a run that finds nothing new writes nothing.
+  per day; the run's act and its snapshot already say which run wrote each assertion, and a recheck, an open's run, or a run given an activity an earlier run was
+  informed by writes nothing when it finds nothing new; the first run given an activity writes its act whatever else it files,
+  so the pod says the arrival was taken (`runtime/matcher.feature`, M1).
 - **A migration retracting assertions on every rule change.** The strongest case: explicit, and PROV's own way to
   withdraw. A matcher judgment counts only under a version that keeps its rule's query hash, so the un-reached matcher judgments stop counting
   with no file written; a retraction is kept for what a release declares wrong, so the review page never offers a
