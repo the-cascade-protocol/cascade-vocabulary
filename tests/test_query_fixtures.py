@@ -105,6 +105,7 @@ BOTH_ENGINES = (
     "two-dispenses-from-a-retrieved-document-judged-the-same", "a-before-outranks-the-clocks", "a-clock-found-behind",
     "a-profiles-hospital-is-its-organizations-current-name", "a-table-revised-elsewhere-keeps-the-matcher-judgment",
     "allergies-view", "variant-classifications-agreement")
+assert set(BOTH_ENGINES) <= {fixture.name for fixture in FIXTURES}
 
 
 def steps_that_add(build):
