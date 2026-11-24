@@ -1,0 +1,24 @@
+# An arrival is an import, a session of the person entering things, a connect to a server, or a sync that names acts.
+# The matcher has taken an arrival once a matcher run is prov:wasInformedBy it, whatever that run filed: a recheck and an
+# open's run are informed by none and take none. Rows come in the order the arrivals started: each arrival that brought a
+# revision of a record the matcher takes, one of the subject's or a server's, and that no matcher run is informed by. A
+# sync brought what the acts it names generated. An arrival whose records no About claims for the subject brought none
+# the matcher takes, so it is not listed until one does.
+PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?started ?arrival ?arrivalLabel
+WHERE {
+  { VALUES ?kind { cascade:DocumentImport cascade:HandEntrySession cascade:ConnectToServer }
+    ?arrival a ?kind ; prov:startedAtTime ?started .
+    ?revision prov:wasGeneratedBy ?arrival }
+  UNION
+  { ?arrival a cascade:SyncFromAnotherWriter ; prov:startedAtTime ?started ; prov:wasInformedBy ?named .
+    ?revision prov:wasGeneratedBy ?named }
+  ?revision cascade:revisionOf ?taken .
+  { ?taken cascade:subject [] } UNION { ?taken a cascade:Server }
+  FILTER NOT EXISTS { ?run a cascade:MatcherRun ; prov:wasInformedBy ?arrival }
+  OPTIONAL { ?arrival rdfs:label ?arrivalLabel }
+}
+ORDER BY ?started ?arrival
