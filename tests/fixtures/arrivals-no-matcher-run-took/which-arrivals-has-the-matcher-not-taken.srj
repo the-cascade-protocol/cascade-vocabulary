@@ -1,0 +1,54 @@
+{
+  "head": {
+    "vars": [
+      "started",
+      "arrival",
+      "arrivalLabel"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "started": {
+          "type": "literal",
+          "value": "2026-03-01T09:00:00Z",
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+        },
+        "arrival": {
+          "type": "uri",
+          "value": "urn:x:pull"
+        },
+        "arrivalLabel": {
+          "type": "literal",
+          "value": "FHIR pull"
+        }
+      },
+      {
+        "started": {
+          "type": "literal",
+          "value": "2026-03-02T09:00:00Z",
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+        },
+        "arrival": {
+          "type": "uri",
+          "value": "urn:x:entered"
+        },
+        "arrivalLabel": {
+          "type": "literal",
+          "value": "entered in the Cascade app"
+        }
+      },
+      {
+        "started": {
+          "type": "literal",
+          "value": "2026-03-03T08:55:00Z",
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+        },
+        "arrival": {
+          "type": "uri",
+          "value": "urn:x:connect"
+        }
+      }
+    ]
+  }
+}
