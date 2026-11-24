@@ -10,14 +10,11 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT DISTINCT ?started ?arrival ?arrivalLabel
 WHERE {
-  { VALUES ?kind { cascade:DocumentImport cascade:HandEntrySession cascade:ConnectToServer }
-    ?arrival a ?kind ; prov:startedAtTime ?started .
-    ?revision prov:wasGeneratedBy ?arrival }
-  UNION
-  { ?arrival a cascade:SyncFromAnotherWriter ; prov:startedAtTime ?started ; prov:wasInformedBy ?named .
-    ?revision prov:wasGeneratedBy ?named }
-  ?revision cascade:revisionOf ?taken .
-  { ?taken cascade:subject [] } UNION { ?taken a cascade:Server }
+  VALUES ?kind { cascade:DocumentImport cascade:HandEntrySession cascade:ConnectToServer cascade:SyncFromAnotherWriter }
+  ?arrival a ?kind ; prov:startedAtTime ?started .
+  ?arrival prov:wasInformedBy? ?source .
+  ?revision prov:wasGeneratedBy ?source ; cascade:revisionOf ?taken .
+  FILTER (EXISTS { ?taken cascade:subject ?subject } || EXISTS { ?taken a cascade:Server })
   FILTER NOT EXISTS { ?run a cascade:MatcherRun ; prov:wasInformedBy ?arrival }
   OPTIONAL { ?arrival rdfs:label ?arrivalLabel }
 }
