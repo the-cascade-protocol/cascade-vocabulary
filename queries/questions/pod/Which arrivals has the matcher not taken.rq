@@ -21,6 +21,7 @@ WHERE {
     ?arrival prov:wasInformedBy? ?source .
     ?revision prov:wasGeneratedBy ?source ; cascade:revisionOf ?taken .
     FILTER (EXISTS { ?taken cascade:subject ?subject } || EXISTS { ?taken a cascade:Server })
+    OPTIONAL { ?arrival rdfs:label ?arrivalLabel }
   } UNION {
     { SELECT DISTINCT ?arrival ?started ?profile
       WHERE {
@@ -32,7 +33,7 @@ WHERE {
     { SELECT DISTINCT ?profile WHERE { ?claimed cascade:patient ?profile ; prov:specializationOf/cascade:subject ?owner } }
     FILTER NOT EXISTS { ?profile a cascade:Subject }
     FILTER NOT EXISTS { ?used a cascade:MatcherRun ; prov:wasInformedBy ?arrival ; cascade:tookRecordsOfProfile ?profile }
+    OPTIONAL { ?arrival rdfs:label ?arrivalLabel }
   }
-  OPTIONAL { ?arrival rdfs:label ?arrivalLabel }
 }
 ORDER BY ?started ?arrival
