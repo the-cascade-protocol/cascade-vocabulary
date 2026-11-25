@@ -2,45 +2,19 @@
 
 The contract a Cascade pod is built and read by; [`README.md`](README.md) names the parts.
 
+A design here is judged by the eight principles in [`PRINCIPLES.md`](PRINCIPLES.md), and every rule answers to them.
+[`CONTRIBUTING.md`](CONTRIBUTING.md) says how to run the tests and what a pull request must pass.
+
 ## The rules
 
-- **An adapter names a file by its path here:** removing a term or moving a file it lists breaks it.
-- **A copied term carries its `dct:source` and `dct:license`**, and its type, label, domain, range and
-  superclasses, and nothing else; its type and label may change on merit. Its shape is the source's, trimmed to the
-  terms here. A `cascade#` term is copied from nothing and says what it is in its `rdfs:comment`.
-- **A new term goes in the one namespace, `cascade#`**, in `ontologies/cascade.ttl`. Where PROV-O or PAV has a
-  term, that term is used instead.
-- **Content is on a version, not on its record.** A class's shape targets the class and the
-  subjects of the properties only that class's content carries; nothing about a version's
-  content is required, because a source may omit any of it. The one exception: every version of a
-  medication says whether it came from a prescription or from a list of what the person takes.
-- **A derivation reads only statements and other derivations, never a view:** its answer is the same with the views in the pod or not.
-- **Each question is asked once.** Before adding one, look under its kind for the question that
-  already returns those rows.
-- **A kit's `expected/` and its examples come from [the scenario](https://github.com/the-cascade-protocol/cascade-vocabulary/issues/4)**,
-  and a rule's examples under `runtime/` from the rule they sit under, never from a runtime's output.
-- **A query is tested on fixtures under [`tests/fixtures/`](tests/fixtures), one per behaviour, never on an
-  example.** Its expected rows are written from what the query says it does. A query is run on the fixtures written for
-  it, those whose manifest names it, and on a few rich ones named in the test (`RICH` in [`tests/test_sql.py`](tests/test_sql.py)),
-  never on every fixture; each gives rows on at least one fixture it is run on, and a test names a query that gives none.
-  A check true of any pod, not of one query, runs over every fixture, with `every_fixture` from
-  [`tests/pods.py`](tests/pods.py). A derivation's table of codes is the exception: its
-  test builds one record for each code of the list pinned under `tests/terminology/`, and one stating none, so a code the
-  list gains fails without a fixture to copy it into.
-- **A change here is tried against the reference runtime** by the `compatibility` check, on each pull request and
-  nightly. One the runtime must follow is a pair of pull requests, here and in cascade-runtime-js, each naming the other
-  on a `Depends-On:` line.
-- **The suite runs in parallel** (`python3 -m pytest -n auto --dist loadgroup`): what a test builds is built once per
-  worker, and the cases that share it are put on one worker with `xdist_group`. A case that takes seconds on rdflib is
-  a `part` of its fixture's group (`on_its_worker(..., part=)`), built again on each worker that draws it, so the fixture's
-  other cases do not wait behind it; `--group-budget SECONDS` fails a parallel run in which a group takes longer (a `-k`
-  that leaves out a group `--budget-groups` lists fails it too).
-- **Every test sits in a top-level class whose docstring's first paragraph is a heading of the tests page,** written
-  word for word in tests/spec.json (under capabilities, or build for the suite's checks of its own tools); CI's
-  spec-shape step refuses one that is not, and pytest does not check it.
+Only what no check catches and the files do not show. The number after each rule is the principle in
+[`PRINCIPLES.md`](PRINCIPLES.md) that it serves.
 
-## Conventions
-
-- Conventional commits: `feat(vocab): ...`, `fix(shapes): ...`; a change to a term, a shape or a
-  query says why in its message, never in the file.
-- No comment that restates a name, a constraint or another file.
+- **Content is on a version, not on its record, and no shape requires it but one:** every version of a medication says
+  whether it came from a prescription or from a list of what the person takes. A source may omit anything else. (4)
+- **Each question is asked once.** Before adding one, look under its kind in `queries/questions/` for the question that
+  already returns those rows. (3)
+- **Expected answers are written from the rule, never from a runtime's output.** A kit's `expected/` and its examples
+  come from [the scenario](https://github.com/the-cascade-protocol/cascade-vocabulary/issues/4), and a rule's examples
+  under `runtime/` from the rule they sit under. A query's expected rows come from what the query says it does, on a
+  fixture under [`tests/fixtures/`](tests/fixtures) made for that behaviour. (6)
