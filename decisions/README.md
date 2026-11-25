@@ -6,5 +6,5 @@ page: what was done, why, and what would show it was wrong. Most rules need no r
 
 Name a record `decisions/<what-it-is-about>.md`.
 
-A record names the rule it is about by its feature file and number, `runtime/currency.feature`, C2, and a term by its
+A record names the rule it is about by its feature file and number, `runtime/currency.feature`, rule C2, and a term by its
 prefixed name, `cascade:currentRevision`. The record points to the rule or the term; a rule or a term never points back.

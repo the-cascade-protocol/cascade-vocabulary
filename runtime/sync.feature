@@ -168,9 +168,8 @@ Feature: Syncs
         | <urn:cascade:step:sync-back> | 0             |
 
   Rule: S5. Two writers hold one set when the set hashes of what each holds agree, whatever order the files arrived in
-    The set hash is order-free, so two writers that each received the
-    other's files carry one set hash on those syncs' snapshots, though neither received them in the order the other
-    did.
+    The set hash is order-free, so two writers that each received the other's files carry one set hash on those syncs'
+    snapshots, though neither received them in the order the other did.
 
     Example: the two writers' syncs carry one set hash
       Given a new pod for Dev on 2026-04-01 at 09:00

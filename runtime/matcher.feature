@@ -120,8 +120,8 @@ Feature: The matcher's procedure
   Rule: M2. The matcher takes only the subject's records, and the servers' records that have a version
     Those queries/derivations/subjects.rq gives the pod's cascade:Subject, under the everyday lens. A server's or an
     organization's record names no patient, as cascade:ServerShape and cascade:OrganizationShape hold, so it is never
-    the subject's. A server's record is taken all
-    the same when it has a version, which only a connect writes (A16), and only R14 applies to it (M20); an organization's record is never taken.
+    the subject's. A server's record is taken all the same when it has a version, which only a connect writes (A16), and
+    only R14 applies to it (M20); an organization's record is never taken.
 
     Example: a record whose patient profile no About claims, or which names no patient, is never taken nor compared
       Given a new pod for Cleo on 2026-03-01 at 09:00
@@ -907,8 +907,9 @@ Feature: The matcher's procedure
     version that carries none finds the row that holds its expression (M4c). The classification plays no part: the join
     is identity. A pair that shares an ID is R12's alone, so no pair has two justifications; a pair whose versions carry
     different IDs is joined by neither, whatever expressions they hold; and a variant whose expression is on more than
-    one row is left alone, rows being counted as distinct row subjects over every version held. No other code is compared, because an HGVS expression written on two transcript
-    versions is two expressions, and only a table says they are one variant.
+    one row is left alone, rows being counted as distinct row subjects over every version held. No other code is
+    compared, because an HGVS expression written on two transcript versions is two expressions, and only a table says
+    they are one variant.
 
     Ivo's table holds ClinVar's rows of two variations of MLH1, 90011 and 90012, 90011 found by its expression on each
     of two transcript versions. Each example opens a new pod for Ivo with it and enters its own entry, so that no
@@ -1053,20 +1054,19 @@ Feature: The matcher's procedure
         | kind | under | justification | members |
 
   Rule: M19. A person answers a finding of matcher judgments no longer reached over the records of its pairs, never by naming the finding
-    "What needs
-    review" lists the finding as one line, its pairs: each pair of records of a matcher judgment it names that are now in two
-    entries and not judged different, with the matcher judgment of least IRI that names it; a lapsed Same the finding names is
-    listed with it and never alone, and one no finding names is listed alone (O1). The finding is named by its triples
-    and a matcher judgment by the versions it used, so a field rename or a rebuild works both out again under other
-    names: an answer names what the finding is about, the records of each pair, never the finding. A person answers a
-    pair with a Same or a Different over its records, which joins or parts it as any Same or Different does; an app may
-    file one for each pair of the line at once. Or with a cascade:Acknowledged whose cascade:answersWarningOfKind is
-    cascade:MatcherJudgmentsNoLongerReached and whose members are exactly the pair's two records: it takes that pair
-    off the review page however the finding is worked out again, and changes nothing else, so the finding still stands
-    and the pair stays apart. One acknowledgement answers one pair: one naming the records of two pairs answers neither,
-    so a later pair of one record from each is listed, and an app that answers the whole line files one per pair. A judgment one of whose members is a
-    finding is refused. Each answer is a judgment the lens counts or not, so writers that file them in any order hold
-    one answer.
+    "What needs review" lists the finding as one line, its pairs: each pair of records of a matcher judgment it names
+    that are now in two entries and not judged different, with the matcher judgment of least IRI that names it; a lapsed
+    Same the finding names is listed with it and never alone, and one no finding names is listed alone (O1). The finding
+    is named by its triples and a matcher judgment by the versions it used, so a field rename or a rebuild works both
+    out again under other names: an answer names what the finding is about, the records of each pair, never the finding.
+    A person answers a pair with a Same or a Different over its records, which joins or parts it as any Same or
+    Different does; an app may file one for each pair of the line at once. Or with a cascade:Acknowledged whose
+    cascade:answersWarningOfKind is cascade:MatcherJudgmentsNoLongerReached and whose members are exactly the pair's two
+    records: it takes that pair off the review page however the finding is worked out again, and changes nothing else,
+    so the finding still stands and the pair stays apart. One acknowledgement answers one pair: one naming the records
+    of two pairs answers neither, so a later pair of one record from each is listed, and an app that answers the whole
+    line files one per pair. A judgment one of whose members is a finding is refused. Each answer is a judgment the lens
+    counts or not, so writers that file them in any order hold one answer.
 
     Background:
       Given a new pod for Gus on 2026-09-01 at 09:00

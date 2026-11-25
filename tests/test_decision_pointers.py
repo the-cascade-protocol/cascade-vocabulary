@@ -6,28 +6,18 @@ from contract import ROOT
 
 SELF = Path(__file__).resolve().relative_to(ROOT.resolve()).as_posix()
 
-FORMS = [
-    ("a record's file", re.compile(r"decisions/(?!README\.md)[A-Za-z0-9_-]+\.md")),
-    ("a rule said to have no record", re.compile(r"No note rules this")),
-    ("the published records' address", re.compile(r"://\S*/decisions/")),
-    ("the phrase for a record", re.compile(r"decision notes?", re.IGNORECASE)),
-]
+POINTER = re.compile(r"decisions/(?!README\.md)|decision note|decision record|No note rules this", re.IGNORECASE)
 
 
 def pointers():
-    """Every line of a tracked file outside decisions/ that names a record, as `path:line: form`."""
+    """Every line of a tracked file outside decisions/ that names a record, as `path:line:text`."""
     done = subprocess.run(
-        ["git", "grep", "-n", "-I", "-i", "-E", "decisions/|No note rules this|decision notes?", "--", ".", ":!decisions/", f":!{SELF}"],
+        ["git", "grep", "-n", "-I", "-i", "-E", "decisions/|decision note|decision record|No note rules this", "--", ".",
+         ":!decisions/", f":!{SELF}", ":!tests/spec.json"],
         cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace",
     )
     assert done.returncode in (0, 1), done.stderr
-    found = []
-    for line in done.stdout.splitlines():
-        where, number, text = line.split(":", 2)
-        for form, pattern in FORMS:
-            if pattern.search(text):
-                found.append(f"{where}:{number}: {form}")
-    return found
+    return [line for line in done.stdout.splitlines() if POINTER.search(line.split(":", 2)[2])]
 
 
 class TestChecksThatNoFilePointsAtARemovedDecisionRecord:

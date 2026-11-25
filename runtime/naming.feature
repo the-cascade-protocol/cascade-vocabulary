@@ -27,8 +27,8 @@ Feature: Naming
         | allergy "Mango"     | cascade:RecordFromServerNamingRule, https://fhir.example.org/r4, AllergyIntolerance, mango     | urn:uuid:df9490a2-ae95-87ef-a856-b899697aaf11 |
 
   Rule: N2. A record from an entry is named from its session and the draft's position
-    cascade:EnteredRecordNamingRule, over the entry session's IRI, which
-    the entry gives (N7), and the draft's position N from urn:cascade:output-N, in decimal.
+    cascade:EnteredRecordNamingRule, over the entry session's IRI, which the entry gives (N7), and the draft's position
+    N from urn:cascade:output-N, in decimal.
 
     Example: each draft of an entry is a record of its own, named from its session and its position
       Given a new pod for Ben on 2026-02-01 at 08:00
@@ -71,8 +71,7 @@ Feature: Naming
     A9's example pins the triples it is named from.
 
   Rule: N5. A document is named by its bytes
-    cascade:DocumentNamingRule: ni:///sha-256; followed by the unpadded
-    base64url SHA-256 of its bytes.
+    cascade:DocumentNamingRule: ni:///sha-256; followed by the unpadded base64url SHA-256 of its bytes.
 
     Example: each kept document is named by the SHA-256 of its bytes
       Given a new pod for Ada on 2026-01-01 at 09:00
@@ -284,15 +283,15 @@ Feature: Naming
     tests/table-versions/.
 
   Rule: N13. A view entry is named relative to its view
-    cascade:ViewEntryNamingRule: the view's path as pod-layout.ttl places it, #,
-    and the lower-case hexadecimal SHA-256 of the IRI of its least member in code point order. SPARQL cannot mint a
-    relative IRI, so queries/derivations/entries.rq names each entry by a placeholder, urn:cascade:entry: and that hex,
-    as urn:cascade:this-version stands for a version until it is named. When the runtime writes or shares a view, it
-    writes each entry in the view file as <#hex>, the relative reference from the view's own path, never resolved
-    against the pod's address, and no placeholder remains. An entry is named in the view that gives it members; another
-    view in the same folder cites it by the relative reference from its own path, as the variant interpretations view
-    cites a variant's entry as <variants.ttl#hex>. A member's current values in the view (cascade:memberCurrentValues)
-    are a node named as the entry is, followed by -, and the lower-case hexadecimal SHA-256 of the member's IRI: <#hex-hex>.
+    cascade:ViewEntryNamingRule: the view's path as pod-layout.ttl places it, #, and the lower-case hexadecimal SHA-256
+    of the IRI of its least member in code point order. SPARQL cannot mint a relative IRI, so
+    queries/derivations/entries.rq names each entry by a placeholder, urn:cascade:entry: and that hex, as
+    urn:cascade:this-version stands for a version until it is named. When the runtime writes or shares a view, it writes
+    each entry in the view file as <#hex>, the relative reference from the view's own path, never resolved against the
+    pod's address, and no placeholder remains. An entry is named in the view that gives it members; another view in the
+    same folder cites it by the relative reference from its own path, as the variant interpretations view cites a
+    variant's entry as <variants.ttl#hex>. A member's current values in the view (cascade:memberCurrentValues) are a
+    node named as the entry is, followed by -, and the lower-case hexadecimal SHA-256 of the member's IRI: <#hex-hex>.
 
     Nothing outside the view cites an entry. An app's statement about an entry names the records the person was shown in
     it, never the entry, and never changes after; it finds the entry again by the question record/Which entry shows it,
