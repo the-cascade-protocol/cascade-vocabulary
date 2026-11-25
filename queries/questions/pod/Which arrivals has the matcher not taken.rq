@@ -14,17 +14,25 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT DISTINCT ?started ?arrival ?arrivalLabel
 WHERE {
-  VALUES ?kind { cascade:DocumentImport cascade:HandEntrySession cascade:ConnectToServer cascade:SyncFromAnotherWriter }
-  ?arrival a ?kind ; prov:startedAtTime ?started .
-  ?arrival prov:wasInformedBy? ?source .
-  ?revision prov:wasGeneratedBy ?source .
-  FILTER ((NOT EXISTS { ?run a cascade:MatcherRun ; prov:wasInformedBy ?arrival }
-           && EXISTS { ?revision cascade:revisionOf ?taken .
-                       FILTER (EXISTS { ?taken cascade:subject ?subject } || EXISTS { ?taken a cascade:Server }) })
-          || EXISTS { ?revision cascade:version/cascade:patient ?profile .
-                      FILTER NOT EXISTS { ?profile a cascade:Subject }
-                      FILTER EXISTS { ?claimed cascade:patient ?profile ; prov:specializationOf/cascade:subject ?owner }
-                      FILTER NOT EXISTS { ?used a cascade:MatcherRun ; prov:wasInformedBy ?arrival ; cascade:tookRecordsOfProfile ?profile } })
+  {
+    VALUES ?kind { cascade:DocumentImport cascade:HandEntrySession cascade:ConnectToServer cascade:SyncFromAnotherWriter }
+    ?arrival a ?kind ; prov:startedAtTime ?started .
+    FILTER NOT EXISTS { ?run a cascade:MatcherRun ; prov:wasInformedBy ?arrival }
+    ?arrival prov:wasInformedBy? ?source .
+    ?revision prov:wasGeneratedBy ?source ; cascade:revisionOf ?taken .
+    FILTER (EXISTS { ?taken cascade:subject ?subject } || EXISTS { ?taken a cascade:Server })
+  } UNION {
+    { SELECT DISTINCT ?arrival ?started ?profile
+      WHERE {
+        VALUES ?kind { cascade:DocumentImport cascade:HandEntrySession cascade:ConnectToServer cascade:SyncFromAnotherWriter }
+        ?arrival a ?kind ; prov:startedAtTime ?started .
+        ?arrival prov:wasInformedBy? ?source .
+        ?revision prov:wasGeneratedBy ?source ; cascade:version/cascade:patient ?profile .
+      } }
+    { SELECT DISTINCT ?profile WHERE { ?claimed cascade:patient ?profile ; prov:specializationOf/cascade:subject ?owner } }
+    FILTER NOT EXISTS { ?profile a cascade:Subject }
+    FILTER NOT EXISTS { ?used a cascade:MatcherRun ; prov:wasInformedBy ?arrival ; cascade:tookRecordsOfProfile ?profile }
+  }
   OPTIONAL { ?arrival rdfs:label ?arrivalLabel }
 }
 ORDER BY ?started ?arrival
