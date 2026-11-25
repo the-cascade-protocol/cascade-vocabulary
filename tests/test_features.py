@@ -143,6 +143,14 @@ class TestFeatureFiles:
                         backwards.append((path.name, pickle["name"]))
             assert backwards == []
 
+        def test_has_for_every_rule_an_example_or_a_sentence(self):
+            """has, for every rule, an example or a sentence saying why none can show it"""
+            silent = [(path.name, child["rule"]["name"]) for path, document, _ in feature_documents()
+                      for child in document["feature"]["children"] if "rule" in child
+                      if not any("scenario" in inner for inner in child["rule"]["children"])
+                      and not re.search(r"No example|no test of its own", " ".join(child["rule"]["description"].split()))]
+            assert silent == []
+
         def test_parses_every_query_written_inline_in_an_example(self):
             """parses every query written inline in an example
 

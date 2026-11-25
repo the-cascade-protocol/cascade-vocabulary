@@ -1,13 +1,3 @@
-Attachment
-CodeSystem
-MatcherRule
-NamingRule
-PaddedDateTime
-Quantity
-RequirementForReadingAPod
-RowSubject
-StructuredDosage
-TableKind
 ValueAbsentForReason
 absentReasonCode
 absentValueProperty
@@ -21,8 +11,6 @@ authenticatedPatient
 basis
 buildInputsHash
 clinvarReviewStatus
-codePageUrlTemplate
-codingSystemUri
 conditionCategory
 conditionCodeInOtherSystem
 contributingSubmitterCount
@@ -31,7 +19,6 @@ dispenseDaysSupply
 dispenseQuantity
 expandedValueSet
 expansionMembersWithoutCodeIriLeftOutCount
-foundBy
 lastEvaluated
 matcherRuleDeclaredWrong
 noLongerReachedUnderRuleListVersion
@@ -39,9 +26,7 @@ objectCondition
 occurrenceCount
 physiologicEffectClass
 procedureCodeInOtherSystem
-readByAppPages
 refusedForRecordClass
-rowShape
 sourceFormatVersion
 submitterCount
 testCodeInOtherSystem
