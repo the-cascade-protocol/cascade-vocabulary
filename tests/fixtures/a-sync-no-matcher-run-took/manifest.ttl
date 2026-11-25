@@ -5,14 +5,14 @@
 
 <> a mf:Manifest ;
   rdfs:label "a sync no matcher run took" ;
-  rdfs:comment "Another writer imported a record of the subject and a matcher run of its own took that import; this writer received both in a sync, which no matcher run is informed by." ;
+  rdfs:comment "Another writer imported a record of the subject and a matcher run of its own took that import and filed nothing, the run's act being all the pod holds of it; this writer received both in a sync, which no matcher run is informed by." ;
   mf:entries (
     <#which-arrivals-has-the-matcher-not-taken>
   ) .
 
 <#which-arrivals-has-the-matcher-not-taken> a mf:QueryEvaluationTest ;
   mf:name "which-arrivals-has-the-matcher-not-taken" ;
-  rdfs:comment "The import its writer's run took is not a row; the sync that brought it here is." ;
+  rdfs:comment "The import its writer's run took is not a row, whatever the run filed; the sync that brought it here is." ;
   mf:action [ qt:query <../../../queries/questions/pod/Which%20arrivals%20has%20the%20matcher%20not%20taken.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <which-arrivals-has-the-matcher-not-taken.srj> .
