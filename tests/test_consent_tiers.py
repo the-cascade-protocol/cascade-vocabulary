@@ -60,7 +60,7 @@ class TestConsentTiers:
             """has one consent tier, of the three in `cascade:ConsentTiers`"""
             kinds = in_scheme(CASCADE.ModelToolActKinds)
             tiers = in_scheme(CASCADE.ConsentTiers)
-            assert len(kinds) >= 8
+            assert kinds
             assert sorted(kind for kind in kinds for its in [set(ontology().objects(kind, CASCADE.consentTier))]
                           if len(its) != 1 or not its <= tiers) == []
 

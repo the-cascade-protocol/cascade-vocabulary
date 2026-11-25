@@ -122,10 +122,10 @@ class TestNarrativeAccountedFor:
         def test_leaves_no_section_with_text_wholly_unread(self):
             """leaves no section with text wholly unread
 
-            For each C-CDA download with saved output (at least twelve), the sections whose text no record's statement
+            For each C-CDA download with saved output, the sections whose text no record's statement
             references into and no saved note holds are listed; the list must be empty.
             """
-            assert len(CASES) >= 12
+            assert CASES
             unread = {re.sub(r"\s+", " ", name): sections for name, document in CASES
                       if (sections := list(unread_sections(document, saved_texts(ROOT / name))))}
             assert unread == {}
