@@ -1,6 +1,6 @@
 # Two records of one kind match when their current versions share an RxNorm code that a version of a drug products table
 # lists, so the code names one drug product (SCD, SBD, GPCK or BPCK), and their exposure periods share at least one day,
-# so two courses of one product years apart stay two medications (decisions/medication-matching.md). A period runs from
+# so two courses of one product years apart stay two medications. A period runs from
 # cascade:medicationExposureStart to cascade:medicationExposureEnd, both days included; with no end it runs on when the
 # record's exposure is ongoing, and is its start day alone otherwise. A record with no exposure start matches nothing.
 # Codings are equals: any shared product code joins, and cascade:userSelectedCode plays no part. A retired product code

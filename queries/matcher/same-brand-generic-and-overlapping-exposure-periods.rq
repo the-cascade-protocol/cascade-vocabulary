@@ -1,7 +1,7 @@
 # Two records of one kind match when their current versions give two different RxNorm codes that one version of a brand
 # generics table joins, a brand and its generic, either way round, or two brands of one generic, and their exposure
-# periods share at least one day, so a brand taken in one year and its generic years later stay two medications
-# (decisions/medication-matching.md). The table holds only branded products mapped to their generics (SBD to SCD, BPCK
+# periods share at least one day, so a brand taken in one year and its generic years later stay two medications.
+# The table holds only branded products mapped to their generics (SBD to SCD, BPCK
 # to GPCK), so no ingredient is read as a generic. A period runs from cascade:medicationExposureStart to
 # cascade:medicationExposureEnd, both days included; with no end it runs on when the record's exposure is ongoing, and
 # is its start day alone otherwise. A record with no exposure start matches nothing. Records that share a code are left

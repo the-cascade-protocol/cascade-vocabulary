@@ -6,8 +6,6 @@ Feature: Medication lifecycle
   nothing matches. He also enters five dispenses, each named by the status it states.
 
   Rule: L1. A medication record's status, and so its entry's, is classed active, stopped, paused, unknown or entered-in-error by the first step of this order that holds
-    decisions/one-meaning-per-term.md, rows "3. a medication's status" and "5. one status for every kind", and
-    decisions/medications.md, row "a copy's own lifecycle".
     Each record in an entry is classed by the status of its own current version, derived as
     cascade:currentVersionStatusLifecycle and cascade:currentVersionStatusLifecycleStep, which a rule reads. The entry
     has the class and step of the member it takes its status from, and is unknown at step 2 when no member gives one.
@@ -126,7 +124,6 @@ Feature: Medication lifecycle
         | "status: new"          | cascade:MedicationUnknown | 6    |
 
   Rule: L2. A pharmacy's dispense is classed completed, in progress, not completed, unknown or entered-in-error by its own status, and never by L1
-    decisions/medications.md, row "a dispense's lifecycle".
     Each dispense in an entry is classed by the status of its own current version, derived as
     cascade:currentVersionStatusLifecycle, and the entry has the class of the member it takes its status from, or unknown
     when no member gives one, as cascade:statusLifecycle; the view says it as cascade:lifecycle. The classes are the

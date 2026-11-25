@@ -10,7 +10,6 @@ Feature: Syncs
   second receives the first's files, and then imports the export that changes her peanut allergy.
 
   Rule: S1. A sync is written whenever the writer holds an act, other than a sync, whose snapshot is no ancestor of its last snapshot
-    decisions/naming.md, row "sync"; decisions/performance.md, row "sync as union, with the no-hash test"; decisions/files-held-in-archives.md, row "a sync".
     A writer receiving another writer's files writes each it lacks, in a folder the
     layout gives by solid:instanceContainer but the views', the archives' and the requirements', in W1's order: the stored documents first, then the other
     files of the set, then the act files, each after those holding its snapshot's parents, and its sync last. Whether
@@ -38,7 +37,6 @@ Feature: Syncs
       Then "sync" wrote 1 file
 
   Rule: S2. A sync names each act it is written for, and the runtime that performed it
-    decisions/naming.md, row "sync".
     It is prov:wasInformedBy each act, other than a sync, whose snapshot is no ancestor of the writer's last snapshot:
     an act is held once its file, which holds its snapshot, is. It says prov:wasAssociatedWith the runtime, as every
     act does (N7). The matcher run it causes takes the records all of whose first revisions those acts generated (M1).
@@ -85,7 +83,6 @@ Feature: Syncs
         | same code        | allergy RxNorm 2670 from codeine-1, allergy RxNorm 2670 from codeine-2, allergy RxNorm 2670 "Codeine phosphate" |
 
   Rule: S3. A sync's snapshot merges every head the writer holds
-    decisions/naming.md, rows "snapshot" and "sync".
     Its cascade:firstParentSnapshot is the writer's last snapshot, and its
     cascade:mergedParentSnapshot values are every head the writer holds once the files that arrived are written, each
     snapshot it holds that no snapshot it holds names as a parent, but the first parent, as git merges; on a writer's
@@ -129,7 +126,6 @@ Feature: Syncs
         | <urn:cascade:step:sync-back> | <urn:cascade:step:later>   | <urn:cascade:step:sync>    | 0          |
 
   Rule: S4. A writer given only syncs writes nothing, and takes the one head it then holds as its last snapshot
-    decisions/naming.md, row "sync".
     No sync names a sync, so syncs arriving alone give the writer no act to name: two writers that sync back and forth
     settle. The files that arrived are written all the same. When the writer then holds one head, and it is not the
     writer's last snapshot, that head descends from it and becomes its last snapshot, as git fast-forwards: the
@@ -172,9 +168,8 @@ Feature: Syncs
         | <urn:cascade:step:sync-back> | 0             |
 
   Rule: S5. Two writers hold one set when the set hashes of what each holds agree, whatever order the files arrived in
-    decisions/naming.md, rows "snapshot" and "sync". The set hash is order-free, so two writers that each received the
-    other's files carry one set hash on those syncs' snapshots, though neither received them in the order the other
-    did.
+    The set hash is order-free, so two writers that each received the other's files carry one set hash on those syncs'
+    snapshots, though neither received them in the order the other did.
 
     Example: the two writers' syncs carry one set hash
       Given a new pod for Dev on 2026-04-01 at 09:00
@@ -197,7 +192,6 @@ Feature: Syncs
         | 2     | 1         |
 
   Rule: S6. An arrival after a sync revises each of the record's heads
-    decisions/currency.md, row "heads".
     Two writers that each imported a record hold, once synced, two revisions of it that none revises: its heads. The
     next arrival that changes it writes one revision, prov:wasRevisionOf each head, as a git merge names each parent
     (A5), and one whose version is the record's current one writes none (A4).

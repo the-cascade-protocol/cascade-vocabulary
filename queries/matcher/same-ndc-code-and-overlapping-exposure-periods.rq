@@ -1,5 +1,5 @@
 # Two records of one kind match when their current versions share an NDC and their exposure periods share at least
-# one day, so two courses of one product years apart stay two medications (decisions/medication-matching.md). A period
+# one day, so two courses of one product years apart stay two medications. A period
 # runs from cascade:medicationExposureStart to cascade:medicationExposureEnd, both days included; with no end it runs on
 # when the record's exposure is ongoing, and is its start day alone otherwise. A record with no exposure start matches
 # nothing. No table is read, and RxNorm codes are not compared here: the rule that reads the drug products table joins
