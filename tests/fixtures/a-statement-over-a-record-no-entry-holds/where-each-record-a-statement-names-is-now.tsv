@@ -1,0 +1,2 @@
+?statement	?statementLabel	?counts	?record	?recordLabel	?outcome	?entry	?entryLabel	?why	?otherMembers	?grewBy	?otherStatements	?mergedWith
+<urn:x:erroneous>	"Erroneous · the patient · 2026-02-01 · Allergen judged"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>	<urn:x:judged>	"Allergy · Allergen judged · own entry"	"hidden"			"https://ns.cascadeprotocol.org/cascade#JudgedErroneous"				

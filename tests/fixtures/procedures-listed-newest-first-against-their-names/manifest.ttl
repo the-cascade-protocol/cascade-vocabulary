@@ -15,4 +15,4 @@
   rdfs:comment "The colonoscopy is listed before the appendectomy: newest first, before name order." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20procedures.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-procedures.srj> .
+  mf:result <my-procedures.tsv> .

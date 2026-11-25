@@ -1,0 +1,22 @@
+?entry	?field	?value
+<https://pod.example/clinical/notes-and-documents.ttl#f78979d4369a5f920f3bf5248b58f53d418159db128b325a6a5ce4275da9f646>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#ClinicalNoteOrDocument>
+<https://pod.example/clinical/notes-and-documents.ttl#f78979d4369a5f920f3bf5248b58f53d418159db128b325a6a5ce4275da9f646>	<https://ns.cascadeprotocol.org/cascade#noteOrDocumentTypeName>	"Progress note"
+<https://pod.example/clinical/notes-and-documents.ttl#f78979d4369a5f920f3bf5248b58f53d418159db128b325a6a5ce4275da9f646>	<https://ns.cascadeprotocol.org/cascade#noteOrDocumentTypeCode>	<http://loinc.org/rdf/11506-3>
+<https://pod.example/clinical/notes-and-documents.ttl#f78979d4369a5f920f3bf5248b58f53d418159db128b325a6a5ce4275da9f646>	<https://ns.cascadeprotocol.org/cascade#noteOrDocumentTitle>	"Follow-up visit"
+<https://pod.example/clinical/notes-and-documents.ttl#f78979d4369a5f920f3bf5248b58f53d418159db128b325a6a5ce4275da9f646>	<https://ns.cascadeprotocol.org/cascade#noteOrDocumentDate>	"2025-05-06T10:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>
+<https://pod.example/clinical/notes-and-documents.ttl#f78979d4369a5f920f3bf5248b58f53d418159db128b325a6a5ce4275da9f646>	<https://ns.cascadeprotocol.org/cascade#noteOrDocumentContentStatus>	"final"
+<https://pod.example/clinical/notes-and-documents.ttl#f78979d4369a5f920f3bf5248b58f53d418159db128b325a6a5ce4275da9f646>	<https://ns.cascadeprotocol.org/cascade#narrativeText>	"Lung nodule, 6 mm, right upper lobe.\nRepeat chest CT in 12 months."
+<https://pod.example/clinical/notes-and-documents.ttl#f78979d4369a5f920f3bf5248b58f53d418159db128b325a6a5ce4275da9f646>	<http://www.w3.org/ns/prov#wasAttributedTo>	<urn:x:clinic>
+<https://pod.example/clinical/notes-and-documents.ttl#f78979d4369a5f920f3bf5248b58f53d418159db128b325a6a5ce4275da9f646>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"current"
+<https://pod.example/clinical/notes-and-documents.ttl#f78979d4369a5f920f3bf5248b58f53d418159db128b325a6a5ce4275da9f646>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:progress>
+<https://pod.example/clinical/notes-and-documents.ttl#f78979d4369a5f920f3bf5248b58f53d418159db128b325a6a5ce4275da9f646>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:progress>
+<https://pod.example/clinical/notes-and-documents.ttl#f78979d4369a5f920f3bf5248b58f53d418159db128b325a6a5ce4275da9f646>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:progress>
+<https://pod.example/clinical/notes-and-documents.ttl#8daee9bb47ab8892901cf7405a3640be96a76f231a0cf8570a8ae7850e4406d9>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#ClinicalNoteOrDocument>
+<https://pod.example/clinical/notes-and-documents.ttl#8daee9bb47ab8892901cf7405a3640be96a76f231a0cf8570a8ae7850e4406d9>	<https://ns.cascadeprotocol.org/cascade#noteOrDocumentTypeName>	"Plan of care note"
+<https://pod.example/clinical/notes-and-documents.ttl#8daee9bb47ab8892901cf7405a3640be96a76f231a0cf8570a8ae7850e4406d9>	<https://ns.cascadeprotocol.org/cascade#noteOrDocumentTypeCode>	<http://loinc.org/rdf/18776-5>
+<https://pod.example/clinical/notes-and-documents.ttl#8daee9bb47ab8892901cf7405a3640be96a76f231a0cf8570a8ae7850e4406d9>	<https://ns.cascadeprotocol.org/cascade#noteOrDocumentTypeCodeInOtherSystem>	"PLAN"^^<urn:oid:2.16.840.1.113883.19.6>
+<https://pod.example/clinical/notes-and-documents.ttl#8daee9bb47ab8892901cf7405a3640be96a76f231a0cf8570a8ae7850e4406d9>	<https://ns.cascadeprotocol.org/cascade#noteOrDocumentDate>	"2025-02-01"^^<http://www.w3.org/2001/XMLSchema#date>
+<https://pod.example/clinical/notes-and-documents.ttl#8daee9bb47ab8892901cf7405a3640be96a76f231a0cf8570a8ae7850e4406d9>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"current"
+<https://pod.example/clinical/notes-and-documents.ttl#8daee9bb47ab8892901cf7405a3640be96a76f231a0cf8570a8ae7850e4406d9>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:plan>
+<https://pod.example/clinical/notes-and-documents.ttl#8daee9bb47ab8892901cf7405a3640be96a76f231a0cf8570a8ae7850e4406d9>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:plan>
+<https://pod.example/clinical/notes-and-documents.ttl#8daee9bb47ab8892901cf7405a3640be96a76f231a0cf8570a8ae7850e4406d9>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:plan>

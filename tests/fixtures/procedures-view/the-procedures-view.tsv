@@ -1,0 +1,17 @@
+?entry	?field	?value
+<https://pod.example/clinical/procedures.ttl#d810d6e50d9ec9d8d0330c9af60d4425c42a2f39d5e2781d7c8669042c1b0ae2>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#MedicalProcedure>
+<https://pod.example/clinical/procedures.ttl#d810d6e50d9ec9d8d0330c9af60d4425c42a2f39d5e2781d7c8669042c1b0ae2>	<https://ns.cascadeprotocol.org/cascade#procedureName>	"Colonoscopy, screening"
+<https://pod.example/clinical/procedures.ttl#d810d6e50d9ec9d8d0330c9af60d4425c42a2f39d5e2781d7c8669042c1b0ae2>	<https://ns.cascadeprotocol.org/cascade#procedureCode>	<http://snomed.info/id/73761001>
+<https://pod.example/clinical/procedures.ttl#d810d6e50d9ec9d8d0330c9af60d4425c42a2f39d5e2781d7c8669042c1b0ae2>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"completed"
+<https://pod.example/clinical/procedures.ttl#d810d6e50d9ec9d8d0330c9af60d4425c42a2f39d5e2781d7c8669042c1b0ae2>	<https://ns.cascadeprotocol.org/cascade#procedureDate>	"2024-03-01"^^<http://www.w3.org/2001/XMLSchema#date>
+<https://pod.example/clinical/procedures.ttl#d810d6e50d9ec9d8d0330c9af60d4425c42a2f39d5e2781d7c8669042c1b0ae2>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:coloNew>
+<https://pod.example/clinical/procedures.ttl#d810d6e50d9ec9d8d0330c9af60d4425c42a2f39d5e2781d7c8669042c1b0ae2>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:coloOld>
+<https://pod.example/clinical/procedures.ttl#d810d6e50d9ec9d8d0330c9af60d4425c42a2f39d5e2781d7c8669042c1b0ae2>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:coloNew>
+<https://pod.example/clinical/procedures.ttl#d810d6e50d9ec9d8d0330c9af60d4425c42a2f39d5e2781d7c8669042c1b0ae2>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:coloOld>
+<https://pod.example/clinical/procedures.ttl#cab79012a4c95a718e52af9bc73a7e2f4125fdc3b6b0a1274eddf85a0b084091>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#MedicalProcedure>
+<https://pod.example/clinical/procedures.ttl#cab79012a4c95a718e52af9bc73a7e2f4125fdc3b6b0a1274eddf85a0b084091>	<https://ns.cascadeprotocol.org/cascade#procedureName>	"Echocardiogram"
+<https://pod.example/clinical/procedures.ttl#cab79012a4c95a718e52af9bc73a7e2f4125fdc3b6b0a1274eddf85a0b084091>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"not-done"
+<https://pod.example/clinical/procedures.ttl#cab79012a4c95a718e52af9bc73a7e2f4125fdc3b6b0a1274eddf85a0b084091>	<https://ns.cascadeprotocol.org/cascade#procedureDate>	"2023-05-01"^^<http://www.w3.org/2001/XMLSchema#date>
+<https://pod.example/clinical/procedures.ttl#cab79012a4c95a718e52af9bc73a7e2f4125fdc3b6b0a1274eddf85a0b084091>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:echo>
+<https://pod.example/clinical/procedures.ttl#cab79012a4c95a718e52af9bc73a7e2f4125fdc3b6b0a1274eddf85a0b084091>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:echo>
+<https://pod.example/clinical/procedures.ttl#cab79012a4c95a718e52af9bc73a7e2f4125fdc3b6b0a1274eddf85a0b084091>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:echo>

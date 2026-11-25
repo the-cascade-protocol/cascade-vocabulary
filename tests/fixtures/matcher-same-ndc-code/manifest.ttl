@@ -21,4 +21,4 @@
                                   <urn:x:refill> ,
                                   <urn:x:reported> ,
                                   <urn:x:sameDrug> ] ;
-  mf:result <same-ndc-code.srj> .
+  mf:result <same-ndc-code.tsv> .

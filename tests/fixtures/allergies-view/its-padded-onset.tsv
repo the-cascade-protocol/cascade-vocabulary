@@ -1,0 +1,5 @@
+?holds	?property	?written	?named
+"entry"	<https://ns.cascadeprotocol.org/cascade#onsetDate>	"2020021409"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+"member's values"	<https://ns.cascadeprotocol.org/cascade#onsetDate>	"2020021409"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+"entry"	<https://ns.cascadeprotocol.org/cascade#onsetDate>	"2019030409"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+"member's values"	<https://ns.cascadeprotocol.org/cascade#onsetDate>	"2019030409"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>

@@ -15,4 +15,4 @@
   rdfs:comment "The name labels.rq gives each thing, made from what it says, beside the label a file states." ;
   mf:action [ qt:query <../../../queries/questions/pod/What%20everything%20is%20called.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-everything-is-called.srj> .
+  mf:result <what-everything-is-called.tsv> .

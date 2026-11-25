@@ -15,4 +15,4 @@
   rdfs:comment "One row for each entry, its text once, newest first, the B12 report placed by the time it was issued: every code it states, the IRI or the code in its system; the PDF as the attachment the pod does not read; each result with its test, value, unit, range and its own flags, so the two high glucoses are told from the one that is not; and each record of the note with its own document, retrieval time and the hospitals that wrote and keep it." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20reports,%20notes%20and%20documents.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-reports-notes-and-documents.srj> .
+  mf:result <my-reports-notes-and-documents.tsv> .

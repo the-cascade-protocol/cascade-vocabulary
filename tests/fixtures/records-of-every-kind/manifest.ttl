@@ -18,18 +18,18 @@
   rdfs:comment "Each record becomes a cascade:Record of its kind, and only an allergy takes its status only from documents." ;
   mf:action [ qt:query <what-each-record-is.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-each-record-is.srj> .
+  mf:result <what-each-record-is.tsv> .
 
 <#the-name-and-date-of-each-version> a mf:QueryEvaluationTest ;
   mf:name "the-name-and-date-of-each-version" ;
   rdfs:comment "Each version gets cascade:displayName and cascade:displayDate from its kind's own properties; an allergy states no date, a prescription with no start of use is dated by the day it was written, and a dispense not yet handed over by the day it was prepared." ;
   mf:action [ qt:query <the-name-and-date-of-each-version.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-name-and-date-of-each-version.srj> .
+  mf:result <the-name-and-date-of-each-version.tsv> .
 
 <#what-each-version-says> a mf:QueryEvaluationTest ;
   mf:name "what-each-version-says" ;
   rdfs:comment "One row per statement of each version as its file states it, and none of the name and date the derivations copy." ;
   mf:action [ qt:query <../../../queries/questions/record/What%20each%20version%20says.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-each-version-says.srj> .
+  mf:result <what-each-version-says.tsv> .

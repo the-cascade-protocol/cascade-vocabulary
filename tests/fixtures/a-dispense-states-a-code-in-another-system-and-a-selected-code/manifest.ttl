@@ -15,4 +15,4 @@
   rdfs:comment "The entry takes the code the source chose and the code in the other system, typed by the system, of its lead." ;
   mf:action [ qt:query <the-medication-dispenses-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-medication-dispenses-view.srj> .
+  mf:result <the-medication-dispenses-view.tsv> .

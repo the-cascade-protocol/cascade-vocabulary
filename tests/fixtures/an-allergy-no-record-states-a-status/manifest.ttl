@@ -15,4 +15,4 @@
   rdfs:comment "Dust and shellfish are listed with the status not stated, the shellfish with its reaction and the dust with none; latex and pollen are not." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20allergies.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-allergies.srj> .
+  mf:result <my-active-allergies.tsv> .

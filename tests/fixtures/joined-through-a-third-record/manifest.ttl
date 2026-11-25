@@ -16,11 +16,11 @@
   rdfs:comment "A and C are joined through B though judged different, in one entry named from A." ;
   mf:action [ qt:query <one-entry-named-from-its-smallest-member.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <one-entry-named-from-its-smallest-member.srj> .
+  mf:result <one-entry-named-from-its-smallest-member.tsv> .
 
 <#judged-different-still-joined> a mf:QueryEvaluationTest ;
   mf:name "judged-different-still-joined" ;
   rdfs:comment "The entry is listed for review, naming the pair judged different and the judgment." ;
   mf:action [ qt:query <../../../queries/questions/entry/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <judged-different-still-joined.srj> .
+  mf:result <judged-different-still-joined.tsv> .

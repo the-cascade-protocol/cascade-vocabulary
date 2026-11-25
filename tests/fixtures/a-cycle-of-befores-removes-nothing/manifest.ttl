@@ -16,11 +16,11 @@
   rdfs:comment "Befores that form a cycle remove nothing, so the clocks pick the February state." ;
   mf:action [ qt:query <the-current-revision.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-current-revision.srj> .
+  mf:result <the-current-revision.tsv> .
 
 <#what-needs-review> a mf:QueryEvaluationTest ;
   mf:name "what-needs-review" ;
   rdfs:comment "The pair the Befores order both ways is listed once." ;
   mf:action [ qt:query <../../../queries/questions/record/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-needs-review.srj> .
+  mf:result <what-needs-review.tsv> .

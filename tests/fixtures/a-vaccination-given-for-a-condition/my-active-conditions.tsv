@@ -1,0 +1,2 @@
+?condition	?conditionCode	?onset	?entriesForIt	?records	?entry	?entryLabel	?sources
+"Asthma"			"https://pod.example/clinical/immunizations.ttl#b672fa1ae6050752a77495397f2d9c7da939e9929cc02ba129e4d76bb5d35bd2, Influenza"	"1"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/conditions.ttl#12dea789fd22e5367a168b40d411334d9368b9abc30af2c2471266ec1bbb53ce>	"Condition entry · Asthma"	"urn:x:asthma"

@@ -15,4 +15,4 @@
   rdfs:comment "Penicillin once for each of its three places, the person's own entry placed by its session's label; asthma once, with both its records, placed by their hospital rather than by their two downloads; latex, a single record, not at all." ;
   mf:action [ qt:query <../../../queries/questions/pod/What%20was%20seen%20more%20than%20once.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-was-seen-more-than-once.srj> .
+  mf:result <what-was-seen-more-than-once.tsv> .

@@ -16,11 +16,11 @@
   rdfs:comment "Each entry takes every member's gene symbol, HGVS expressions and ClinVar IDs, so the joined entry shows both transcripts and the ID, and the status of the member chosen for status." ;
   mf:action [ qt:query <the-variants-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-variants-view.srj> .
+  mf:result <the-variants-view.tsv> .
 
 <#my-genetic-variants> a mf:QueryEvaluationTest ;
   mf:name "my-genetic-variants" ;
   rdfs:comment "One row for each entry and each code it states, the expression or the ID with its gene, and one row without a code for the entry that states none." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20genetic%20variants.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-genetic-variants.srj> .
+  mf:result <my-genetic-variants.tsv> .

@@ -15,4 +15,4 @@
   rdfs:comment "The finding is one line saying one record is at a state older than the source reported on 10 January, expanding to eczema alone: gout, which the acknowledgement named, is neither counted nor listed." ;
   mf:action [ qt:query <../../../queries/questions/record/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-needs-review.srj> .
+  mf:result <what-needs-review.tsv> .

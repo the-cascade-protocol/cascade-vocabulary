@@ -16,11 +16,11 @@
   rdfs:comment "The Same holds a currently different pair, so it joins every other pair of its members, both ways, and not that pair: a3 with a1 and with a2." ;
   mf:action [ qt:query <pairs.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <pairs.srj> .
+  mf:result <pairs.tsv> .
 
 <#entries> a mf:QueryEvaluationTest ;
   mf:name "entries" ;
   rdfs:comment "The different pair is still one entry through the third member, named from a1." ;
   mf:action [ qt:query <entries.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <entries.srj> .
+  mf:result <entries.tsv> .

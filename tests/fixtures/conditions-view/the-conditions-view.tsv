@@ -1,0 +1,20 @@
+?entry	?field	?value
+<https://pod.example/clinical/conditions.ttl#02b01a66081ab24834be12922c6853d9e403346e9057f82faad48d0700ab5c80>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#ProblemOrDiagnosis>
+<https://pod.example/clinical/conditions.ttl#02b01a66081ab24834be12922c6853d9e403346e9057f82faad48d0700ab5c80>	<https://ns.cascadeprotocol.org/cascade#conditionName>	"Asthma, allergic"
+<https://pod.example/clinical/conditions.ttl#02b01a66081ab24834be12922c6853d9e403346e9057f82faad48d0700ab5c80>	<https://ns.cascadeprotocol.org/cascade#conditionCode>	<http://snomed.info/id/389145006>
+<https://pod.example/clinical/conditions.ttl#02b01a66081ab24834be12922c6853d9e403346e9057f82faad48d0700ab5c80>	<https://ns.cascadeprotocol.org/cascade#conditionCode>	<https://ns.cascadeprotocol.org/codes/icd10cm/J45.909>
+<https://pod.example/clinical/conditions.ttl#02b01a66081ab24834be12922c6853d9e403346e9057f82faad48d0700ab5c80>	<https://ns.cascadeprotocol.org/cascade#conditionCode>	<https://ns.cascadeprotocol.org/codes/icd10cm/J45.50>
+<https://pod.example/clinical/conditions.ttl#02b01a66081ab24834be12922c6853d9e403346e9057f82faad48d0700ab5c80>	<https://ns.cascadeprotocol.org/cascade#conditionCode>	<http://snomed.info/id/195967001>
+<https://pod.example/clinical/conditions.ttl#02b01a66081ab24834be12922c6853d9e403346e9057f82faad48d0700ab5c80>	<https://ns.cascadeprotocol.org/cascade#clinicalStatus>	"active"
+<https://pod.example/clinical/conditions.ttl#02b01a66081ab24834be12922c6853d9e403346e9057f82faad48d0700ab5c80>	<https://ns.cascadeprotocol.org/cascade#onsetDate>	"2019-04-01"^^<http://www.w3.org/2001/XMLSchema#date>
+<https://pod.example/clinical/conditions.ttl#02b01a66081ab24834be12922c6853d9e403346e9057f82faad48d0700ab5c80>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:asthmaNew>
+<https://pod.example/clinical/conditions.ttl#02b01a66081ab24834be12922c6853d9e403346e9057f82faad48d0700ab5c80>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:asthmaOld>
+<https://pod.example/clinical/conditions.ttl#02b01a66081ab24834be12922c6853d9e403346e9057f82faad48d0700ab5c80>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:asthmaNew>
+<https://pod.example/clinical/conditions.ttl#02b01a66081ab24834be12922c6853d9e403346e9057f82faad48d0700ab5c80>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:asthmaOld>
+<https://pod.example/clinical/conditions.ttl#bd9fe6af027d3d613ff596a9e9cbaa409228b8510df71dad55fda79f408f5737>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#ProblemOrDiagnosis>
+<https://pod.example/clinical/conditions.ttl#bd9fe6af027d3d613ff596a9e9cbaa409228b8510df71dad55fda79f408f5737>	<https://ns.cascadeprotocol.org/cascade#conditionName>	"Sinusitis"
+<https://pod.example/clinical/conditions.ttl#bd9fe6af027d3d613ff596a9e9cbaa409228b8510df71dad55fda79f408f5737>	<https://ns.cascadeprotocol.org/cascade#clinicalStatus>	"resolved"
+<https://pod.example/clinical/conditions.ttl#bd9fe6af027d3d613ff596a9e9cbaa409228b8510df71dad55fda79f408f5737>	<https://ns.cascadeprotocol.org/cascade#abatementDate>	"2023-01-01"^^<http://www.w3.org/2001/XMLSchema#date>
+<https://pod.example/clinical/conditions.ttl#bd9fe6af027d3d613ff596a9e9cbaa409228b8510df71dad55fda79f408f5737>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:sinusitis>
+<https://pod.example/clinical/conditions.ttl#bd9fe6af027d3d613ff596a9e9cbaa409228b8510df71dad55fda79f408f5737>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:sinusitis>
+<https://pod.example/clinical/conditions.ttl#bd9fe6af027d3d613ff596a9e9cbaa409228b8510df71dad55fda79f408f5737>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:sinusitis>

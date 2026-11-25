@@ -1,0 +1,12 @@
+?entry	?field	?value
+<https://pod.example/clinical/medication-dispenses.ttl#c9ae70133bc6e450cba57ca3470000f9016dc7b521915502e52c3d0793fe9e1c>	<https://ns.cascadeprotocol.org/cascade#userSelectedCode>	<https://ns.cascadeprotocol.org/codes/ndc11/00093104801>
+<https://pod.example/clinical/medication-dispenses.ttl#c9ae70133bc6e450cba57ca3470000f9016dc7b521915502e52c3d0793fe9e1c>	<https://ns.cascadeprotocol.org/cascade#dispensePreparedTime>	"2026-01-11"^^<http://www.w3.org/2001/XMLSchema#date>
+<https://pod.example/clinical/medication-dispenses.ttl#c9ae70133bc6e450cba57ca3470000f9016dc7b521915502e52c3d0793fe9e1c>	<https://ns.cascadeprotocol.org/cascade#lifecycle>	<https://ns.cascadeprotocol.org/cascade#MedicationDispenseCompleted>
+<https://pod.example/clinical/medication-dispenses.ttl#c9ae70133bc6e450cba57ca3470000f9016dc7b521915502e52c3d0793fe9e1c>	<https://ns.cascadeprotocol.org/cascade#drugName>	"Example tablet"
+<https://pod.example/clinical/medication-dispenses.ttl#c9ae70133bc6e450cba57ca3470000f9016dc7b521915502e52c3d0793fe9e1c>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:filled>
+<https://pod.example/clinical/medication-dispenses.ttl#c9ae70133bc6e450cba57ca3470000f9016dc7b521915502e52c3d0793fe9e1c>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:filled>
+<https://pod.example/clinical/medication-dispenses.ttl#c9ae70133bc6e450cba57ca3470000f9016dc7b521915502e52c3d0793fe9e1c>	<https://ns.cascadeprotocol.org/cascade#rxNormCode>	<https://ns.cascadeprotocol.org/codes/rxnorm/861007>
+<https://pod.example/clinical/medication-dispenses.ttl#c9ae70133bc6e450cba57ca3470000f9016dc7b521915502e52c3d0793fe9e1c>	<https://ns.cascadeprotocol.org/cascade#medicationCodeInOtherSystem>	"A-4412"^^<https://example.org/codes/local>
+<https://pod.example/clinical/medication-dispenses.ttl#c9ae70133bc6e450cba57ca3470000f9016dc7b521915502e52c3d0793fe9e1c>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"completed"
+<https://pod.example/clinical/medication-dispenses.ttl#c9ae70133bc6e450cba57ca3470000f9016dc7b521915502e52c3d0793fe9e1c>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:filled>
+<https://pod.example/clinical/medication-dispenses.ttl#c9ae70133bc6e450cba57ca3470000f9016dc7b521915502e52c3d0793fe9e1c>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#MedicationDispense>

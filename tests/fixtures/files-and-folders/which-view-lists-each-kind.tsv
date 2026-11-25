@@ -1,0 +1,6 @@
+?title	?type	?view	?entries
+"Allergies"	<https://ns.cascadeprotocol.org/cascade#AllergyOrIntolerance>	<https://pod.example/clinical/allergies.ttl>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+"Conditions"	<https://ns.cascadeprotocol.org/cascade#ProblemOrDiagnosis>	<https://pod.example/clinical/conditions.ttl>	"0"^^<http://www.w3.org/2001/XMLSchema#integer>
+"Immunizations"	<https://ns.cascadeprotocol.org/cascade#Vaccination>	<https://pod.example/clinical/immunizations.ttl>	"0"^^<http://www.w3.org/2001/XMLSchema#integer>
+"Patient profile"	<https://ns.cascadeprotocol.org/cascade#PatientProfile>	<https://pod.example/clinical/patient-profile.ttl>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+"Procedures"	<https://ns.cascadeprotocol.org/cascade#MedicalProcedure>	<https://pod.example/clinical/procedures.ttl>	"0"^^<http://www.w3.org/2001/XMLSchema#integer>

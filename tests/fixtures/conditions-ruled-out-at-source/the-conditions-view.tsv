@@ -1,0 +1,8 @@
+?condition	?clinicalStatus	?verificationStatus	?statusFrom
+"Chest pain"	"resolved"	"refuted"	<urn:x:chestLater>
+"No known problems"		"refuted"	
+"Cough"	"active"	"confirmed"	<urn:x:coughLater>
+"Deep vein thrombosis"	"active"	"refuted"	<urn:x:thrombosis>
+"Pulmonary embolism"	"resolved"	"refuted"	<urn:x:embolism>
+"Hypertension"	"active"	"confirmed"	<urn:x:hypertension>
+"Sprained ankle"	"resolved"	"confirmed"	<urn:x:ankle>

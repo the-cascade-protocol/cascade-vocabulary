@@ -16,11 +16,11 @@
   rdfs:comment "The least IRI is current." ;
   mf:action [ qt:query <the-current-revisions.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-current-revisions.srj> .
+  mf:result <the-current-revisions.tsv> .
 
 <#what-needs-review> a mf:QueryEvaluationTest ;
   mf:name "what-needs-review" ;
   rdfs:comment "The pick is listed, with the state shown, the state not shown, and no basis." ;
   mf:action [ qt:query <../../../queries/questions/record/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-needs-review.srj> .
+  mf:result <what-needs-review.tsv> .

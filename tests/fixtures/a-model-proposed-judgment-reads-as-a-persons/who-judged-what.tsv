@@ -1,0 +1,3 @@
+?judgment	?judgmentLabel	?made	?verdict	?author	?authorLabel	?role	?member	?memberLabel	?reason	?replaces	?replacesLabel	?retracts	?retractsLabel	?assertedUnder
+<urn:x:judgment>	"Different · the patient · 2026-01-02 · a patient profile"	"2026-01-02T09:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>	<https://ns.cascadeprotocol.org/cascade#Different>	<urn:x:person>		<https://ns.cascadeprotocol.org/cascade#PatientRole>	<urn:x:other>							
+<urn:x:judgment>	"Different · the patient · 2026-01-02 · a patient profile"	"2026-01-02T09:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>	<https://ns.cascadeprotocol.org/cascade#Different>	<urn:x:person>		<https://ns.cascadeprotocol.org/cascade#PatientRole>	<urn:x:record>							

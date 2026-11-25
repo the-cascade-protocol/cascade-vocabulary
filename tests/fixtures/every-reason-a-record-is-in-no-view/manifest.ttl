@@ -15,4 +15,4 @@
   rdfs:comment "One row for each record left out, with its reason and what the reason rests on; the record shown has none." ;
   mf:action [ qt:query <../../../queries/questions/record/Why%20it%20is%20in%20no%20view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <why-it-is-in-no-view.srj> .
+  mf:result <why-it-is-in-no-view.tsv> .

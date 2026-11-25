@@ -15,4 +15,4 @@
   rdfs:comment "The revision belongs in its record's kind's folder, the judgment in the judgments folder and each sync in the syncs folder, which the layout places by the sync's class over prov:Activity's; the record, the run's file with its snapshot, which the layout places by the run, the sync in the syncs folder, the other app's file and the files the build writes are where the layout puts them, or hold nothing it places." ;
   mf:action [ qt:query <../../../queries/questions/pod/Which%20files%20are%20out%20of%20place.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <which-files-are-out-of-place.srj> .
+  mf:result <which-files-are-out-of-place.tsv> .

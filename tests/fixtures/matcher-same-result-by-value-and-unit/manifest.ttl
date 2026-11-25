@@ -55,7 +55,7 @@
                                   <urn:x:sodiumPaddedOtherUnit> ,
                                   <urn:x:sodiumPaddedOtherValue> ,
                                   <urn:x:sodiumToTheSecond> ] ;
-  mf:result <same-code-day-or-padded-time-value-and-unit-others-by-code-and-day.srj> .
+  mf:result <same-code-day-or-padded-time-value-and-unit-others-by-code-and-day.tsv> .
 
 <#same-code-instant-to-the-second-different-units> a mf:QueryEvaluationTest ;
   mf:name "same-code-instant-to-the-second-different-units-others-by-code-and-instant" ;
@@ -99,7 +99,7 @@
                                   <urn:x:sodiumPaddedOtherUnit> ,
                                   <urn:x:sodiumPaddedOtherValue> ,
                                   <urn:x:sodiumToTheSecond> ] ;
-  mf:result <same-code-instant-to-the-second-different-units-others-by-code-and-instant.srj> .
+  mf:result <same-code-instant-to-the-second-different-units-others-by-code-and-instant.tsv> .
 
 <#same-code-instant-to-the-second-different-values> a mf:QueryEvaluationTest ;
   mf:name "same-code-instant-to-the-second-different-values-others-by-code-and-instant" ;
@@ -143,7 +143,7 @@
                                   <urn:x:sodiumPaddedOtherUnit> ,
                                   <urn:x:sodiumPaddedOtherValue> ,
                                   <urn:x:sodiumToTheSecond> ] ;
-  mf:result <same-code-instant-to-the-second-different-values-others-by-code-and-instant.srj> .
+  mf:result <same-code-instant-to-the-second-different-values-others-by-code-and-instant.tsv> .
 
 <#same-code-instant-to-the-second-value-and-unit> a mf:QueryEvaluationTest ;
   mf:name "same-code-instant-to-the-second-value-and-unit-others-by-code-and-instant" ;
@@ -187,4 +187,4 @@
                                   <urn:x:sodiumPaddedOtherUnit> ,
                                   <urn:x:sodiumPaddedOtherValue> ,
                                   <urn:x:sodiumToTheSecond> ] ;
-  mf:result <same-code-instant-to-the-second-value-and-unit-others-by-code-and-instant.srj> .
+  mf:result <same-code-instant-to-the-second-value-and-unit-others-by-code-and-instant.tsv> .

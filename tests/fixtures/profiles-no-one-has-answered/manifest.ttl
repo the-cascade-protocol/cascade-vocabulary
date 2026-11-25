@@ -15,4 +15,4 @@
   rdfs:comment "The profile no judgment names, once for each hospital with how many records it sent, and the one whose About was retracted; not the claimed, the denied, the subject, nor a profile only a superseded version names." ;
   mf:action [ qt:query <../../../queries/questions/profile/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-needs-review.srj> .
+  mf:result <what-needs-review.tsv> .

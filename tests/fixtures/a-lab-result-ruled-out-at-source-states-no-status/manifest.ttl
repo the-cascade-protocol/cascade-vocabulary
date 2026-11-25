@@ -15,4 +15,4 @@
   rdfs:comment "The entry takes its status from the record that rules it out, which states no workflow status, so the troponin is shown with no status." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20lab%20results.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-lab-results.srj> .
+  mf:result <my-lab-results.tsv> .

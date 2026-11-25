@@ -1,0 +1,3 @@
+?medication	?start	?end	?ongoing	?copiesInEntry
+"metformin hydrochloride 500 MG Oral Tablet"	"2022-03-01"^^<http://www.w3.org/2001/XMLSchema#date>		"true"^^<http://www.w3.org/2001/XMLSchema#boolean>	"2"^^<http://www.w3.org/2001/XMLSchema#integer>
+"Glucophage 500 MG Oral Tablet"	"2025-06-01"^^<http://www.w3.org/2001/XMLSchema#date>		"true"^^<http://www.w3.org/2001/XMLSchema#boolean>	"2"^^<http://www.w3.org/2001/XMLSchema#integer>

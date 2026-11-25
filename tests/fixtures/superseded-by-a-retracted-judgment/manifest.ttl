@@ -16,11 +16,11 @@
   rdfs:comment "Under everyday, a retracted judgment supersedes nothing: the judgment it superseded counts again, though the supersession is still shown." ;
   mf:action [ qt:query <../../../queries/questions/judgment/Whether%20it%20counts.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <whether-it-counts.srj> .
+  mf:result <whether-it-counts.tsv> .
 
 <#whether-it-counts-for-export> a mf:QueryEvaluationTest ;
   mf:name "whether-it-counts-for-export" ;
   rdfs:comment "Under export too, a retracted judgment supersedes nothing." ;
   mf:action [ qt:query <../../../queries/questions/judgment/Whether%20it%20counts.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/export.rq> ] ;
-  mf:result <whether-it-counts.srj> .
+  mf:result <whether-it-counts.tsv> .

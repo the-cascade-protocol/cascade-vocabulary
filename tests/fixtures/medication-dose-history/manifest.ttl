@@ -16,11 +16,11 @@
   rdfs:comment "Each active entry gives the dosage text of every member that states one, each with the day its prescription was written where it states one, in order of that day, the member stating none last." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20medications.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-medications.srj> .
+  mf:result <my-active-medications.tsv> .
 
 <#my-medication-history> a mf:QueryEvaluationTest ;
   mf:name "my-medication-history" ;
   rdfs:comment "Each entry gives the dosage text of every member that states one, each with the day its prescription was written where it states one, in order of that day, the member stating none last." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20medication%20history.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-medication-history.srj> .
+  mf:result <my-medication-history.tsv> .

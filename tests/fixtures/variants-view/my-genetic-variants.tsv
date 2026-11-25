@@ -1,0 +1,7 @@
+?variant	?gene	?hgvs	?variation	?sources
+<https://pod.example/clinical/variants.ttl#91829f692a9f811cb8aca2ed0b6c20fd3a2f1a54e91a6fe29371e2db11329a66>	"MLH1"		"90011"	"urn:x:exome\u001Furn:x:panel"
+<https://pod.example/clinical/variants.ttl#91829f692a9f811cb8aca2ed0b6c20fd3a2f1a54e91a6fe29371e2db11329a66>	"MLH1"	"NM_000249.3:c.2042C>T"		"urn:x:exome\u001Furn:x:panel"
+<https://pod.example/clinical/variants.ttl#91829f692a9f811cb8aca2ed0b6c20fd3a2f1a54e91a6fe29371e2db11329a66>	"MLH1"	"NM_000249.4:c.2042C>T"		"urn:x:exome\u001Furn:x:panel"
+<https://pod.example/clinical/variants.ttl#a628d0b0114becf3507735963aa351ef7790bbf8a364e0712f9a1aa55c9411a5>	"PMS2"			"urn:x:bare"
+<https://pod.example/clinical/variants.ttl#c41478aa2df9f257a4e29d8a0523f62a662588089ca179b243ed71ceabbaebf7>	"MSH2"		"41612"	"urn:x:benign"
+<https://pod.example/clinical/variants.ttl#c41478aa2df9f257a4e29d8a0523f62a662588089ca179b243ed71ceabbaebf7>	"MSH2"	"NM_000251.3:c.1168C>T"		"urn:x:benign"

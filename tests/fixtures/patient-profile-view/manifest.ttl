@@ -18,25 +18,25 @@
   rdfs:comment "One patient profile entry, named from the subject, joins both profiles." ;
   mf:action [ qt:query <one-entry-for-the-person.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <one-entry-for-the-person.srj> .
+  mf:result <one-entry-for-the-person.tsv> .
 
 <#whose-it-is-counted-as-with-no-record> a mf:QueryEvaluationTest ;
   mf:name "whose-it-is-counted-as-with-no-record" ;
   rdfs:comment "Each row is a hospital whose records name a profile; with no version naming either profile, there is none." ;
   mf:action [ qt:query <../../../queries/questions/profile/Whose%20it%20is%20counted%20as.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <whose-it-is-counted-as-with-no-record.srj> .
+  mf:result <whose-it-is-counted-as-with-no-record.tsv> .
 
 <#where-it-came-from> a mf:QueryEvaluationTest ;
   mf:name "where-it-came-from" ;
   rdfs:comment "Each member of the patient entry, a profile, with when its current revision arrived and the import that brought it." ;
   mf:action [ qt:query <../../../queries/questions/entry/Where%20it%20came%20from.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <where-it-came-from.srj> .
+  mf:result <where-it-came-from.tsv> .
 
 <#no-entry-seen-more-than-once> a mf:QueryEvaluationTest ;
   mf:name "no-entry-seen-more-than-once" ;
   rdfs:comment "The patient entry joins two profiles from two places, but a profile is no record, so no entry holds more than one record." ;
   mf:action [ qt:query <../../../queries/questions/pod/What%20was%20seen%20more%20than%20once.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <no-entry-seen-more-than-once.srj> .
+  mf:result <no-entry-seen-more-than-once.tsv> .

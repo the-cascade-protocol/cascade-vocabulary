@@ -15,4 +15,4 @@
   rdfs:comment "An entry with two codes is two rows, one for each, alike but for the code; the entry that names no vaccine is listed before the one that does, given the same day." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20immunizations.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-immunizations.srj> .
+  mf:result <my-immunizations.tsv> .

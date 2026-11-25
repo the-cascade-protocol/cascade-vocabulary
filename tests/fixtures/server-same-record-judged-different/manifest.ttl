@@ -15,4 +15,4 @@
   rdfs:comment "The Different wins: the two a2 are not one record." ;
   mf:action [ qt:query <same-records.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <same-records.srj> .
+  mf:result <same-records.tsv> .

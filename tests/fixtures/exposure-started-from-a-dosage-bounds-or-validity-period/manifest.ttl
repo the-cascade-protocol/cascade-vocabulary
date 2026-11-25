@@ -15,4 +15,4 @@
   rdfs:comment "As CumulativeMedicationDuration's request period, a prescription's exposure starts at its one dosage's bounds, else the day it was written, else its dispensing window's start, and ends at its supply's end, else at its one dosage's bounds' end; the bounds of a version with several dosages are not read, and a dispensing window's end is never an end." ;
   mf:action [ qt:query <each-copys-exposure.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <each-copys-exposure.srj> .
+  mf:result <each-copys-exposure.tsv> .

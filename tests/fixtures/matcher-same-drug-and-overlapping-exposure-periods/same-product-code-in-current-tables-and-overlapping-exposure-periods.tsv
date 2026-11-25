@@ -1,0 +1,3 @@
+?record	?other	?origin
+<urn:x:metforminFirst>	<urn:x:metforminOverlapping>	<urn:x:products-1>
+<urn:x:metforminOverlapping>	<urn:x:metforminFirst>	<urn:x:products-1>

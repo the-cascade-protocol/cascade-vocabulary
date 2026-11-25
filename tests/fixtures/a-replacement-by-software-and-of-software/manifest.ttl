@@ -15,4 +15,4 @@
   rdfs:comment "The person's judgment the model replaced is listed, as one retracted by anyone but its maker is; the model's own judgment Ana replaced is not, its maker being no person." ;
   mf:action [ qt:query <../../../queries/questions/judgment/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <replaced-by-software-and-of-software.srj> .
+  mf:result <replaced-by-software-and-of-software.tsv> .

@@ -15,4 +15,4 @@
   rdfs:comment "Newest first, and a result with no time after every result with one, so the calcium comes before the sodium, which is shown with no time." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20lab%20results.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-lab-results.srj> .
+  mf:result <my-lab-results.tsv> .

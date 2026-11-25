@@ -17,18 +17,18 @@
   rdfs:comment "Each entry takes the name and code of its lead, the status of the member chosen for status, the start of the member chosen for the date, and every intent a member states." ;
   mf:action [ qt:query <the-medications-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-medications-view.srj> .
+  mf:result <the-medications-view.tsv> .
 
 <#my-active-medications> a mf:QueryEvaluationTest ;
   mf:name "my-active-medications" ;
   rdfs:comment "Only the active entries, with each code, start, how many records each joins, each record's own status and end, so the atorvastatin shows the stop its older record states, and each record, none from a document; not the metformin, whose stop was chosen over its list entry's active." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20medications.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-medications.srj> .
+  mf:result <my-active-medications.tsv> .
 
 <#my-medication-history> a mf:QueryEvaluationTest ;
   mf:name "my-medication-history" ;
   rdfs:comment "Every entry whatever its status, with each record's own status and end: the metformin stopped, its list entry's active beside the stop; the end date on the stopped entry alone, none on the completed one that states no stop." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20medication%20history.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-medication-history.srj> .
+  mf:result <my-medication-history.tsv> .

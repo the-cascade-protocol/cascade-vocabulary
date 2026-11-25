@@ -1,0 +1,10 @@
+?member	?clinicalStatus	?verificationStatus
+<urn:x:thrombosis>	"active"	"refuted"
+<urn:x:coughLater>	"active"	"confirmed"
+<urn:x:chestFirst>	"active"	"confirmed"
+<urn:x:chestLater>	"resolved"	"refuted"
+<urn:x:coughFirst>	"resolved"	"refuted"
+<urn:x:negated>		"refuted"
+<urn:x:hypertension>	"active"	"confirmed"
+<urn:x:embolism>	"resolved"	"refuted"
+<urn:x:ankle>	"resolved"	"confirmed"

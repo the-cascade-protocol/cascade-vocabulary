@@ -1,0 +1,3 @@
+?allergenName	?code	?criticality	?status	?category	?onset	?reactionsByRecord	?records	?entry	?entryLabel	?sources
+"Penicillin"	<https://ns.cascadeprotocol.org/codes/rxnorm/7980>		"not stated"				"1"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/allergies.ttl#0c4f61cbc8e3f984a127410490514ffb148865647413c82792e7dc64015bb290>	"Allergy entry · Penicillin"	"urn:x:penicillin"
+"Penicillin"	<http://snomed.info/id/373270004>		"not stated"				"1"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/allergies.ttl#0c4f61cbc8e3f984a127410490514ffb148865647413c82792e7dc64015bb290>	"Allergy entry · Penicillin"	"urn:x:penicillin"

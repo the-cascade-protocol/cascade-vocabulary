@@ -15,4 +15,4 @@
   rdfs:comment "Ana's judgment whose replacement Ben retracted counts again and is not listed, nor is his retracted replacement; the one whose replacement was replaced still does not count, so it is listed with Ben's replaced replacement." ;
   mf:action [ qt:query <../../../queries/questions/judgment/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <a-taken-back-replacement-lists-nothing.srj> .
+  mf:result <a-taken-back-replacement-lists-nothing.tsv> .

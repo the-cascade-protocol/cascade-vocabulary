@@ -11,13 +11,13 @@ from time import perf_counter
 
 import pytest
 import rdflib
-from rdflib import OWL, RDF, RDFS, Graph, Literal, URIRef
+from rdflib import OWL, RDF, RDFS, XSD, Graph, Literal, URIRef
 
 from contract import CASCADE, PROV, QUERIES, ROOT, built, derivations, named, query, questions
 import engines
 from engines import ENGINES, Oxigraph, Rdflib, bound_to_records, marked_groups
 from group_budget import group_of, over_budget, unseen
-from manifests import Entry, entries, failure, lens_name, row
+from manifests import Entry, entries, expected, failure, lens_name, row
 from pods import ADDRESS, FIXTURES, built_once, every_fixture, on_its_worker
 
 LENSES = sorted(named("lenses"))
@@ -728,14 +728,55 @@ class TestChecksOfTheFixtureTools:
             assert {name: [len(graph) for graph in graphs] for name, graphs in loaded.items()} == {name: [1, 1] for name in ENGINES}
             assert loaded["oxigraph"] == loaded["rdflib"]
 
+    class TestExpected:
+        """`manifests.expected()`"""
+
+        TERMS = [
+            ("<urn:x:a>", URIRef("urn:x:a")),
+            ('"two words"', engines.literal("two words")),
+            ('""', engines.literal("")),
+            (f'"3"^^<{XSD.integer}>', engines.literal("3", XSD.integer)),
+            (f'"007"^^<{XSD.integer}>', engines.literal("007", XSD.integer)),
+            (f'"x"^^<{XSD.string}>', engines.literal("x")),
+            ('"chat"@fr', engines.literal("chat", lang="fr")),
+            ('"a\\tb\\nc \\"q\\" \\\\ \\u001F"', engines.literal('a\tb\nc "q" \\ \x1f')),
+            ("", None),
+        ]
+
+        def test_reads_a_tsv_answer_as_its_variables_and_a_multiset_of_rows(self, tmp_path):
+            """reads a TSV answer as its variables and the multiset of its rows, each term as written, an empty field as unbound"""
+            answer = tmp_path / "answer.tsv"
+            for field, term in self.TERMS:
+                answer.write_text(f"?a\t?b\n{field}\t<urn:x:z>\n{field}\t<urn:x:z>\n", encoding="utf-8")
+                found = {"a": term, "b": URIRef("urn:x:z")} if term is not None else {"b": URIRef("urn:x:z")}
+                assert expected(answer) == ({"a", "b"}, Counter({row(found): 2})), field
+            answer.write_text("?a\t?b\n", encoding="utf-8")
+            assert expected(answer) == ({"a", "b"}, Counter())
+            answer.write_text("?a\n\n<urn:x:a>\n", encoding="utf-8")
+            assert expected(answer) == ({"a"}, Counter({row({}): 1, row({"a": URIRef("urn:x:a")}): 1}))
+
+        def test_takes_no_term_it_cannot_match_exactly(self, tmp_path):
+            """takes no blank node, no abbreviated number, no long-quoted string, no escape Turtle lacks, no short or
+            long row, no missing final newline and no variable twice, which no comparison can match exactly"""
+            answer = tmp_path / "answer.tsv"
+            for field in ("_:b0", "1", '"""x"""', '"a\\qb"'):
+                answer.write_text(f"?a\n{field}\n", encoding="utf-8")
+                with pytest.raises(ValueError, match=f"holds {re.escape(field)}"):
+                    expected(answer)
+            for text, why in (("?a\t?b\n<urn:x:a>\n", "1 fields"), ("?a\n<urn:x:a>\t<urn:x:b>\n", "2 fields"),
+                              ("?a\n<urn:x:a>", "newline"), ("?a\t?a\n<urn:x:a>\t<urn:x:b>\n", "once")):
+                answer.write_text(text, encoding="utf-8", newline="\n")
+                with pytest.raises(ValueError, match=why):
+                    expected(answer)
+
     class TestFailure:
         """`manifests.failure()`"""
 
         def test_returns_a_sentence_naming_the_variables(self, tmp_path):
             """returns a sentence naming the variables for a query whose columns are not its result's"""
-            query, result = tmp_path / "q.rq", tmp_path / "r.srj"
+            query, result = tmp_path / "q.rq", tmp_path / "r.tsv"
             query.write_text("SELECT ?a WHERE { ?a ?b ?c }", encoding="utf-8")
-            result.write_text('{"head": {"vars": ["z"]}, "results": {"bindings": []}}', encoding="utf-8")
+            result.write_text("?z\n", encoding="utf-8")
             entry = Entry(iri="urn:x:e", name="e", types=frozenset(), lens=None, query=query, result=result)
             assert "variables" in (failure(entry, ENGINES["oxigraph"]()) or "")
 

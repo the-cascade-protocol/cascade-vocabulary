@@ -38,4 +38,4 @@
                                   <urn:x:strayB> ,
                                   <urn:x:strengthA> ,
                                   <urn:x:strengthB> ] ;
-  mf:result <same-product-code-in-current-tables.srj> .
+  mf:result <same-product-code-in-current-tables.tsv> .

@@ -15,4 +15,4 @@
   rdfs:comment "The judgment Ben replaced is listed, being someone else's; the one Ana replaced herself is not." ;
   mf:action [ qt:query <../../../queries/questions/judgment/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <replaced-by-someone-else.srj> .
+  mf:result <replaced-by-someone-else.tsv> .

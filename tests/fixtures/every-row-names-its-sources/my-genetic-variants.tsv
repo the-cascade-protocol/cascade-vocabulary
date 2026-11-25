@@ -1,0 +1,2 @@
+?variant	?gene	?hgvs	?variation	?sources
+<https://pod.example/clinical/variants.ttl#1e4bddd81d4658d2caf58ded67edd0d587b4f537be090a440df5d059f0f4b280>	"MLH1"	"NM_000249.3:c.2042C>T"		"urn:x:variant from urn:x:summary, retrieved 2026-01-01T00:00:00Z, kept by Bay Area Health Exchange, written by Fernhill Clinic"

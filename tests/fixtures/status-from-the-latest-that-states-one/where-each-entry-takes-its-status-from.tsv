@@ -1,0 +1,6 @@
+?member	?from
+<urn:x:conditionFromDocument>	<urn:x:conditionFromDocument>
+<urn:x:conditionLater>	<urn:x:conditionFromDocument>
+<urn:x:allergyFromDocument>	<urn:x:allergyFromDocument>
+<urn:x:allergyEntered>	<urn:x:allergyFromDocument>
+<urn:x:conditionEnteredAlone>	<urn:x:conditionEnteredAlone>

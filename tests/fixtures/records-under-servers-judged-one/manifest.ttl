@@ -15,4 +15,4 @@
   rdfs:comment "Only the allergy a1 under the two addresses is one record, both ways: not the condition of its id, not the allergy under the third server." ;
   mf:action [ qt:query <same-records.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <same-records.srj> .
+  mf:result <same-records.tsv> .

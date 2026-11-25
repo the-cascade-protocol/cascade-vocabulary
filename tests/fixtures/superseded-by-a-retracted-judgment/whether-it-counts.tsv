@@ -1,0 +1,5 @@
+?judgment	?judgmentLabel	?counts	?happened	?by	?byLabel
+<urn:x:personSame>	"Same · the patient · 2026-01-01 · Peanut"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>			
+<urn:x:personSame>	"Same · the patient · 2026-01-01 · Peanut"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>	"replaced"	<urn:x:superseding>	"Same · the patient · 2026-02-01 · Peanut"
+<urn:x:superseding>	"Same · the patient · 2026-02-01 · Peanut"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>			
+<urn:x:superseding>	"Same · the patient · 2026-02-01 · Peanut"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>	"retracted"	<urn:x:retraction>	"Retraction · the patient · 2026-03-01 · of Same · Peanut"

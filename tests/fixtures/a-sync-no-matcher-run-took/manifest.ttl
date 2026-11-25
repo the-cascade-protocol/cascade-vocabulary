@@ -15,4 +15,4 @@
   rdfs:comment "The import its writer's run took is not a row, whatever the run filed; the sync that brought it here is." ;
   mf:action [ qt:query <../../../queries/questions/pod/Which%20arrivals%20has%20the%20matcher%20not%20taken.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <which-arrivals-has-the-matcher-not-taken.srj> .
+  mf:result <which-arrivals-has-the-matcher-not-taken.tsv> .

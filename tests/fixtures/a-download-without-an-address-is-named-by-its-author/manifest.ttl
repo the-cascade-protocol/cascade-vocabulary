@@ -15,4 +15,4 @@
   rdfs:comment "A record, version and revision whose download names an author but no address are named by the author, and the record, which gives no day of its own, by the day its revision arrived; one whose download names nobody is of an unknown source." ;
   mf:action [ qt:query <the-record-version-and-revision-labels.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-record-version-and-revision-labels.srj> .
+  mf:result <the-record-version-and-revision-labels.tsv> .

@@ -15,4 +15,4 @@
   rdfs:comment "The two dispenses are one entry of two members." ;
   mf:action [ qt:query <the-medication-dispenses-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-medication-dispenses-view.srj> .
+  mf:result <the-medication-dispenses-view.tsv> .

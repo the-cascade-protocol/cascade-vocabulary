@@ -16,11 +16,11 @@
   rdfs:comment "The medicine's row says its record was given for the code." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20medications.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-medications.srj> .
+  mf:result <my-active-medications.tsv> .
 
 <#my-medication-history> a mf:QueryEvaluationTest ;
   mf:name "my-medication-history" ;
   rdfs:comment "The medicine's row says its record was given for the code." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20medication%20history.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-medication-history.srj> .
+  mf:result <my-medication-history.tsv> .

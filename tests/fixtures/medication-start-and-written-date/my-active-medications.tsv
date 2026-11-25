@@ -1,0 +1,2 @@
+?medication	?code	?started	?written	?statuses	?dosages	?narrativeTexts	?reasons	?records	?entry	?entryLabel	?sources
+"lisinopril 10 MG Oral Tablet"		"2024-01-01"^^<http://www.w3.org/2001/XMLSchema#date>	"2024-02-10"^^<http://www.w3.org/2001/XMLSchema#date>	"urn:x:listed active\u001Furn:x:prescribed active"				"2"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/medications.ttl#ba3f3b3fd0a55b6316de9976fc45bd9472c1301690703de81363c0b305fb5eb8>	"Medication entry · lisinopril 10 MG Oral Tablet · 2024-02-10"	"urn:x:listed\u001Furn:x:prescribed"

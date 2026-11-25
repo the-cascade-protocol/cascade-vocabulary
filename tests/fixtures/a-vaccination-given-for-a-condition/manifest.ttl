@@ -15,4 +15,4 @@
   rdfs:comment "The asthma lists the vaccination's entry with the vaccine's name." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20conditions.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-conditions.srj> .
+  mf:result <my-active-conditions.tsv> .

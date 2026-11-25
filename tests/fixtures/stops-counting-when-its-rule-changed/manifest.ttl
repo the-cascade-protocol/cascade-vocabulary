@@ -16,11 +16,11 @@
   rdfs:comment "The matcher judgment asserted under version 1 alone does not count, since version 2 runs another query for its rule, and the question says version 2 did it; the matcher judgment asserted again under version 2 counts." ;
   mf:action [ qt:query <../../../queries/questions/judgment/Whether%20it%20counts.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <whether-it-counts.srj> .
+  mf:result <whether-it-counts.tsv> .
 
 <#lapsed> a mf:QueryEvaluationTest ;
   mf:name "lapsed" ;
   rdfs:comment "The matcher judgment that stopped counting has lapsed: nothing retracts or supersedes it." ;
   mf:action [ qt:query <lapsed.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <lapsed.srj> .
+  mf:result <lapsed.tsv> .

@@ -1,0 +1,3 @@
+?medication	?recordLifecycle	?entryLifecycle	?start	?end	?ongoing
+"metformin 500 MG, completed with no end date"	<https://ns.cascadeprotocol.org/cascade#MedicationStopped>	<https://ns.cascadeprotocol.org/cascade#MedicationActive>	"2023-01-01"^^<http://www.w3.org/2001/XMLSchema#date>		
+"metformin 500 MG, active"	<https://ns.cascadeprotocol.org/cascade#MedicationActive>	<https://ns.cascadeprotocol.org/cascade#MedicationActive>	"2025-01-01"^^<http://www.w3.org/2001/XMLSchema#date>		"true"^^<http://www.w3.org/2001/XMLSchema#boolean>

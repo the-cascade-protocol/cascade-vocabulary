@@ -15,4 +15,4 @@
   rdfs:comment "The version is named for its verification status, where it states no other status." ;
   mf:action [ qt:query <the-version-labelled.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-version-labelled.srj> .
+  mf:result <the-version-labelled.tsv> .

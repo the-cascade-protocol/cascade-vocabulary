@@ -1,0 +1,5 @@
+?record	?other
+<urn:x:potassiumFine>	<urn:x:potassiumFineOtherValue>
+<urn:x:potassiumFineCopy>	<urn:x:potassiumFineOtherValue>
+<urn:x:potassiumFineOtherValue>	<urn:x:potassiumFine>
+<urn:x:potassiumFineOtherValue>	<urn:x:potassiumFineCopy>

@@ -1,0 +1,13 @@
+?record	?kind	?statusOnlyFromDocuments
+<urn:x:labResult>	"Lab result"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>
+<urn:x:allergy>	"Allergy"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+<urn:x:immunization>	"Immunization"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>
+<urn:x:medication>	"Medication"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>
+<urn:x:condition>	"Condition"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>
+<urn:x:procedure>	"Procedure"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>
+<urn:x:interpretation>	"Variant interpretation"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>
+<urn:x:variant>	"Variant"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>
+<urn:x:prescription>	"Medication"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>
+<urn:x:report>	"Report"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>
+<urn:x:note>	"Note or document"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>
+<urn:x:dispense>	"Medication dispense"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>

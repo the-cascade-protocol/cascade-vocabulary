@@ -1,0 +1,4 @@
+?record	?other	?origin
+<urn:x:droppedA>	<urn:x:droppedB>	<urn:x:products-1>
+<urn:x:droppedB>	<urn:x:droppedA>	<urn:x:products-1>
+<urn:x:productB>	<urn:x:productA>	<urn:x:products-1>

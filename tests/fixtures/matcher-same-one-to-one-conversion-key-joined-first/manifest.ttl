@@ -27,4 +27,4 @@
                                   <urn:x:split> ,
                                   <urn:x:strayA> ,
                                   <urn:x:strayB> ] ;
-  mf:result <same-one-to-one-conversion-key-joined-first.srj> .
+  mf:result <same-one-to-one-conversion-key-joined-first.tsv> .

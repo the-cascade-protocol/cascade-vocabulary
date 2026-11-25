@@ -26,4 +26,4 @@
                                   <urn:x:visits2025> ,
                                   <urn:x:visitsGrownWithA> ,
                                   <urn:x:visitsGrownWithB> ] ;
-  mf:result <same-note-type-and-text-grown-within-one-organization.srj> .
+  mf:result <same-note-type-and-text-grown-within-one-organization.tsv> .

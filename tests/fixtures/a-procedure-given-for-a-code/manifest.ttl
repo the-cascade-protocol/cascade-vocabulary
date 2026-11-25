@@ -15,4 +15,4 @@
   rdfs:comment "The procedures view keeps both of a member's reason codes on its values, the listed one as its IRI and the other as the literal typed by its system." ;
   mf:action [ qt:query <the-codes-the-view-shows.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-codes-the-view-shows.srj> .
+  mf:result <the-codes-the-view-shows.tsv> .

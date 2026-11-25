@@ -1,0 +1,3 @@
+?entry	?entryLabel	?record	?recordLabel	?arrived	?import	?importLabel	?document	?documentLabel	?hospital	?retrieved
+<https://pod.example/clinical/patient-profile.ttl#d0ef2a5818626eecee2fb0ac68c965b7a0780b5390149647539953fb64dd1312>	"Patient entry"	<urn:x:northProfile>		"2026-01-01T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>	<urn:x:northImport>	"North import"				
+<https://pod.example/clinical/patient-profile.ttl#d0ef2a5818626eecee2fb0ac68c965b7a0780b5390149647539953fb64dd1312>	"Patient entry"	<urn:x:southProfile>		"2026-01-02T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>	<urn:x:southImport>	"South import"				

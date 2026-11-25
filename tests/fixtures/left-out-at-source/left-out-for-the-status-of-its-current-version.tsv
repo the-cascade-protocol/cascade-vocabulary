@@ -1,0 +1,7 @@
+?record	?reason	?because
+<urn:x:inError>	<https://ns.cascadeprotocol.org/cascade#EnteredInErrorAtSource>	
+<urn:x:refuted>	<https://ns.cascadeprotocol.org/cascade#RefutedAtSource>	
+<urn:x:reportInError>	<https://ns.cascadeprotocol.org/cascade#EnteredInErrorAtSource>	
+<urn:x:noteInError>	<https://ns.cascadeprotocol.org/cascade#EnteredInErrorAtSource>	
+<urn:x:noteContentInError>	<https://ns.cascadeprotocol.org/cascade#EnteredInErrorAtSource>	
+<urn:x:dispenseInError>	<https://ns.cascadeprotocol.org/cascade#EnteredInErrorAtSource>	

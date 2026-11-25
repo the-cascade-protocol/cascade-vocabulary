@@ -1,0 +1,7 @@
+?holds	?property	?written	?named
+"entry"	<https://ns.cascadeprotocol.org/cascade#medicationUseStartDate>	"2025120108"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+"member's values"	<https://ns.cascadeprotocol.org/cascade#medicationUseEndDate>	"2026030110"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+"member's values"	<https://ns.cascadeprotocol.org/cascade#prescriptionWrittenDate>	"2026020109"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+"entry"	<https://ns.cascadeprotocol.org/cascade#medicationUseEndDate>	"2026030110"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+"member's values"	<https://ns.cascadeprotocol.org/cascade#medicationUseStartDate>	"2025120108"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+"entry"	<https://ns.cascadeprotocol.org/cascade#prescriptionWrittenDate>	"2026020109"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>

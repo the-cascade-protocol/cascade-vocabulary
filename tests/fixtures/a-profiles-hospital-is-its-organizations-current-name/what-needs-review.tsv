@@ -1,0 +1,2 @@
+?profile	?profileLabel	?needs	?hospital	?records	?saidAbout	?saidNotAbout
+<urn:x:unjudged>	"Patient profile · Fernhill Family Clinic · first received 2026-01-01"	"no one has said whether it is the subject's"	"Fernhill Family Clinic"	"1"^^<http://www.w3.org/2001/XMLSchema#integer>		

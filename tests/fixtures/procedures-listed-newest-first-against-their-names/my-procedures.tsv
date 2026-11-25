@@ -1,0 +1,3 @@
+?performed	?procedure	?procedureCode	?status	?narrativeTexts	?records	?entry	?entryLabel	?sources
+"2024-03-01"^^<http://www.w3.org/2001/XMLSchema#date>	"Colonoscopy"		"completed"		"1"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/procedures.ttl#ffecd578f03dedbd62f27dbdbd6a51e4b3ab693c6ae4d7bc91cc4b47f83e5216>	"Procedure entry · Colonoscopy · 2024-03-01"	"urn:x:colonoscopy"
+"2020-05-01"^^<http://www.w3.org/2001/XMLSchema#date>	"Appendectomy"		"completed"		"1"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/procedures.ttl#95e4999471718e1be6d76b975e4d8e41fc08faabf154d0e8b678345bc6e58e9a>	"Procedure entry · Appendectomy · 2020-05-01"	"urn:x:appendectomy"

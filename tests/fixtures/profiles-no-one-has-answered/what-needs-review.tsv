@@ -1,0 +1,4 @@
+?profile	?profileLabel	?needs	?hospital	?records	?saidAbout	?saidNotAbout
+<urn:x:unanswered>	"Patient profile · Northgate · first received 2026-01-10"	"no one has said whether it is the subject's"	"Northgate"	"1"^^<http://www.w3.org/2001/XMLSchema#integer>		
+<urn:x:unanswered>	"Patient profile · Northgate · first received 2026-01-10"	"no one has said whether it is the subject's"	"Southview"	"2"^^<http://www.w3.org/2001/XMLSchema#integer>		
+<urn:x:unclaimedAgain>	"Patient profile · unknown source · first received 2026-01-10"	"no one has said whether it is the subject's"		"1"^^<http://www.w3.org/2001/XMLSchema#integer>		

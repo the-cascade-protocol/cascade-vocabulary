@@ -19,4 +19,4 @@
                                   <urn:x:noCode> ,
                                   <urn:x:older> ,
                                   <urn:x:other> ] ;
-  mf:result <same-variation-key-joined-first.srj> .
+  mf:result <same-variation-key-joined-first.tsv> .

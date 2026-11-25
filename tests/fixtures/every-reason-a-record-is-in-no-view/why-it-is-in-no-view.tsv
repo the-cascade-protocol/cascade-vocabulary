@@ -1,0 +1,14 @@
+?record	?recordLabel	?why	?because	?becauseLabel
+<urn:x:inError>	"Allergy · Peanut · own entry"	<https://ns.cascadeprotocol.org/cascade#EnteredInErrorAtSource>		
+<urn:x:refuted>	"Allergy · Latex · own entry"	<https://ns.cascadeprotocol.org/cascade#RefutedAtSource>		
+<urn:x:judged>	"Allergy · Egg · own entry"	<https://ns.cascadeprotocol.org/cascade#JudgedErroneous>	<urn:x:erroneous>	"Erroneous · the patient · 2026-02-01 · Egg"
+<urn:x:fromTheImport>	"Allergy · Soy · own entry"	<https://ns.cascadeprotocol.org/cascade#ImportJudgedErroneous>	<urn:x:erroneousImport>	"Erroneous · the patient · 2026-02-01 · a patient profile"
+<urn:x:unclaimed>	"Allergy · Wheat · own entry"	<https://ns.cascadeprotocol.org/cascade#PatientProfileNotClaimed>	<urn:x:profile>	"Patient profile · unknown source · first received 2026-01-01"
+<urn:x:denied>	"Allergy · Milk · own entry"	<https://ns.cascadeprotocol.org/cascade#PatientProfileJudgedNotAbout>	<urn:x:deniedProfile>	"Patient profile · unknown source · first received 2026-01-01"
+<urn:x:heldBack>	"Allergy · Shellfish · own entry"	<https://ns.cascadeprotocol.org/cascade#PatientProfileJudgedBothAboutAndNotAbout>	<urn:x:heldBackProfile>	"Patient profile · unknown source · first received 2026-01-01"
+<urn:x:noPatient>	"Allergy · Fish · own entry"	<https://ns.cascadeprotocol.org/cascade#NoPatient>		
+<urn:x:immunizationInError>	"Immunization · Influenza · own entry"	<https://ns.cascadeprotocol.org/cascade#EnteredInErrorAtSource>		
+<urn:x:labResultInError>	"Lab result · Potassium · own entry"	<https://ns.cascadeprotocol.org/cascade#EnteredInErrorAtSource>		
+<urn:x:procedureInError>	"Procedure · Colonoscopy · own entry"	<https://ns.cascadeprotocol.org/cascade#EnteredInErrorAtSource>		
+<urn:x:variantInError>	"Variant · NM_000492.4:c.1521_1523del · own entry"	<https://ns.cascadeprotocol.org/cascade#EnteredInErrorAtSource>		
+<urn:x:interpretationInError>	"Variant interpretation · no name · own entry"	<https://ns.cascadeprotocol.org/cascade#EnteredInErrorAtSource>		

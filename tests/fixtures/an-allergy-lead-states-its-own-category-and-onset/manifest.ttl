@@ -15,4 +15,4 @@
   rdfs:comment "The entry shows the category and onset its lead states, not those of the later member." ;
   mf:action [ qt:query <its-category-and-onset.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <its-category-and-onset.srj> .
+  mf:result <its-category-and-onset.tsv> .

@@ -1,0 +1,2 @@
+?subject	?subjectLabel	?dateOfBirth	?administrativeGender	?deceased	?dateOfDeath	?sources
+<urn:x:subject>	"The person this pod is about"	"urn:x:north 1968-11-04\u001Furn:x:south 1968-11"	"urn:x:north female\u001Furn:x:south unknown"	"urn:x:north false\u001Furn:x:south true"	"urn:x:south 2026-01-15"	"urn:x:north from urn:x:northSummary, retrieved 2026-01-01T00:00:00Z, written by North Hospital\u001Furn:x:silent\u001Furn:x:south from urn:x:southSummary, retrieved 2026-02-01T00:00:00Z, written by South Clinic"

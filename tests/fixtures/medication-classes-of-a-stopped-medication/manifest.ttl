@@ -15,4 +15,4 @@
   rdfs:comment "The stopped metformin tablet is given Biguanide through metformin, the ingredient step reached though its precise ingredient bears no class, and the row names the record beside its entry." ;
   mf:action [ qt:query <../../../queries/tables/medication-classes-of-every-medication-record.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <medication-classes-of-every-medication-record.srj> .
+  mf:result <medication-classes-of-every-medication-record.tsv> .

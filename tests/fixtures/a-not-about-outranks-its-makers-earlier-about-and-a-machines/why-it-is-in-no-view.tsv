@@ -1,0 +1,3 @@
+?record	?recordLabel	?why	?because	?becauseLabel
+<urn:x:latex>	"Allergy · Latex · own entry"	<https://ns.cascadeprotocol.org/cascade#PatientProfileJudgedNotAbout>	<urn:x:machineClaimed>	"Patient profile · unknown source · first received 2026-01-10"
+<urn:x:peanut>	"Allergy · Peanut · own entry"	<https://ns.cascadeprotocol.org/cascade#PatientProfileJudgedNotAbout>	<urn:x:changedMind>	"Patient profile · unknown source · first received 2026-01-10"

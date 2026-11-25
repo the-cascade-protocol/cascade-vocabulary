@@ -16,11 +16,11 @@
   rdfs:comment "The matcher judgment counts and has not lapsed though version 2 is current: version 2's rows join its members as version 1's did." ;
   mf:action [ qt:query <matcher-judgments-that-count.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <matcher-judgments-that-count.srj> .
+  mf:result <matcher-judgments-that-count.tsv> .
 
 <#whether-it-counts> a mf:QueryEvaluationTest ;
   mf:name "whether-it-counts" ;
   rdfs:comment "The matcher judgment's one row says it counts, and none says it was made under a version since replaced: the current version joins its members." ;
   mf:action [ qt:query <../../../queries/questions/judgment/Whether%20it%20counts.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <whether-it-counts.srj> .
+  mf:result <whether-it-counts.tsv> .

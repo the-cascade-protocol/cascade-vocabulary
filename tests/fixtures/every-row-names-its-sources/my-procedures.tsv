@@ -1,0 +1,2 @@
+?performed	?procedure	?procedureCode	?status	?narrativeTexts	?records	?entry	?entryLabel	?sources
+	"Colonoscopy"		"completed"		"1"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/procedures.ttl#ffecd578f03dedbd62f27dbdbd6a51e4b3ab693c6ae4d7bc91cc4b47f83e5216>	"Procedure entry · Colonoscopy"	"urn:x:colonoscopy from urn:x:visit, retrieved 2026-02-01T00:00:00Z, written by Kestrel Harbor Hospital"

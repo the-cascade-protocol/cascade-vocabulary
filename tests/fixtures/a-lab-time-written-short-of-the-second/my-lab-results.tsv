@@ -1,0 +1,2 @@
+?performed	?test	?code	?value	?unit	?status	?interpretations	?referenceRangeText	?referenceRangeLow	?referenceRangeHigh	?narrativeTexts	?records	?entry	?entryLabel	?sources
+"2025-06-01T09:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>	"Potassium"	<http://loinc.org/rdf/2823-3>	"4.2"	"mmol/L"	"final"						"1"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/lab-results.ttl#bdd79cd5933291b61ddaa74e0d648cbd2f70e6e0fb9cdce6adaaddfe03a913d7>	"Lab result entry · Potassium · 2025-06-01T09:00:00"	"urn:x:potassium"

@@ -1,0 +1,7 @@
+?medication	?dosageInstructionText	?member	?memberDosage
+"lisinopril 10 MG Oral Tablet"	"1 tablet by mouth every morning"	<urn:x:listed>	"Take 1 tablet daily"
+"lisinopril 10 MG Oral Tablet"	"1 tablet by mouth every morning"	<urn:x:prescribed>	"1 tablet by mouth every morning"
+"metformin 500 MG Oral Tablet"	"500 mg twice a day with meals"	<urn:x:metforminListed>	"500 mg twice a day with meals"
+"Atorvastatin 20 mg tablet"	"Take 1 tablet at night"	<urn:x:atorvastatinListed>	"Take 1 tablet at night"
+"Atorvastatin 20 mg tablet"	"Take 1 tablet at night"	<urn:x:atorvastatinPrescribed>	"20 mg orally at bedtime"
+"amoxicillin 500 MG Oral Capsule"			

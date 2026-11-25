@@ -15,4 +15,4 @@
   rdfs:comment "Each condition whose code the value set, found by its canonical URL, lists, with each version that lists it and its expansion version. E11.9 is in both versions, one row each; 1481000119100 is in the second only, so the two versions answer apart; hypertension is in neither, and 44054006, which no condition holds, gives no row." ;
   mf:action [ qt:query <conditions-in-the-value-set.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <conditions-in-the-value-set.srj> .
+  mf:result <conditions-in-the-value-set.tsv> .

@@ -1,0 +1,3 @@
+?record	?recordLabel	?needs	?finding	?revision	?revisionLabel	?otherRevision	?otherRevisionLabel
+<urn:x:eczema>	"Condition · Eczema · Northgate · received 2026-01-20"	"no basis"		<urn:x:eczemaOnTheSkewedClock>	"Revision · Eczema · Northgate · received 2026-01-20"	<urn:x:eczemaPulledByThem>	"Revision · Eczema · Northgate · received 2026-01-10"
+<urn:x:gout>	"Condition · Gout · Northgate · received 2026-01-10"	"no basis"		<urn:x:goutPulledByThem>	"Revision · Gout · Northgate · received 2026-01-10"	<urn:x:goutPulledOnTheSkewedClock>	"Revision · Gout · Northgate · received 2026-01-20"

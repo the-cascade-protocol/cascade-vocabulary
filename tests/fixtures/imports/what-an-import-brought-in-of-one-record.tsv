@@ -1,0 +1,3 @@
+?started	?import	?importLabel	?record	?recordLabel	?revision	?revisionLabel	?version	?versionLabel
+"2026-01-01T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>	<urn:x:first>	"First download"	<urn:x:a>	"Allergy · Peanuts · own entry"	<urn:x:aR1>	"Revision · Peanut · own entry · received 2026-01-01"	<urn:x:aV1>	"Allergy version · Peanut · nothing stated · own entry · first received 2026-01-01"
+"2026-02-01T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>	<urn:x:second>	"Second download"	<urn:x:a>	"Allergy · Peanuts · own entry"	<urn:x:aR2>	"Revision · Peanuts · own entry · received 2026-02-01"	<urn:x:aV2>	"Allergy version · Peanuts · nothing stated · own entry · first received 2026-02-01"

@@ -16,11 +16,11 @@
   rdfs:comment "An onset or abatement its source wrote to the hour keeps, in the view, the node saying so and what was written, on the entry and on its member's values, each named after its holder, -padded- and the property." ;
   mf:action [ qt:query <its-padded-times.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <its-padded-times.srj> .
+  mf:result <its-padded-times.tsv> .
 
 <#my-active-conditions> a mf:QueryEvaluationTest ;
   mf:name "my-active-conditions" ;
   rdfs:comment "The migraine alone is active, shown with its onset as the record holds it, padded, with no zone." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20conditions.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-conditions.srj> .
+  mf:result <my-active-conditions.tsv> .

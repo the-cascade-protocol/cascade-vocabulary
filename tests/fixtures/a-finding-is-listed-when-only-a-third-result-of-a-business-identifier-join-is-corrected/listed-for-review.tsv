@@ -1,0 +1,2 @@
+?entry	?entryLabel	?needs	?finding	?judgment	?judgmentLabel	?record	?recordLabel	?otherRecord	?otherRecordLabel
+<https://pod.example/clinical/lab-results.ttl#c70e1d0d0d8d3229913070ceea0a7a7df68f554b1e1d17c9a22607e0fb03cf43>	"Lab result entry · Chloride, corrected · 2025-03-27T12:00:00Z"	"one test at one instant, two values"	<urn:x:differentValues>			<urn:x:chlorideFirst>	"Lab result · Chloride · own entry"	<urn:x:chlorideSecond>	"Lab result · Chloride, other channel · own entry"

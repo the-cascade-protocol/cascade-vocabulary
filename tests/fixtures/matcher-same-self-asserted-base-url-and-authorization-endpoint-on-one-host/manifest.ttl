@@ -20,4 +20,4 @@
                                   <urn:uuid:cf4d662f-cbe7-895f-9a9e-5ff5c3237b74> ,
                                   <urn:uuid:30de1bac-2cfe-8f17-a26a-d056a68eb658> ,
                                   <urn:uuid:b34d6c64-14c0-815c-a7e0-1cc41a94769f> ] ;
-  mf:result <same-self-asserted-base-url-and-authorization-endpoint-on-one-host.srj> .
+  mf:result <same-self-asserted-base-url-and-authorization-endpoint-on-one-host.tsv> .

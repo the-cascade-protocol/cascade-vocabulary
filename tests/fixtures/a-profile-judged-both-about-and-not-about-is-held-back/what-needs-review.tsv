@@ -1,0 +1,4 @@
+?profile	?profileLabel	?needs	?hospital	?records	?saidAbout	?saidNotAbout
+<urn:x:twoParents>	"Patient profile · Northgate · first received 2026-01-10"	"judged both about and not about the subject"	"Northgate"	"1"^^<http://www.w3.org/2001/XMLSchema#integer>	"urn:x:parent"	"urn:x:otherParent"
+<urn:x:claimedAgain>	"Patient profile · unknown source · first received 2026-01-10"	"judged both about and not about the subject"		"1"^^<http://www.w3.org/2001/XMLSchema#integer>	"urn:x:parent"	"urn:x:parent"
+<urn:x:threePeople>	"Patient profile · unknown source · first received 2026-01-10"	"judged both about and not about the subject"		"1"^^<http://www.w3.org/2001/XMLSchema#integer>	"urn:x:grandparent\u001Furn:x:parent"	"urn:x:otherParent"

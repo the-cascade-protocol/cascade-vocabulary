@@ -15,4 +15,4 @@
   rdfs:comment "A report's conclusion code is shown by the view on the entry and on its member's values." ;
   mf:action [ qt:query <its-conclusion-code.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <its-conclusion-code.srj> .
+  mf:result <its-conclusion-code.tsv> .

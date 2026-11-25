@@ -15,4 +15,4 @@
   rdfs:comment "Each of the two records is in the one entry, outcome one, with the other as its other member and nothing grown or merged." ;
   mf:action [ qt:query <../../../queries/questions/record/Where%20each%20record%20a%20statement%20names%20is%20now.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <where-each-record-a-statement-names-is-now.srj> .
+  mf:result <where-each-record-a-statement-names-is-now.tsv> .

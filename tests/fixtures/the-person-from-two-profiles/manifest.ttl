@@ -15,4 +15,4 @@
   rdfs:comment "The subject, with each claimed profile's date of birth, gender, whether they have died and when, after the profile that says it, neither source chosen over the other and nothing for the profile that says nothing; and each claimed profile with its document, when that was retrieved and the hospital that wrote it, the entered one with none. Nothing from the profile no About claims." ;
   mf:action [ qt:query <../../../queries/questions/pod/The%20person%20this%20pod%20is%20about.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-person-this-pod-is-about.srj> .
+  mf:result <the-person-this-pod-is-about.tsv> .

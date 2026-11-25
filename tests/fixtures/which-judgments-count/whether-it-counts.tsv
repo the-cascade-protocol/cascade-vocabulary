@@ -1,0 +1,11 @@
+?judgment	?judgmentLabel	?counts	?happened	?by	?byLabel
+<urn:x:machineCode>	"Same · Cascade matcher · machineC · Peanut"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>			
+<urn:x:machineMapped>	"Same · Cascade matcher · machineM · Peanut"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>			
+<urn:x:machineOld>	"Same · Cascade matcher · machineO · Peanut"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>			
+<urn:x:machineOld>	"Same · Cascade matcher · machineO · Peanut"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>	"its rule runs another query since"	<urn:x:rules-2>	"Rules · 2"
+<urn:x:personSame>	"Same · the patient · 2026-01-01 · Peanut"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>			
+<urn:x:retracted>	"Same · the patient · 2026-01-01 · Peanut"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>			
+<urn:x:retracted>	"Same · the patient · 2026-01-01 · Peanut"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>	"retracted"	<urn:x:retraction>	"Retraction · the patient · 2026-02-01 · of Same · Peanut"
+<urn:x:superseded>	"Same · the patient · 2026-01-01 · Peanut"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>			
+<urn:x:superseded>	"Same · the patient · 2026-01-01 · Peanut"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>	"replaced"	<urn:x:superseding>	"Same · the patient · 2026-02-01 · Peanut"
+<urn:x:superseding>	"Same · the patient · 2026-02-01 · Peanut"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>			

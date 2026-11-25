@@ -15,4 +15,4 @@
   rdfs:comment "The Same whose member's current revision came from a document it does not name is listed; the Same over records unchanged since is not." ;
   mf:action [ qt:query <../../../queries/questions/judgment/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <a-member-changed.srj> .
+  mf:result <a-member-changed.tsv> .

@@ -15,4 +15,4 @@
   rdfs:comment "The medicine's row gives no reason: the record it names is in no entry." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20medications.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-medications.srj> .
+  mf:result <my-active-medications.tsv> .

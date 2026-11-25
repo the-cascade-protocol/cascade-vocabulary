@@ -1,0 +1,10 @@
+?type	?things
+<https://ns.cascadeprotocol.org/cascade#PatientProfile>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+<https://ns.cascadeprotocol.org/cascade#AllergyOrIntolerance>	"2"^^<http://www.w3.org/2001/XMLSchema#integer>
+<https://ns.cascadeprotocol.org/cascade#Judgment>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+<http://www.w3.org/ns/prov#Person>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+<https://ns.cascadeprotocol.org/cascade#Revision>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+<http://www.w3.org/ns/solid/terms#TypeIndex>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+<http://www.w3.org/ns/solid/terms#TypeRegistration>	"6"^^<http://www.w3.org/2001/XMLSchema#integer>
+<http://www.w3.org/ns/solid/terms#UnlistedDocument>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+<https://ns.cascadeprotocol.org/cascade#View>	"3"^^<http://www.w3.org/2001/XMLSchema#integer>
