@@ -1,0 +1,17 @@
+?record	?other
+<urn:x:glucoseDayA>	<urn:x:glucoseDayB>
+<urn:x:glucoseDayA>	<urn:x:glucoseEvening>
+<urn:x:glucoseDayA>	<urn:x:glucoseMorning>
+<urn:x:glucoseDayB>	<urn:x:glucoseDayA>
+<urn:x:glucoseDayB>	<urn:x:glucoseEvening>
+<urn:x:glucoseDayB>	<urn:x:glucoseMorning>
+<urn:x:glucoseEvening>	<urn:x:glucoseDayA>
+<urn:x:glucoseEvening>	<urn:x:glucoseDayB>
+<urn:x:glucoseMorning>	<urn:x:glucoseDayA>
+<urn:x:glucoseMorning>	<urn:x:glucoseDayB>
+<urn:x:sodiumPaddedA>	<urn:x:sodiumPaddedB>
+<urn:x:sodiumPaddedB>	<urn:x:sodiumPaddedA>
+<urn:x:sodiumToTheSecond>	<urn:x:sodiumPaddedA>
+<urn:x:sodiumToTheSecond>	<urn:x:sodiumPaddedB>
+<urn:x:sodiumPaddedA>	<urn:x:sodiumToTheSecond>
+<urn:x:sodiumPaddedB>	<urn:x:sodiumToTheSecond>

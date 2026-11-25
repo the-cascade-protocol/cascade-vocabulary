@@ -15,4 +15,4 @@
   rdfs:comment "The matcher judgment counts though no assertion is under the current version 2: version 2 runs the same code query it was asserted with." ;
   mf:action [ qt:query <everyday-counts.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <everyday-counts.srj> .
+  mf:result <everyday-counts.tsv> .

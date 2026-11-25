@@ -1,0 +1,2 @@
+?entry	?entryLabel	?needs	?finding	?judgment	?judgmentLabel	?record	?recordLabel	?otherRecord	?otherRecordLabel
+<https://pod.example/clinical/conditions.ttl#e8cda6a64d052138dd3afeccd925bbd16d8ac0be8ce46a3fba054b5432fad7a1>	"Condition entry · Asthma"	"judged different, still joined"		<urn:x:differentAC>	"Different · the patient · 2026-02-01 · Asthma"	<urn:x:a>	"Condition · Asthma · own entry"	<urn:x:c>	"Condition · Asthma · own entry"

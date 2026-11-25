@@ -1,0 +1,10 @@
+?name	?text	?member	?memberText
+"Echocardiogram"			
+"Colonoscopy, screening"	"Two polyps removed."	<urn:x:colonoscopy>	"Normal; repeat in 10 years."
+"Colonoscopy, screening"	"Two polyps removed."	<urn:x:colonoscopyResent>	"Two polyps removed."
+"Thyrotropin"		<urn:x:tsh>	"historical result"
+"Glucose"			
+"lisinopril 10 MG Oral Tablet"	"Ninety days, two refills."	<urn:x:listed>	"Takes it with breakfast."
+"lisinopril 10 MG Oral Tablet"	"Ninety days, two refills."	<urn:x:prescribed>	"Ninety days, two refills."
+"Amlodipine 5 mg tablet"	"Stopped by Dr. Ng: ankle swelling."	<urn:x:amlodipine>	"Stopped by Dr. Ng: ankle swelling."
+"Metformin 500 mg tablet"			

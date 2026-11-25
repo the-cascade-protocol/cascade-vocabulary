@@ -15,4 +15,4 @@
   rdfs:comment "The second restore is listed, one record at states older than the source reported on 20 January: the acknowledgement names the first pull's document but not the third's, so it does not answer a warning that contradicts the third. The first restore's finding is not listed." ;
   mf:action [ qt:query <../../../queries/questions/record/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-needs-review.srj> .
+  mf:result <what-needs-review.tsv> .

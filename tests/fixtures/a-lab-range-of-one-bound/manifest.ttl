@@ -15,4 +15,4 @@
   rdfs:comment "A range with one bound is shown as the bound it has, after >= or <=, so the protein reads >=30 and the LDL <=100; neither has a unit, which is a quantity's, not a range's." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20lab%20results.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-lab-results.srj> .
+  mf:result <my-lab-results.tsv> .

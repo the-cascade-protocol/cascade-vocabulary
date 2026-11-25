@@ -1,0 +1,3 @@
+?record	?recordLabel	?needs	?finding	?revision	?revisionLabel	?otherRevision	?otherRevisionLabel
+<urn:x:directThenRelayed>	"Condition · Migraine · Northgate · received 2026-01-01"	"observed later"		<urn:x:directThenRelayedDirect>	"Revision · Migraine · Northgate · received 2026-01-01"	<urn:x:directThenRelayedRelayed>	"Revision · Migraine · Northgate · received 2025-12-20"
+<urn:x:twoRelays>	"Condition · Rash · Northgate · received 2026-01-01"	"observed later"		<urn:x:twoRelaysApple>	"Revision · Rash · Northgate · received 2026-01-01"	<urn:x:twoRelaysOtherApple>	"Revision · Rash · Northgate · received 2025-12-20"

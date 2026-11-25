@@ -1,0 +1,6 @@
+?record	?other	?origin
+<urn:x:brandTwo>	<urn:x:theirGeneric>	<urn:x:generics-1>
+<urn:x:theirGeneric>	<urn:x:brandTwo>	<urn:x:generics-1>
+<urn:x:theirGeneric>	<urn:x:brandOne>	<urn:x:generics-1>
+<urn:x:generic>	<urn:x:brand>	<urn:x:generics-1>
+<urn:x:brandTwo>	<urn:x:brandOne>	<urn:x:generics-1>

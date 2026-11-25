@@ -1,0 +1,13 @@
+?record	?other
+<urn:x:exchangePlan>	<urn:x:planAugust>
+<urn:x:exchangePlan>	<urn:x:planAugustSentAgain>
+<urn:x:exchangePlan>	<urn:x:planMay>
+<urn:x:localPlanAugust>	<urn:x:localPlanMay>
+<urn:x:localPlanMay>	<urn:x:localPlanAugust>
+<urn:x:planAugust>	<urn:x:exchangePlan>
+<urn:x:planAugust>	<urn:x:planMay>
+<urn:x:planAugustSentAgain>	<urn:x:exchangePlan>
+<urn:x:planAugustSentAgain>	<urn:x:planMay>
+<urn:x:planMay>	<urn:x:exchangePlan>
+<urn:x:planMay>	<urn:x:planAugust>
+<urn:x:planMay>	<urn:x:planAugustSentAgain>

@@ -15,4 +15,4 @@
   rdfs:comment "The act gives one row for the revision it added, not one for each kind it names." ;
   mf:action [ qt:query <../../../queries/questions/pod/What%20each%20import%20brought%20in.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-each-import-brought-in.srj> .
+  mf:result <what-each-import-brought-in.tsv> .

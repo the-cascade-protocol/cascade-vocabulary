@@ -1,0 +1,11 @@
+?record	?other
+<urn:x:clinicCopy>	<urn:x:hospitalCourse>
+<urn:x:clinicCopy>	<urn:x:pulledCopy>
+<urn:x:hospitalCourse>	<urn:x:clinicCopy>
+<urn:x:hospitalCourse>	<urn:x:pulledCopy>
+<urn:x:localCourseAtTheClinic>	<urn:x:localCourseAtTheHospital>
+<urn:x:localCourseAtTheHospital>	<urn:x:localCourseAtTheClinic>
+<urn:x:pulledCopy>	<urn:x:clinicCopy>
+<urn:x:pulledCopy>	<urn:x:hospitalCourse>
+<urn:x:unstructuredFromCcda>	<urn:x:unstructuredWithTextFromFhir>
+<urn:x:unstructuredWithTextFromFhir>	<urn:x:unstructuredFromCcda>

@@ -15,4 +15,4 @@
   rdfs:comment "a1 is one record, both ways; a2, whose custodians are two organizations, is not." ;
   mf:action [ qt:query <same-records.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <same-records.srj> .
+  mf:result <same-records.tsv> .

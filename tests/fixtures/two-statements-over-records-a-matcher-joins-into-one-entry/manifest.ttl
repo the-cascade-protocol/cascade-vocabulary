@@ -15,4 +15,4 @@
   rdfs:comment "Each of the four rows is outcome one in the one entry, which grew by the two records the other statement names, and the other statement is merged with it, listed with the other three records." ;
   mf:action [ qt:query <../../../queries/questions/record/Where%20each%20record%20a%20statement%20names%20is%20now.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <where-each-record-a-statement-names-is-now.srj> .
+  mf:result <where-each-record-a-statement-names-is-now.tsv> .

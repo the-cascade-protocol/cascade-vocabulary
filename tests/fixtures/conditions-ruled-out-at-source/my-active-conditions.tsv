@@ -1,0 +1,3 @@
+?condition	?conditionCode	?onset	?entriesForIt	?records	?entry	?entryLabel	?sources
+"Cough"				"2"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/conditions.ttl#c796148eaafcb915759fa83df02afd6f4ff80c4129e98488f174de3512736c04>	"Condition entry · Cough"	"urn:x:coughFirst\u001Furn:x:coughLater"
+"Hypertension"				"1"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/conditions.ttl#fd7448e0fbca2abfba9d88134c69f55eff5384c749939f4f18823fe601236576>	"Condition entry · Hypertension"	"urn:x:hypertension"

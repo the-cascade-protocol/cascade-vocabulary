@@ -1,0 +1,4 @@
+?judgment	?judgmentLabel	?counts	?happened	?by	?byLabel
+<urn:x:assertedAgain>	"Same · Cascade matcher · asserted · Amoxicillin"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>			
+<urn:x:changedRule>	"Same · Cascade matcher · changedR · Penicillin"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>			
+<urn:x:changedRule>	"Same · Cascade matcher · changedR · Penicillin"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>	"its rule runs another query since"	<urn:x:rules2>	"Rules · 2"

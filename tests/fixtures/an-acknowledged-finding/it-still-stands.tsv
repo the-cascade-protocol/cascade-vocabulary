@@ -1,0 +1,2 @@
+?finding	?judgment	?acknowledged	?judgmentCounts	?joined
+<urn:x:findingAfterTheRename>	<urn:x:sameXAfterTheRename>	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>

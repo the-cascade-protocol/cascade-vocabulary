@@ -16,11 +16,11 @@
   rdfs:comment "A time its source wrote to the hour keeps, in the view, the node saying so and what was written, on the entry and on its member's values, each named after its holder and -padded-resultClinicallyRelevantTime." ;
   mf:action [ qt:query <its-padded-time.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <its-padded-time.srj> .
+  mf:result <its-padded-time.tsv> .
 
 <#my-lab-results> a mf:QueryEvaluationTest ;
   mf:name "my-lab-results" ;
   rdfs:comment "The potassium is shown at the time as the record holds it, padded, with no zone." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20lab%20results.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-lab-results.srj> .
+  mf:result <my-lab-results.tsv> .

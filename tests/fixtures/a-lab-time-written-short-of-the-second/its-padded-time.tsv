@@ -1,0 +1,3 @@
+?holds	?property	?written	?named
+"member's values"	<https://ns.cascadeprotocol.org/cascade#resultClinicallyRelevantTime>	"2025060109"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+"entry"	<https://ns.cascadeprotocol.org/cascade#resultClinicallyRelevantTime>	"2025060109"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>

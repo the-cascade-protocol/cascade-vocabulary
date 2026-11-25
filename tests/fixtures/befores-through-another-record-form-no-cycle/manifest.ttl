@@ -15,4 +15,4 @@
   rdfs:comment "A cycle is looked for among one record's revisions alone, so the Before removes the February revision and the January state is current; the other condition is at its one revision." ;
   mf:action [ qt:query <the-current-revision.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-current-revision.srj> .
+  mf:result <the-current-revision.tsv> .

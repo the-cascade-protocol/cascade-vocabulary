@@ -16,11 +16,11 @@
   rdfs:comment "The asthma's one entry lists the medicine's entry once." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20conditions.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-conditions.srj> .
+  mf:result <my-active-conditions.tsv> .
 
 <#my-active-medications> a mf:QueryEvaluationTest ;
   mf:name "my-active-medications" ;
   rdfs:comment "The medicine's row names the asthma's entry once." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20medications.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-medications.srj> .
+  mf:result <my-active-medications.tsv> .

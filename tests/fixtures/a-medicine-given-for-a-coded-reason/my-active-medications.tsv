@@ -1,0 +1,2 @@
+?medication	?code	?started	?written	?statuses	?dosages	?narrativeTexts	?reasons	?records	?entry	?entryLabel	?sources
+"Albuterol inhaler"				"urn:x:albuterol active"			"urn:x:albuterol for http://snomed.info/id/195967001"	"1"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/medications.ttl#5673086b9bb051a519ebba50477c2e395fca86071046ba904f5fae16597d0869>	"Medication entry · Albuterol inhaler"	"urn:x:albuterol"

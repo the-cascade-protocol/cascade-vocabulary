@@ -1,0 +1,2 @@
+?profile	?profileLabel	?subject	?subjectLabel	?counts	?about	?aboutLabel	?hospital	?records
+<urn:x:claimed>	"Patient profile · Fernhill Family Clinic · first received 2026-01-01"	<urn:x:subject>	"The person this pod is about"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>	<urn:x:parentsAbout>	"About · the patient · 2026-02-01 · a patient profile"	"Fernhill Family Clinic"	"1"^^<http://www.w3.org/2001/XMLSchema#integer>

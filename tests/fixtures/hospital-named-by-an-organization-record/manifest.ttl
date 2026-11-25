@@ -15,4 +15,4 @@
   rdfs:comment "The asthma's document once, its hospital the organization record's current name, though the document names the record in two roles." ;
   mf:action [ qt:query <../../../queries/questions/entry/Where%20it%20came%20from.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <where-it-came-from.srj> .
+  mf:result <where-it-came-from.tsv> .

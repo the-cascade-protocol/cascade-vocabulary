@@ -15,4 +15,4 @@
   rdfs:comment "The machine's server Same derives as a person's does: the two a1 are one record, both ways." ;
   mf:action [ qt:query <same-records.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <same-records.srj> .
+  mf:result <same-records.tsv> .

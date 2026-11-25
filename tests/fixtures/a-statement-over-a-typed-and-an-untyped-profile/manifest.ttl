@@ -15,4 +15,4 @@
   rdfs:comment "Both rows are listed, outcome one in the one patient entry, which grew by the other profile and is merged with the other About: what the pod types a member as decides nothing." ;
   mf:action [ qt:query <../../../queries/questions/record/Where%20each%20record%20a%20statement%20names%20is%20now.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <where-each-record-a-statement-names-is-now.srj> .
+  mf:result <where-each-record-a-statement-names-is-now.tsv> .

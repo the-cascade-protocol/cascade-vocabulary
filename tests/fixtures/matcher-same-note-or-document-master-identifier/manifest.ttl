@@ -25,4 +25,4 @@
                                   <urn:x:otherSystem> ,
                                   <urn:x:rootAloneFromCcda> ,
                                   <urn:x:rootAloneFromFhir> ] ;
-  mf:result <same-note-or-document-master-identifier.srj> .
+  mf:result <same-note-or-document-master-identifier.tsv> .

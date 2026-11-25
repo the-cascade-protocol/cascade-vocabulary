@@ -1,0 +1,3 @@
+?allergenName	?code	?criticality	?status	?category	?onset	?reactionsByRecord	?records	?entry	?entryLabel	?sources
+"Dust"			"not stated"				"1"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/allergies.ttl#d7485c7a2ef615bfed37b398d35dc9a40926076b952f723c4a39e3102a0b191a>	"Allergy entry · Dust"	"urn:x:dust from urn:x:summary, retrieved 2026-01-01T00:00:00Z, written by Northgate"
+"Shellfish"			"not stated"			"urn:x:shellfish Anaphylaxis, severe"	"1"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/allergies.ttl#2f6c98f797df58c48c9443a75f370125ce01561940ad70c9ba126dccd43d4b94>	"Allergy entry · Shellfish"	"urn:x:shellfish from urn:x:summary, retrieved 2026-01-01T00:00:00Z, written by Northgate"

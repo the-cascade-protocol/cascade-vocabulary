@@ -1,0 +1,3 @@
+?medication	?start	?end	?ongoing
+"supply: 0 months"	"2025-01-15"^^<http://www.w3.org/2001/XMLSchema#date>	"2025-01-15"^^<http://www.w3.org/2001/XMLSchema#date>	
+"supply: 0 years"	"2025-02-01"^^<http://www.w3.org/2001/XMLSchema#date>	"2025-02-01"^^<http://www.w3.org/2001/XMLSchema#date>	

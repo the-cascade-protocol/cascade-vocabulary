@@ -1,0 +1,5 @@
+?medication	?start	?end	?ongoing
+"bounds: one dosage's, starting after it was written"	"2025-01-20"^^<http://www.w3.org/2001/XMLSchema#date>	"2025-04-20"^^<http://www.w3.org/2001/XMLSchema#date>	
+"bounds: two dosages', read from neither"	"2025-02-01"^^<http://www.w3.org/2001/XMLSchema#date>		"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+"validity: only a dispensing window"	"2025-03-05"^^<http://www.w3.org/2001/XMLSchema#date>		"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+"bounds: ending after its supply"	"2025-01-01"^^<http://www.w3.org/2001/XMLSchema#date>	"2025-01-30"^^<http://www.w3.org/2001/XMLSchema#date>	

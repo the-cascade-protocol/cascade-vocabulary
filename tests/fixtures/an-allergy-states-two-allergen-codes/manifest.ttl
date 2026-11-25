@@ -15,4 +15,4 @@
   rdfs:comment "An entry with two allergen codes is two rows, one for each, alike but for the code." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20allergies.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-allergies.srj> .
+  mf:result <my-active-allergies.tsv> .

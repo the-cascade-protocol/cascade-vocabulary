@@ -34,4 +34,4 @@
                                   <urn:x:y> ,
                                   <urn:x:z1> ,
                                   <urn:x:z2> ] ;
-  mf:result <same-variation-through-current-tables-key-joined-first.srj> .
+  mf:result <same-variation-through-current-tables-key-joined-first.tsv> .

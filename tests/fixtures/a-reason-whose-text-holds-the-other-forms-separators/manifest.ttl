@@ -15,4 +15,4 @@
   rdfs:comment "Each item puts its IRIs first and its text last, so the condition's name, which holds \" for \" and \", \", and the code, which holds \" in \" and \", \", read as free text after the IRIs." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20medications.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-medications.srj> .
+  mf:result <my-active-medications.tsv> .

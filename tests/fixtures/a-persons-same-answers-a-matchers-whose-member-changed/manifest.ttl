@@ -15,4 +15,4 @@
   rdfs:comment "The matcher's Same a person's Same over all its records answers is not listed; the one whose changed member a person's Same holds without its other member is, and neither of the person's Sames is." ;
   mf:action [ qt:query <../../../queries/questions/judgment/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <a-matchers-member-changed.srj> .
+  mf:result <a-matchers-member-changed.tsv> .

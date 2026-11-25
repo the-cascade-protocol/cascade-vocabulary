@@ -16,11 +16,11 @@
   rdfs:comment "The entry shows high, which ranks over low and unable to assess." ;
   mf:action [ qt:query <the-highest-criticality.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-highest-criticality.srj> .
+  mf:result <the-highest-criticality.tsv> .
 
 <#members-disagree-on-criticality> a mf:QueryEvaluationTest ;
   mf:name "members-disagree-on-criticality" ;
   rdfs:comment "The entry is listed for review because its members disagree." ;
   mf:action [ qt:query <../../../queries/questions/entry/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <members-disagree-on-criticality.srj> .
+  mf:result <members-disagree-on-criticality.tsv> .

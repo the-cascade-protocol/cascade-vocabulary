@@ -15,4 +15,4 @@
   rdfs:comment "A bound is shown with the unit as its source wrote it rather than its UCUM code, so the range reads 30 nanograms per millilitre to 400 nanograms per millilitre." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20lab%20results.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-lab-results.srj> .
+  mf:result <my-lab-results.tsv> .

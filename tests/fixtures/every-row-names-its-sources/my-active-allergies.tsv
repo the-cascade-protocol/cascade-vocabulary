@@ -1,0 +1,2 @@
+?allergenName	?code	?criticality	?status	?category	?onset	?reactionsByRecord	?records	?entry	?entryLabel	?sources
+"Peanut"			"active"				"1"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/allergies.ttl#2dda9f7a08f807fb233a050bd6c5d483ea4e1a25d6280f21590dbdf0e22d3ec2>	"Allergy entry · Peanut"	"urn:x:peanut from urn:x:summary, retrieved 2026-01-01T00:00:00Z, kept by Bay Area Health Exchange, written by Fernhill Clinic"

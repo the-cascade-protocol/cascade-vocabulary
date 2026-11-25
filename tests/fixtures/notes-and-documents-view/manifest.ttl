@@ -15,4 +15,4 @@
   rdfs:comment "Each entry takes the type, type name, title, date, content status, text and clinic of its lead and the status of the member chosen for status." ;
   mf:action [ qt:query <the-notes-and-documents-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-notes-and-documents-view.srj> .
+  mf:result <the-notes-and-documents-view.tsv> .

@@ -15,4 +15,4 @@
   rdfs:comment "Both organizations are listed with outcome in no entry, no entry and no reason: the pod holds them, so neither reads not in the pod." ;
   mf:action [ qt:query <../../../queries/questions/record/Where%20each%20record%20a%20statement%20names%20is%20now.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <where-each-record-a-statement-names-is-now.srj> .
+  mf:result <where-each-record-a-statement-names-is-now.tsv> .

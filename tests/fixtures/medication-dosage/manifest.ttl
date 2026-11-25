@@ -17,18 +17,18 @@
   rdfs:comment "An entry takes the dosage of its lead, else that of the member that states one, none when none does, and keeps each member's own dosage beside the member; an entry no member gives a dosage has none." ;
   mf:action [ qt:query <the-dosage-the-view-shows.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-dosage-the-view-shows.srj> .
+  mf:result <the-dosage-the-view-shows.tsv> .
 
 <#my-active-medications> a mf:QueryEvaluationTest ;
   mf:name "my-active-medications" ;
   rdfs:comment "Each active entry gives the dosages its members state, each with the member that states it; none for the entry no member gives a dosage." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20medications.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-medications.srj> .
+  mf:result <my-active-medications.tsv> .
 
 <#my-medication-history> a mf:QueryEvaluationTest ;
   mf:name "my-medication-history" ;
   rdfs:comment "Every entry gives the dosages its members state, each with the member that states it." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20medication%20history.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-medication-history.srj> .
+  mf:result <my-medication-history.tsv> .

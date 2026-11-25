@@ -29,4 +29,4 @@
                                   <urn:x:unstructuredFromCcda> ,
                                   <urn:x:unstructuredFromFhir> ,
                                   <urn:x:unstructuredWithTextFromFhir> ] ;
-  mf:result <same-note-type-and-text.srj> .
+  mf:result <same-note-type-and-text.tsv> .

@@ -18,25 +18,25 @@
   rdfs:comment "Each entry takes the test, code, value, unit and time of its lead, so the potassium shows no time and its unit text, and the status of the member chosen for status; a bound shows its comparator, a ratio its two parts and a range its two bounds. The MCV shows both flags its source gave, as codes, and its reference range's text and bounds." ;
   mf:action [ qt:query <the-lab-results-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-lab-results-view.srj> .
+  mf:result <the-lab-results-view.tsv> .
 
 <#the-reference-range-bounds> a mf:QueryEvaluationTest ;
   mf:name "the-reference-range-bounds" ;
   rdfs:comment "Each bound of the MCV's reference range is a node of the view holding its lead's number as typed and as written and its units, so an app reads the range from the view alone." ;
   mf:action [ qt:query <the-reference-range-bounds.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-reference-range-bounds.srj> .
+  mf:result <the-reference-range-bounds.tsv> .
 
 <#what-it-shows> a mf:QueryEvaluationTest ;
   mf:name "what-it-shows" ;
   rdfs:comment "The MCV's reference range is shown by its text alone: the view's two bound nodes are nodes of their own, so neither bound is a value of the entry, nor of the member as a row with no From." ;
   mf:action [ qt:query <../../../queries/questions/entry/What%20it%20shows.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-it-shows.srj> .
+  mf:result <what-it-shows.tsv> .
 
 <#my-lab-results> a mf:QueryEvaluationTest ;
   mf:name "my-lab-results" ;
   rdfs:comment "Every entry, newest first by day and then by time as written, so the glucose comes before the A1c of its day, with how many records it joins and each of them, none from a document; the MCV with both its flags, as codes, its reference range's text, and each bound as written with its unit, the high one's unit text before its UCUM unit." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20lab%20results.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-lab-results.srj> .
+  mf:result <my-lab-results.tsv> .

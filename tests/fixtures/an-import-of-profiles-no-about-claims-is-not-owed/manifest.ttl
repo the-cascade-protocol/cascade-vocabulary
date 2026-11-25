@@ -15,4 +15,4 @@
   rdfs:comment "The import's only record is not the subject's, so no run could take it: no row." ;
   mf:action [ qt:query <../../../queries/questions/pod/Which%20arrivals%20has%20the%20matcher%20not%20taken.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <which-arrivals-has-the-matcher-not-taken.srj> .
+  mf:result <which-arrivals-has-the-matcher-not-taken.tsv> .

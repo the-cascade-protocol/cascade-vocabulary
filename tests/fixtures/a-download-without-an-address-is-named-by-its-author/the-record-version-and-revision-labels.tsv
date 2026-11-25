@@ -1,0 +1,10 @@
+?thing	?label
+<urn:x:first>	"Allergy · Peanut · Northgate · received 2026-01-01"
+<urn:x:firstRevision>	"Revision · Peanut · Northgate · received 2026-01-01"
+<urn:x:firstVersion>	"Allergy version · Peanut · active · Northgate · first received 2026-01-01"
+<urn:x:second>	"Allergy · Peanut · Northgate · received 2026-02-01"
+<urn:x:secondRevision>	"Revision · Peanut · Northgate · received 2026-02-01"
+<urn:x:secondVersion>	"Allergy version · Peanut · active · Northgate · first received 2026-02-01"
+<urn:x:unsigned>	"Allergy · Peanut · unknown source"
+<urn:x:unsignedRevision>	"Revision · Peanut · unknown source · received 2026-03-01"
+<urn:x:unsignedVersion>	"Allergy version · Peanut · active · unknown source · first received 2026-03-01"

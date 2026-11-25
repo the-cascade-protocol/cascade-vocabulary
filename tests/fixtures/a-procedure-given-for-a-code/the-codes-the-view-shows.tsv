@@ -1,0 +1,2 @@
+?member	?reasonCode	?reasonCodeInOtherSystem
+<urn:x:colonoscopy>	<http://snomed.info/id/195967001>	"A-4412"^^<urn:oid:2.16.840.1.113883.19.5.99999.8>

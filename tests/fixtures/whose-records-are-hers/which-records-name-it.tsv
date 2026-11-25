@@ -1,0 +1,7 @@
+?profile	?profileLabel	?record	?recordLabel
+<urn:x:claimed>	"Patient profile · Northgate · first received 2026-01-10"	<urn:x:north>	"Allergy · Peanut · Northgate · peanut"
+<urn:x:claimed>	"Patient profile · Northgate · first received 2026-01-10"	<urn:x:south1>	"Allergy · Latex · Southview · latex"
+<urn:x:claimed>	"Patient profile · Northgate · first received 2026-01-10"	<urn:x:south2>	"Allergy · Penicillin · Southview · penicillin"
+<urn:x:unclaimed>	"Patient profile · unknown source · first received 2026-01-10"	<urn:x:unclaimedRecord>	"Allergy · Shellfish · own entry"
+<urn:x:retracted>	"Patient profile · unknown source · first received 2026-01-10"	<urn:x:retractedRecord>	"Allergy · Egg · own entry"
+<urn:x:subject>	"The person this pod is about"	<urn:x:ownRecord>	"Allergy · Sesame · own entry"

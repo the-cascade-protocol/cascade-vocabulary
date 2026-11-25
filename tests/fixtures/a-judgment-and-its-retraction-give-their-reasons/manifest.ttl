@@ -15,4 +15,4 @@
   rdfs:comment "One row for the judgment with its reason and one for the retraction with its own, each beside its author, when, and role." ;
   mf:action [ qt:query <../../../queries/questions/judgment/Who%20judged%20what.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <who-judged-what.srj> .
+  mf:result <who-judged-what.tsv> .

@@ -15,4 +15,4 @@
   rdfs:comment "Records of two kinds are never joined: each is in an entry of its own." ;
   mf:action [ qt:query <an-entry-each.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <an-entry-each.srj> .
+  mf:result <an-entry-each.tsv> .

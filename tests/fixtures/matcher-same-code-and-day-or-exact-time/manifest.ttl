@@ -22,4 +22,4 @@
                                   <urn:x:undatedB> ,
                                   <urn:x:sameYearB> ,
                                   <urn:x:paddedHourB> ] ;
-  mf:result <same-code-and-day-or-exact-time-key-joined-first.srj> .
+  mf:result <same-code-and-day-or-exact-time-key-joined-first.tsv> .

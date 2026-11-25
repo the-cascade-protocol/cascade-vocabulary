@@ -15,4 +15,4 @@
   rdfs:comment "The import and the entry session are the imports, each with the revision it added; the connect is neither, so the server's revision it generated has no row." ;
   mf:action [ qt:query <../../../queries/questions/pod/What%20each%20import%20brought%20in.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-each-import-brought-in.srj> .
+  mf:result <what-each-import-brought-in.tsv> .

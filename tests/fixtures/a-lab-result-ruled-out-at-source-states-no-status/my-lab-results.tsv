@@ -1,0 +1,2 @@
+?performed	?test	?code	?value	?unit	?status	?interpretations	?referenceRangeText	?referenceRangeLow	?referenceRangeHigh	?narrativeTexts	?records	?entry	?entryLabel	?sources
+"2025-05-02T09:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>	"Troponin I"	<http://loinc.org/rdf/10839-9>	"0.01"								"1"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/lab-results.ttl#50c7bf1469e21f198bcdd7a1f1a6e3766f93686361c26cef31f8255f20b0e3dc>	"Lab result entry · Troponin I · 2025-05-02T09:00:00Z"	"urn:x:troponin"

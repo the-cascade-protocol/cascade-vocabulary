@@ -1,0 +1,3 @@
+?profile	?profileLabel	?made	?judgment	?judgmentLabel	?verdict	?counts
+<urn:x:claimed>	"Patient profile · Northgate · first received 2026-01-10"	"2026-02-01T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>	<urn:x:about>	"About · the patient · 2026-02-01 · a patient profile"	<https://ns.cascadeprotocol.org/cascade#About>	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+<urn:x:retracted>	"Patient profile · unknown source · first received 2026-01-10"	"2026-02-01T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>	<urn:x:aboutRetracted>	"About · the patient · 2026-02-01 · a patient profile"	<https://ns.cascadeprotocol.org/cascade#About>	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>

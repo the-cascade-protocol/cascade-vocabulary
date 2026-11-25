@@ -15,4 +15,4 @@
   rdfs:comment "The matcher judgment no longer counts, and has lapsed: version 2 joins two of its members, but no member to each other one." ;
   mf:action [ qt:query <matcher-judgments-that-count.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <matcher-judgments-that-count.srj> .
+  mf:result <matcher-judgments-that-count.tsv> .

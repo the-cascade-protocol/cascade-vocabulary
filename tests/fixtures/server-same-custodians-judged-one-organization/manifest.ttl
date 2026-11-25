@@ -15,4 +15,4 @@
   rdfs:comment "The two custodians are one organization, so the two a3 are one record, both ways." ;
   mf:action [ qt:query <same-records.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <same-records.srj> .
+  mf:result <same-records.tsv> .

@@ -1,0 +1,3 @@
+?medication	?kind	?recordLifecycle	?entryLifecycle	?membersOfItsEntry	?fills	?start	?end	?ongoing
+"metformin 500 MG Oral Tablet"	"Medication"	<https://ns.cascadeprotocol.org/cascade#MedicationActive>	<https://ns.cascadeprotocol.org/cascade#MedicationActive>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>		"2026-01-10"^^<http://www.w3.org/2001/XMLSchema#date>		"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+"metformin 500 MG Oral Tablet, filled"	"Medication dispense"	<https://ns.cascadeprotocol.org/cascade#MedicationDispenseCompleted>	<https://ns.cascadeprotocol.org/cascade#MedicationDispenseCompleted>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>	"metformin 500 MG Oral Tablet"			

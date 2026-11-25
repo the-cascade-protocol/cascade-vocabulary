@@ -16,11 +16,11 @@
   rdfs:comment "Each entry takes the name and code of its lead, the status and abatement of the member chosen for status, and the onset of the member chosen for the date." ;
   mf:action [ qt:query <the-conditions-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-conditions-view.srj> .
+  mf:result <the-conditions-view.tsv> .
 
 <#my-active-conditions> a mf:QueryEvaluationTest ;
   mf:name "my-active-conditions" ;
   rdfs:comment "Only the active entry, one row, with the first of its codes in code point order, its onset and how many records it joins." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20conditions.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-conditions.srj> .
+  mf:result <my-active-conditions.tsv> .

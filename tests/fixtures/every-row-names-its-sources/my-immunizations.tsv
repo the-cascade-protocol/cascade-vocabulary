@@ -1,0 +1,2 @@
+?given	?vaccine	?code	?status	?records	?entry	?entryLabel	?sources
+	"Influenza"		"completed"	"1"^^<http://www.w3.org/2001/XMLSchema#integer>	<https://pod.example/clinical/immunizations.ttl#b672fa1ae6050752a77495397f2d9c7da939e9929cc02ba129e4d76bb5d35bd2>	"Immunization entry · Influenza"	"urn:x:flu from urn:x:visit, retrieved 2026-02-01T00:00:00Z, written by Kestrel Harbor Hospital"

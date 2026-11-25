@@ -15,4 +15,4 @@
   rdfs:comment "The profile is held back, the first parent's About standing against the other's NotAbout: their later NotAbout is for another subject, so it outranks nothing." ;
   mf:action [ qt:query <../../../queries/questions/profile/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-needs-review.srj> .
+  mf:result <what-needs-review.tsv> .

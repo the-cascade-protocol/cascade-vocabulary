@@ -15,4 +15,4 @@
   rdfs:comment "A record a counting Erroneous judgment names is left out because of that judgment; one named only by a superseded one is not." ;
   mf:action [ qt:query <left-out-because-of-the-judgment.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <left-out-because-of-the-judgment.srj> .
+  mf:result <left-out-because-of-the-judgment.tsv> .

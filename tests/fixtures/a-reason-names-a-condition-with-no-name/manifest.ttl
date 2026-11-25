@@ -15,4 +15,4 @@
   rdfs:comment "The condition's item is the record and the condition's entry IRI alone, under the pod's address, and the code's item is the record and a code IRI." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20medications.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-medications.srj> .
+  mf:result <my-active-medications.tsv> .

@@ -16,11 +16,11 @@
   rdfs:comment "Each profile's record is left out because its profile is judged both about and not about the subject: the later About lifts nothing." ;
   mf:action [ qt:query <../../../queries/questions/record/Why%20it%20is%20in%20no%20view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <why-it-is-in-no-view.srj> .
+  mf:result <why-it-is-in-no-view.tsv> .
 
 <#what-needs-review> a mf:QueryEvaluationTest ;
   mf:name "what-needs-review" ;
   rdfs:comment "Each profile is listed once for each hospital whose records name it, with how many, the people whose About stands against a NotAbout and the people whose NotAbout counts." ;
   mf:action [ qt:query <../../../queries/questions/profile/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-needs-review.srj> .
+  mf:result <what-needs-review.tsv> .

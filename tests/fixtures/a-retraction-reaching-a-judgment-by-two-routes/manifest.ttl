@@ -15,4 +15,4 @@
   rdfs:comment "Each judgment has its one row and one row saying the retraction retracted it, however many routes the retraction reaches it by." ;
   mf:action [ qt:query <../../../queries/questions/judgment/Whether%20it%20counts.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <whether-it-counts.srj> .
+  mf:result <whether-it-counts.tsv> .

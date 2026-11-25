@@ -15,4 +15,4 @@
   rdfs:comment "A document no revision names is labelled from its author, address and day as one a revision names is." ;
   mf:action [ qt:query <the-document-labels.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-document-labels.srj> .
+  mf:result <the-document-labels.tsv> .

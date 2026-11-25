@@ -1,0 +1,4 @@
+?verdict	?justification	?madeBy	?judgments
+<https://ns.cascadeprotocol.org/cascade#Same>		<http://www.w3.org/ns/prov#Person>	"2"^^<http://www.w3.org/2001/XMLSchema#integer>
+<https://ns.cascadeprotocol.org/cascade#Same>	<https://ns.cascadeprotocol.org/cascade#SameCode>	<http://www.w3.org/ns/prov#SoftwareAgent>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+<https://ns.cascadeprotocol.org/cascade#Same>	<https://ns.cascadeprotocol.org/cascade#SameMappedCode>	<http://www.w3.org/ns/prov#SoftwareAgent>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>

@@ -15,4 +15,4 @@
   rdfs:comment "The retraction is named for the person's label, not for their role, and, with no start time, by the start of its own name." ;
   mf:action [ qt:query <the-retraction-labelled.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-retraction-labelled.srj> .
+  mf:result <the-retraction-labelled.tsv> .

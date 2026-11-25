@@ -34,4 +34,4 @@
                                   <urn:x:templateJune> ,
                                   <urn:x:templateMarch> ,
                                   <urn:x:templateSeptember> ] ;
-  mf:result <same-note-type-and-text-grown-within-one-organization.srj> .
+  mf:result <same-note-type-and-text-grown-within-one-organization.tsv> .

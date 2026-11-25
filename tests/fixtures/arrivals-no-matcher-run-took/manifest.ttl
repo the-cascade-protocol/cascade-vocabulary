@@ -15,4 +15,4 @@
   rdfs:comment "Each of the three arrivals, in the order they started, whatever its kind; the recheck took none of them, and is no arrival." ;
   mf:action [ qt:query <../../../queries/questions/pod/Which%20arrivals%20has%20the%20matcher%20not%20taken.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <which-arrivals-has-the-matcher-not-taken.srj> .
+  mf:result <which-arrivals-has-the-matcher-not-taken.tsv> .

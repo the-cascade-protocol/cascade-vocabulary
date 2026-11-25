@@ -15,4 +15,4 @@
   rdfs:comment "Both Sames are listed: the person's names a document the changed member's current revision did not come from, so it is not an answer to the matcher's, and the matcher's changed member is the one that needs it." ;
   mf:action [ qt:query <../../../queries/questions/judgment/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <a-matchers-member-changed.srj> .
+  mf:result <a-matchers-member-changed.tsv> .

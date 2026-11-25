@@ -16,11 +16,11 @@
   rdfs:comment "Each time its source wrote to the hour keeps, in the view, the node saying so and what was written, on the entry and on its member's values, each named after its holder, -padded- and the property." ;
   mf:action [ qt:query <its-padded-times.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <its-padded-times.srj> .
+  mf:result <its-padded-times.tsv> .
 
 <#my-medication-history> a mf:QueryEvaluationTest ;
   mf:name "my-medication-history" ;
   rdfs:comment "The medicine is shown with its start, the day its prescription was written and its end as the record holds them, with no zone." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20medication%20history.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-medication-history.srj> .
+  mf:result <my-medication-history.tsv> .

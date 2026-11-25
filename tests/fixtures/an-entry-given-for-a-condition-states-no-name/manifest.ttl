@@ -16,11 +16,11 @@
   rdfs:comment "The asthma lists the procedure's entry IRI alone first, then the medicine's entry IRI and its name." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20conditions.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-conditions.srj> .
+  mf:result <my-active-conditions.tsv> .
 
 <#my-condition-history> a mf:QueryEvaluationTest ;
   mf:name "my-condition-history" ;
   rdfs:comment "The asthma lists the procedure's entry IRI alone first, then the medicine's entry IRI and its name." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20condition%20history.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-condition-history.srj> .
+  mf:result <my-condition-history.tsv> .

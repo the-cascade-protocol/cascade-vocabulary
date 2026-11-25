@@ -1,0 +1,3 @@
+?holds	?property	?written	?named
+"entry"	<https://ns.cascadeprotocol.org/cascade#vaccinationOccurrenceTime>	"2025110314"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>
+"member's values"	<https://ns.cascadeprotocol.org/cascade#vaccinationOccurrenceTime>	"2025110314"	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>

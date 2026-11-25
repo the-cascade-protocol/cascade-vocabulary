@@ -15,4 +15,4 @@
   rdfs:comment "The retraction is by someone other than the judgment's maker, but the maker is not a person, so nothing is listed." ;
   mf:action [ qt:query <../../../queries/questions/judgment/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <a-person-taking-back-a-models-judgment-is-not-listed.srj> .
+  mf:result <a-person-taking-back-a-models-judgment-is-not-listed.tsv> .

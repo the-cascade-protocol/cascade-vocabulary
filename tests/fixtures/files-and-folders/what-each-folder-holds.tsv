@@ -1,0 +1,12 @@
+?folder	?type	?things
+"/clinical/"	<https://ns.cascadeprotocol.org/cascade#PatientProfile>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+"/clinical/"	<https://ns.cascadeprotocol.org/cascade#AllergyOrIntolerance>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+"/judgments/"	<https://ns.cascadeprotocol.org/cascade#Judgment>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+"/profile/"	<http://www.w3.org/ns/prov#Person>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+"/records/allergies/"	<https://ns.cascadeprotocol.org/cascade#AllergyOrIntolerance>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+"/records/allergies/"	<https://ns.cascadeprotocol.org/cascade#Revision>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+"/records/allergies/"	"no type stated"	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+"/settings/"	<http://www.w3.org/ns/solid/terms#TypeIndex>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+"/settings/"	<http://www.w3.org/ns/solid/terms#TypeRegistration>	"6"^^<http://www.w3.org/2001/XMLSchema#integer>
+"/settings/"	<http://www.w3.org/ns/solid/terms#UnlistedDocument>	"1"^^<http://www.w3.org/2001/XMLSchema#integer>
+"/clinical/"	<https://ns.cascadeprotocol.org/cascade#View>	"3"^^<http://www.w3.org/2001/XMLSchema#integer>

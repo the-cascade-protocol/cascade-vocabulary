@@ -15,4 +15,4 @@
   rdfs:comment "A start given to the year or month is read as its last day and an end as its first, a time as its day; with no start of use the exposure starts on the day the prescription was written; an end before the start so read, or no start, gives no exposure at all." ;
   mf:action [ qt:query <each-copys-exposure.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <each-copys-exposure.srj> .
+  mf:result <each-copys-exposure.tsv> .

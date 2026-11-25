@@ -1,0 +1,22 @@
+?version	?property	?value
+<urn:x:immunizationVersion>	<https://ns.cascadeprotocol.org/cascade#displayName>	"Influenza"
+<urn:x:variantVersion>	<https://ns.cascadeprotocol.org/cascade#displayName>	"NM_000249.4:c.2042C>T"
+<urn:x:labResultVersion>	<https://ns.cascadeprotocol.org/cascade#displayName>	"Potassium"
+<urn:x:medicationVersion>	<https://ns.cascadeprotocol.org/cascade#displayName>	"lisinopril 10 MG Oral Tablet"
+<urn:x:allergyVersion>	<https://ns.cascadeprotocol.org/cascade#displayName>	"Peanut"
+<urn:x:conditionVersion>	<https://ns.cascadeprotocol.org/cascade#displayName>	"Asthma"
+<urn:x:procedureVersion>	<https://ns.cascadeprotocol.org/cascade#displayName>	"Colonoscopy"
+<urn:x:medicationVersion>	<https://ns.cascadeprotocol.org/cascade#displayDate>	"2023-06-15"^^<http://www.w3.org/2001/XMLSchema#date>
+<urn:x:immunizationVersion>	<https://ns.cascadeprotocol.org/cascade#displayDate>	"2025-10-01"^^<http://www.w3.org/2001/XMLSchema#date>
+<urn:x:interpretationVersion>	<https://ns.cascadeprotocol.org/cascade#displayDate>	"2024-03-12"^^<http://www.w3.org/2001/XMLSchema#date>
+<urn:x:labResultVersion>	<https://ns.cascadeprotocol.org/cascade#displayDate>	"2025-03-27T12:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>
+<urn:x:procedureVersion>	<https://ns.cascadeprotocol.org/cascade#displayDate>	"2024-03-01"^^<http://www.w3.org/2001/XMLSchema#date>
+<urn:x:conditionVersion>	<https://ns.cascadeprotocol.org/cascade#displayDate>	"2020-05-01"^^<http://www.w3.org/2001/XMLSchema#date>
+<urn:x:prescriptionVersion>	<https://ns.cascadeprotocol.org/cascade#displayName>	"amoxicillin 500 MG Oral Capsule"
+<urn:x:prescriptionVersion>	<https://ns.cascadeprotocol.org/cascade#displayDate>	"2024-02-10"^^<http://www.w3.org/2001/XMLSchema#date>
+<urn:x:reportVersion>	<https://ns.cascadeprotocol.org/cascade#displayName>	"Cobalamin"
+<urn:x:reportVersion>	<https://ns.cascadeprotocol.org/cascade#displayDate>	"2025-04-02"^^<http://www.w3.org/2001/XMLSchema#date>
+<urn:x:noteVersion>	<https://ns.cascadeprotocol.org/cascade#displayName>	"Progress note"
+<urn:x:noteVersion>	<https://ns.cascadeprotocol.org/cascade#displayDate>	"2025-05-06"^^<http://www.w3.org/2001/XMLSchema#date>
+<urn:x:dispenseVersion>	<https://ns.cascadeprotocol.org/cascade#displayName>	"amoxicillin 500 MG Oral Capsule"
+<urn:x:dispenseVersion>	<https://ns.cascadeprotocol.org/cascade#displayDate>	"2024-02-11"^^<http://www.w3.org/2001/XMLSchema#date>

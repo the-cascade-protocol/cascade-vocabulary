@@ -16,11 +16,11 @@
   rdfs:comment "Each entry takes the name and code of its lead, the status of the member chosen for status, and the date of the member chosen for the date." ;
   mf:action [ qt:query <the-procedures-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-procedures-view.srj> .
+  mf:result <the-procedures-view.tsv> .
 
 <#my-procedures> a mf:QueryEvaluationTest ;
   mf:name "my-procedures" ;
   rdfs:comment "Every entry, newest first, with its code as SNOMED CT's IRI and how many records it joins." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20procedures.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-procedures.srj> .
+  mf:result <my-procedures.tsv> .

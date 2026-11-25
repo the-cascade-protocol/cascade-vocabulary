@@ -1,0 +1,5 @@
+?judgment	?judgmentLabel	?counts	?happened	?by	?byLabel
+<urn:x:judgmentAndAssertion>	"Erroneous · the patient · 2026-02-01 · Peanut"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>			
+<urn:x:judgmentAndAssertion>	"Erroneous · the patient · 2026-02-01 · Peanut"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>	"retracted"	<urn:x:anaRetractsBoth>	"Retraction · the patient · 2026-03-01 · of Erroneous · Peanut"
+<urn:x:twoAssertions>	"Same · Cascade matcher · twoAsser · Latex"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>			
+<urn:x:twoAssertions>	"Same · Cascade matcher · twoAsser · Latex"	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>	"retracted"	<urn:x:anaRetractsBothAssertions>	"Retraction · the patient · 2026-03-01 · of Same · Latex"

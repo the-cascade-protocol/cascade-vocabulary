@@ -1,0 +1,2 @@
+?record	?recordLabel	?needs	?finding	?revision	?revisionLabel	?otherRevision	?otherRevisionLabel
+<urn:x:psoriasis>	"Condition · Psoriasis · Northgate · received 2026-01-20"	"this source reports 1 record at states older than it reported on 2026-01-20"	<urn:x:wentBackAgain>	<urn:x:psoriasisThird>	"Revision · Psoriasis · Northgate · received 2026-01-20"	<urn:x:psoriasisSecond>	"Revision · Psoriasis · Northgate · received 2026-01-10"

@@ -1,0 +1,11 @@
+?record	?other	?origin
+<urn:x:oldRow1>	<urn:x:oldRow2>	<urn:x:lynch-1>
+<urn:x:oldRow2>	<urn:x:oldRow1>	<urn:x:lynch-1>
+<urn:x:v2>	<urn:x:v1>	<urn:x:lynch-1>
+<urn:x:v2>	<urn:x:v3>	<urn:x:lynch-1>
+<urn:x:v3>	<urn:x:v1>	<urn:x:lynch-1>
+<urn:x:v3>	<urn:x:v1>	<urn:x:other-1>
+<urn:x:v3>	<urn:x:v2>	<urn:x:lynch-1>
+<urn:x:w2>	<urn:x:w1>	<urn:x:lynch-1>
+<urn:x:w2>	<urn:x:w1>	<urn:x:other-1>
+<urn:x:y>	<urn:x:x2>	<urn:x:lynch-1>

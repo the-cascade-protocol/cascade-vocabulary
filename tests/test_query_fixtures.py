@@ -757,9 +757,9 @@ class TestChecksOfTheFixtureTools:
             assert expected(answer) == ({"a"}, Counter({row({}): 1, row({"a": URIRef("urn:x:a")}): 1}))
 
         def test_takes_no_term_it_cannot_match_exactly(self, tmp_path):
-            """takes no blank node, no abbreviated number and no long-quoted string, which no comparison can match exactly"""
+            """takes no blank node, no abbreviated number, no long-quoted string and no escape Turtle lacks, which no comparison can match exactly"""
             answer = tmp_path / "answer.tsv"
-            for field in ("_:b0", "1", '"""x"""'):
+            for field in ("_:b0", "1", '"""x"""', '"a\\qb"'):
                 answer.write_text(f"?a\n{field}\n", encoding="utf-8")
                 with pytest.raises(ValueError, match=f"holds {re.escape(field)}"):
                     expected(answer)
@@ -769,9 +769,9 @@ class TestChecksOfTheFixtureTools:
 
         def test_returns_a_sentence_naming_the_variables(self, tmp_path):
             """returns a sentence naming the variables for a query whose columns are not its result's"""
-            query, result = tmp_path / "q.rq", tmp_path / "r.srj"
+            query, result = tmp_path / "q.rq", tmp_path / "r.tsv"
             query.write_text("SELECT ?a WHERE { ?a ?b ?c }", encoding="utf-8")
-            result.write_text('{"head": {"vars": ["z"]}, "results": {"bindings": []}}', encoding="utf-8")
+            result.write_text("?z\n", encoding="utf-8")
             entry = Entry(iri="urn:x:e", name="e", types=frozenset(), lens=None, query=query, result=result)
             assert "variables" in (failure(entry, ENGINES["oxigraph"]()) or "")
 

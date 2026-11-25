@@ -1,0 +1,3 @@
+?record	?recordLabel	?needs	?finding	?revision	?revisionLabel	?otherRevision	?otherRevisionLabel
+<urn:x:asthma>	"Condition · Asthma · Northgate · received 2026-01-10"	"this source reports 2 records at states older than it reported on 2026-01-10"	<urn:x:wentBack>	<urn:x:asthmaSecond>	"Revision · Asthma · Northgate · received 2026-01-10"	<urn:x:asthmaRestored>	"Revision · Asthma · Northgate · received 2026-02-01"
+<urn:x:gout>	"Condition · Gout · Northgate · received 2026-01-10"	"this source reports 2 records at states older than it reported on 2026-01-10"	<urn:x:wentBack>	<urn:x:goutSecond>	"Revision · Gout · Northgate · received 2026-01-10"	<urn:x:goutFirst>	"Revision · Gout · Northgate · received 2026-01-01"

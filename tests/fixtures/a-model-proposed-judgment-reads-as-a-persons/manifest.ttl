@@ -16,11 +16,11 @@
   rdfs:comment "The judgment's role is the person's alone, once per member: the model's association is not the author's, so it adds no row." ;
   mf:action [ qt:query <../../../queries/questions/judgment/Who%20judged%20what.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <who-judged-what.srj> .
+  mf:result <who-judged-what.tsv> .
 
 <#what-everything-is-called> a mf:QueryEvaluationTest ;
   mf:name "what-everything-is-called" ;
   rdfs:comment "The judgment is named for the patient who said yes to it, as a judgment the patient made is." ;
   mf:action [ qt:query <../../../queries/questions/pod/What%20everything%20is%20called.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-everything-is-called.srj> .
+  mf:result <what-everything-is-called.tsv> .

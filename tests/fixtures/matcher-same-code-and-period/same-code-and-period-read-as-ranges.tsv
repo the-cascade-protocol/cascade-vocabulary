@@ -1,0 +1,15 @@
+?record	?other
+<urn:x:overlapB>	<urn:x:overlapA>
+<urn:x:touchingB>	<urn:x:touchingA>
+<urn:x:openB>	<urn:x:openA>
+<urn:x:onsetDayC>	<urn:x:onsetDayA>
+<urn:x:zoneB>	<urn:x:zoneA>
+<urn:x:snomedB>	<urn:x:snomedA>
+<urn:x:backwardsB>	<urn:x:backwardsA>
+<urn:x:dualB>	<urn:x:dualA>
+<urn:x:yearA>	<urn:x:yearB>
+<urn:x:yearB>	<urn:x:yearA>
+<urn:x:monthA>	<urn:x:monthB>
+<urn:x:monthB>	<urn:x:monthA>
+<urn:x:yearEndA>	<urn:x:yearEndB>
+<urn:x:yearEndB>	<urn:x:yearEndA>

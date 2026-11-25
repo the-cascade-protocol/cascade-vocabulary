@@ -15,4 +15,4 @@
   rdfs:comment "The activity goes where the entry filing by prov:specializationOf puts it, not where the entry for an activity that states prov:used does, so no file is out of place." ;
   mf:action [ qt:query <../../../queries/questions/pod/Which%20files%20are%20out%20of%20place.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <which-files-are-out-of-place.srj> .
+  mf:result <which-files-are-out-of-place.tsv> .

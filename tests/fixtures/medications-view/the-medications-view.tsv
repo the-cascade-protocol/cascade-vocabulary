@@ -1,0 +1,90 @@
+?entry	?field	?value
+<https://pod.example/clinical/medications.ttl#5d6a5df3405d59ed3c1023386339b3e022547a5f5440c6ba7ca3aaba39a4801f>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:uncoded>
+<https://pod.example/clinical/medications.ttl#5d6a5df3405d59ed3c1023386339b3e022547a5f5440c6ba7ca3aaba39a4801f>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#PrescribedOrReportedMedication>
+<https://pod.example/clinical/medications.ttl#5d6a5df3405d59ed3c1023386339b3e022547a5f5440c6ba7ca3aaba39a4801f>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:uncoded>
+<https://pod.example/clinical/medications.ttl#5d6a5df3405d59ed3c1023386339b3e022547a5f5440c6ba7ca3aaba39a4801f>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:uncoded>
+<https://pod.example/clinical/medications.ttl#5d6a5df3405d59ed3c1023386339b3e022547a5f5440c6ba7ca3aaba39a4801f>	<https://ns.cascadeprotocol.org/cascade#prescribedOrReported>	"reportedUse"
+<https://pod.example/clinical/medications.ttl#5d6a5df3405d59ed3c1023386339b3e022547a5f5440c6ba7ca3aaba39a4801f>	<https://ns.cascadeprotocol.org/cascade#drugName>	"Fish oil"
+<https://pod.example/clinical/medications.ttl#5d6a5df3405d59ed3c1023386339b3e022547a5f5440c6ba7ca3aaba39a4801f>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"active"
+<https://pod.example/clinical/medications.ttl#225d769114ffb3cd572054c7b1cd29d6455c5ad95c9f6f0b4dc67d5008728b99>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:chosen>
+<https://pod.example/clinical/medications.ttl#225d769114ffb3cd572054c7b1cd29d6455c5ad95c9f6f0b4dc67d5008728b99>	<https://ns.cascadeprotocol.org/cascade#rxNormCode>	<https://ns.cascadeprotocol.org/codes/rxnorm/197361>
+<https://pod.example/clinical/medications.ttl#225d769114ffb3cd572054c7b1cd29d6455c5ad95c9f6f0b4dc67d5008728b99>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"active"
+<https://pod.example/clinical/medications.ttl#225d769114ffb3cd572054c7b1cd29d6455c5ad95c9f6f0b4dc67d5008728b99>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#PrescribedOrReportedMedication>
+<https://pod.example/clinical/medications.ttl#225d769114ffb3cd572054c7b1cd29d6455c5ad95c9f6f0b4dc67d5008728b99>	<https://ns.cascadeprotocol.org/cascade#userSelectedCode>	<https://ns.cascadeprotocol.org/codes/rxnorm/197361>
+<https://pod.example/clinical/medications.ttl#225d769114ffb3cd572054c7b1cd29d6455c5ad95c9f6f0b4dc67d5008728b99>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:chosen>
+<https://pod.example/clinical/medications.ttl#225d769114ffb3cd572054c7b1cd29d6455c5ad95c9f6f0b4dc67d5008728b99>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:chosen>
+<https://pod.example/clinical/medications.ttl#225d769114ffb3cd572054c7b1cd29d6455c5ad95c9f6f0b4dc67d5008728b99>	<https://ns.cascadeprotocol.org/cascade#drugName>	"amlodipine 5 MG Oral Tablet"
+<https://pod.example/clinical/medications.ttl#225d769114ffb3cd572054c7b1cd29d6455c5ad95c9f6f0b4dc67d5008728b99>	<https://ns.cascadeprotocol.org/cascade#rxNormCode>	<https://ns.cascadeprotocol.org/codes/rxnorm/17767>
+<https://pod.example/clinical/medications.ttl#225d769114ffb3cd572054c7b1cd29d6455c5ad95c9f6f0b4dc67d5008728b99>	<https://ns.cascadeprotocol.org/cascade#ndcCode>	<https://ns.cascadeprotocol.org/codes/ndc11/00378520905>
+<https://pod.example/clinical/medications.ttl#225d769114ffb3cd572054c7b1cd29d6455c5ad95c9f6f0b4dc67d5008728b99>	<https://ns.cascadeprotocol.org/cascade#medicationUseStartDate>	"2024-02-01"^^<http://www.w3.org/2001/XMLSchema#date>
+<https://pod.example/clinical/medications.ttl#225d769114ffb3cd572054c7b1cd29d6455c5ad95c9f6f0b4dc67d5008728b99>	<https://ns.cascadeprotocol.org/cascade#prescribedOrReported>	"prescribed"
+<https://pod.example/clinical/medications.ttl#ea4fdcfc983d60df89f7cdcfdb31adc38733d008f3932699b318f371f1f98774>	<https://ns.cascadeprotocol.org/cascade#rxNormCode>	<https://ns.cascadeprotocol.org/codes/rxnorm/29046>
+<https://pod.example/clinical/medications.ttl#ea4fdcfc983d60df89f7cdcfdb31adc38733d008f3932699b318f371f1f98774>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:unchosen>
+<https://pod.example/clinical/medications.ttl#ea4fdcfc983d60df89f7cdcfdb31adc38733d008f3932699b318f371f1f98774>	<https://ns.cascadeprotocol.org/cascade#prescribedOrReported>	"reportedUse"
+<https://pod.example/clinical/medications.ttl#ea4fdcfc983d60df89f7cdcfdb31adc38733d008f3932699b318f371f1f98774>	<https://ns.cascadeprotocol.org/cascade#drugName>	"Lisinopril, two codes"
+<https://pod.example/clinical/medications.ttl#ea4fdcfc983d60df89f7cdcfdb31adc38733d008f3932699b318f371f1f98774>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:unchosen>
+<https://pod.example/clinical/medications.ttl#ea4fdcfc983d60df89f7cdcfdb31adc38733d008f3932699b318f371f1f98774>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:unchosen>
+<https://pod.example/clinical/medications.ttl#ea4fdcfc983d60df89f7cdcfdb31adc38733d008f3932699b318f371f1f98774>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"active"
+<https://pod.example/clinical/medications.ttl#ea4fdcfc983d60df89f7cdcfdb31adc38733d008f3932699b318f371f1f98774>	<https://ns.cascadeprotocol.org/cascade#rxNormCode>	<https://ns.cascadeprotocol.org/codes/rxnorm/314076>
+<https://pod.example/clinical/medications.ttl#ea4fdcfc983d60df89f7cdcfdb31adc38733d008f3932699b318f371f1f98774>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#PrescribedOrReportedMedication>
+<https://pod.example/clinical/medications.ttl#ba3f3b3fd0a55b6316de9976fc45bd9472c1301690703de81363c0b305fb5eb8>	<https://ns.cascadeprotocol.org/cascade#prescribedOrReported>	"reportedUse"
+<https://pod.example/clinical/medications.ttl#ba3f3b3fd0a55b6316de9976fc45bd9472c1301690703de81363c0b305fb5eb8>	<https://ns.cascadeprotocol.org/cascade#prescribedOrReported>	"prescribed"
+<https://pod.example/clinical/medications.ttl#ba3f3b3fd0a55b6316de9976fc45bd9472c1301690703de81363c0b305fb5eb8>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:listed>
+<https://pod.example/clinical/medications.ttl#ba3f3b3fd0a55b6316de9976fc45bd9472c1301690703de81363c0b305fb5eb8>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:prescribed>
+<https://pod.example/clinical/medications.ttl#ba3f3b3fd0a55b6316de9976fc45bd9472c1301690703de81363c0b305fb5eb8>	<https://ns.cascadeprotocol.org/cascade#medicationUseStartDate>	"2023-06-15"^^<http://www.w3.org/2001/XMLSchema#date>
+<https://pod.example/clinical/medications.ttl#ba3f3b3fd0a55b6316de9976fc45bd9472c1301690703de81363c0b305fb5eb8>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"active"
+<https://pod.example/clinical/medications.ttl#ba3f3b3fd0a55b6316de9976fc45bd9472c1301690703de81363c0b305fb5eb8>	<https://ns.cascadeprotocol.org/cascade#drugName>	"Lisinopril 10 mg tablet"
+<https://pod.example/clinical/medications.ttl#ba3f3b3fd0a55b6316de9976fc45bd9472c1301690703de81363c0b305fb5eb8>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#PrescribedOrReportedMedication>
+<https://pod.example/clinical/medications.ttl#ba3f3b3fd0a55b6316de9976fc45bd9472c1301690703de81363c0b305fb5eb8>	<https://ns.cascadeprotocol.org/cascade#rxNormCode>	<https://ns.cascadeprotocol.org/codes/rxnorm/314076>
+<https://pod.example/clinical/medications.ttl#ba3f3b3fd0a55b6316de9976fc45bd9472c1301690703de81363c0b305fb5eb8>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:prescribed>
+<https://pod.example/clinical/medications.ttl#ba3f3b3fd0a55b6316de9976fc45bd9472c1301690703de81363c0b305fb5eb8>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:listed>
+<https://pod.example/clinical/medications.ttl#f4cc2e7f35ed7595f7076ec3d1af58ef913d2474509e9ed1e76cba57be3187ee>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"active"
+<https://pod.example/clinical/medications.ttl#f4cc2e7f35ed7595f7076ec3d1af58ef913d2474509e9ed1e76cba57be3187ee>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:fill>
+<https://pod.example/clinical/medications.ttl#f4cc2e7f35ed7595f7076ec3d1af58ef913d2474509e9ed1e76cba57be3187ee>	<https://ns.cascadeprotocol.org/cascade#userSelectedCode>	<https://ns.cascadeprotocol.org/codes/ndc11/00378520905>
+<https://pod.example/clinical/medications.ttl#f4cc2e7f35ed7595f7076ec3d1af58ef913d2474509e9ed1e76cba57be3187ee>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:fill>
+<https://pod.example/clinical/medications.ttl#f4cc2e7f35ed7595f7076ec3d1af58ef913d2474509e9ed1e76cba57be3187ee>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#PrescribedOrReportedMedication>
+<https://pod.example/clinical/medications.ttl#f4cc2e7f35ed7595f7076ec3d1af58ef913d2474509e9ed1e76cba57be3187ee>	<https://ns.cascadeprotocol.org/cascade#medicationUseStartDate>	"2024-03-01"^^<http://www.w3.org/2001/XMLSchema#date>
+<https://pod.example/clinical/medications.ttl#f4cc2e7f35ed7595f7076ec3d1af58ef913d2474509e9ed1e76cba57be3187ee>	<https://ns.cascadeprotocol.org/cascade#drugName>	"Amlodipine 5 mg tablet, pharmacy"
+<https://pod.example/clinical/medications.ttl#f4cc2e7f35ed7595f7076ec3d1af58ef913d2474509e9ed1e76cba57be3187ee>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:fill>
+<https://pod.example/clinical/medications.ttl#f4cc2e7f35ed7595f7076ec3d1af58ef913d2474509e9ed1e76cba57be3187ee>	<https://ns.cascadeprotocol.org/cascade#ndcCode>	<https://ns.cascadeprotocol.org/codes/ndc11/00378520905>
+<https://pod.example/clinical/medications.ttl#f4cc2e7f35ed7595f7076ec3d1af58ef913d2474509e9ed1e76cba57be3187ee>	<https://ns.cascadeprotocol.org/cascade#prescribedOrReported>	"prescribed"
+<https://pod.example/clinical/medications.ttl#f4cc2e7f35ed7595f7076ec3d1af58ef913d2474509e9ed1e76cba57be3187ee>	<https://ns.cascadeprotocol.org/cascade#rxNormCode>	<https://ns.cascadeprotocol.org/codes/rxnorm/197361>
+<https://pod.example/clinical/medications.ttl#9b2c711bace315cf70a44eb672831aa1aab5ac58779806f941784a9518083b6e>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#PrescribedOrReportedMedication>
+<https://pod.example/clinical/medications.ttl#9b2c711bace315cf70a44eb672831aa1aab5ac58779806f941784a9518083b6e>	<https://ns.cascadeprotocol.org/cascade#prescribedOrReported>	"prescribed"
+<https://pod.example/clinical/medications.ttl#9b2c711bace315cf70a44eb672831aa1aab5ac58779806f941784a9518083b6e>	<https://ns.cascadeprotocol.org/cascade#drugName>	"amoxicillin 500 MG Oral Capsule"
+<https://pod.example/clinical/medications.ttl#9b2c711bace315cf70a44eb672831aa1aab5ac58779806f941784a9518083b6e>	<https://ns.cascadeprotocol.org/cascade#rxNormCode>	<https://ns.cascadeprotocol.org/codes/rxnorm/308191>
+<https://pod.example/clinical/medications.ttl#9b2c711bace315cf70a44eb672831aa1aab5ac58779806f941784a9518083b6e>	<https://ns.cascadeprotocol.org/cascade#medicationUseStartDate>	"2022-09-01"^^<http://www.w3.org/2001/XMLSchema#date>
+<https://pod.example/clinical/medications.ttl#9b2c711bace315cf70a44eb672831aa1aab5ac58779806f941784a9518083b6e>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"completed"
+<https://pod.example/clinical/medications.ttl#9b2c711bace315cf70a44eb672831aa1aab5ac58779806f941784a9518083b6e>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:completed>
+<https://pod.example/clinical/medications.ttl#9b2c711bace315cf70a44eb672831aa1aab5ac58779806f941784a9518083b6e>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:completed>
+<https://pod.example/clinical/medications.ttl#9b2c711bace315cf70a44eb672831aa1aab5ac58779806f941784a9518083b6e>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:completed>
+<https://pod.example/clinical/medications.ttl#bc339db651b7faa3f257bb0a3549aa940e631510aa0e405794e500676da731eb>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#PrescribedOrReportedMedication>
+<https://pod.example/clinical/medications.ttl#bc339db651b7faa3f257bb0a3549aa940e631510aa0e405794e500676da731eb>	<https://ns.cascadeprotocol.org/cascade#prescribedOrReported>	"prescribed"
+<https://pod.example/clinical/medications.ttl#bc339db651b7faa3f257bb0a3549aa940e631510aa0e405794e500676da731eb>	<https://ns.cascadeprotocol.org/cascade#drugName>	"Atorvastatin 20 mg tablet"
+<https://pod.example/clinical/medications.ttl#bc339db651b7faa3f257bb0a3549aa940e631510aa0e405794e500676da731eb>	<https://ns.cascadeprotocol.org/cascade#rxNormCode>	<https://ns.cascadeprotocol.org/codes/rxnorm/617310>
+<https://pod.example/clinical/medications.ttl#bc339db651b7faa3f257bb0a3549aa940e631510aa0e405794e500676da731eb>	<https://ns.cascadeprotocol.org/cascade#medicationUseStartDate>	"2022-08-01"^^<http://www.w3.org/2001/XMLSchema#date>
+<https://pod.example/clinical/medications.ttl#bc339db651b7faa3f257bb0a3549aa940e631510aa0e405794e500676da731eb>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"active"
+<https://pod.example/clinical/medications.ttl#bc339db651b7faa3f257bb0a3549aa940e631510aa0e405794e500676da731eb>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:paused>
+<https://pod.example/clinical/medications.ttl#bc339db651b7faa3f257bb0a3549aa940e631510aa0e405794e500676da731eb>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:resumed>
+<https://pod.example/clinical/medications.ttl#bc339db651b7faa3f257bb0a3549aa940e631510aa0e405794e500676da731eb>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:resumed>
+<https://pod.example/clinical/medications.ttl#bc339db651b7faa3f257bb0a3549aa940e631510aa0e405794e500676da731eb>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:resumed>
+<https://pod.example/clinical/medications.ttl#225d769114ffb3cd572054c7b1cd29d6455c5ad95c9f6f0b4dc67d5008728b99>	<https://ns.cascadeprotocol.org/cascade#lifecycle>	<https://ns.cascadeprotocol.org/cascade#MedicationActive>
+<https://pod.example/clinical/medications.ttl#5d6a5df3405d59ed3c1023386339b3e022547a5f5440c6ba7ca3aaba39a4801f>	<https://ns.cascadeprotocol.org/cascade#lifecycle>	<https://ns.cascadeprotocol.org/cascade#MedicationActive>
+<https://pod.example/clinical/medications.ttl#9b2c711bace315cf70a44eb672831aa1aab5ac58779806f941784a9518083b6e>	<https://ns.cascadeprotocol.org/cascade#lifecycle>	<https://ns.cascadeprotocol.org/cascade#MedicationStopped>
+<https://pod.example/clinical/medications.ttl#ba3f3b3fd0a55b6316de9976fc45bd9472c1301690703de81363c0b305fb5eb8>	<https://ns.cascadeprotocol.org/cascade#lifecycle>	<https://ns.cascadeprotocol.org/cascade#MedicationActive>
+<https://pod.example/clinical/medications.ttl#bc339db651b7faa3f257bb0a3549aa940e631510aa0e405794e500676da731eb>	<https://ns.cascadeprotocol.org/cascade#lifecycle>	<https://ns.cascadeprotocol.org/cascade#MedicationActive>
+<https://pod.example/clinical/medications.ttl#ea4fdcfc983d60df89f7cdcfdb31adc38733d008f3932699b318f371f1f98774>	<https://ns.cascadeprotocol.org/cascade#lifecycle>	<https://ns.cascadeprotocol.org/cascade#MedicationActive>
+<https://pod.example/clinical/medications.ttl#f4cc2e7f35ed7595f7076ec3d1af58ef913d2474509e9ed1e76cba57be3187ee>	<https://ns.cascadeprotocol.org/cascade#lifecycle>	<https://ns.cascadeprotocol.org/cascade#MedicationActive>
+<https://pod.example/clinical/medications.ttl#4259c0aa09b36fd7e55c53f5251142f7446eb5b7f726dab313ecc6d56b778d35>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:stopped>
+<https://pod.example/clinical/medications.ttl#4259c0aa09b36fd7e55c53f5251142f7446eb5b7f726dab313ecc6d56b778d35>	<https://ns.cascadeprotocol.org/cascade#drugName>	"metformin 500 MG Oral Tablet"
+<https://pod.example/clinical/medications.ttl#4259c0aa09b36fd7e55c53f5251142f7446eb5b7f726dab313ecc6d56b778d35>	<https://ns.cascadeprotocol.org/cascade#prescribedOrReported>	"reportedUse"
+<https://pod.example/clinical/medications.ttl#4259c0aa09b36fd7e55c53f5251142f7446eb5b7f726dab313ecc6d56b778d35>	<https://ns.cascadeprotocol.org/cascade#medicationUseStartDate>	"2021-01-10"^^<http://www.w3.org/2001/XMLSchema#date>
+<https://pod.example/clinical/medications.ttl#4259c0aa09b36fd7e55c53f5251142f7446eb5b7f726dab313ecc6d56b778d35>	<https://ns.cascadeprotocol.org/cascade#lifecycle>	<https://ns.cascadeprotocol.org/cascade#MedicationStopped>
+<https://pod.example/clinical/medications.ttl#4259c0aa09b36fd7e55c53f5251142f7446eb5b7f726dab313ecc6d56b778d35>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"stopped"
+<https://pod.example/clinical/medications.ttl#4259c0aa09b36fd7e55c53f5251142f7446eb5b7f726dab313ecc6d56b778d35>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:stillListed>
+<https://pod.example/clinical/medications.ttl#4259c0aa09b36fd7e55c53f5251142f7446eb5b7f726dab313ecc6d56b778d35>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:stopped>
+<https://pod.example/clinical/medications.ttl#4259c0aa09b36fd7e55c53f5251142f7446eb5b7f726dab313ecc6d56b778d35>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#PrescribedOrReportedMedication>
+<https://pod.example/clinical/medications.ttl#4259c0aa09b36fd7e55c53f5251142f7446eb5b7f726dab313ecc6d56b778d35>	<https://ns.cascadeprotocol.org/cascade#rxNormCode>	<https://ns.cascadeprotocol.org/codes/rxnorm/861007>
+<https://pod.example/clinical/medications.ttl#4259c0aa09b36fd7e55c53f5251142f7446eb5b7f726dab313ecc6d56b778d35>	<https://ns.cascadeprotocol.org/cascade#medicationUseEndDate>	"2023-04-02"^^<http://www.w3.org/2001/XMLSchema#date>
+<https://pod.example/clinical/medications.ttl#4259c0aa09b36fd7e55c53f5251142f7446eb5b7f726dab313ecc6d56b778d35>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:stopped>
+<https://pod.example/clinical/medications.ttl#4259c0aa09b36fd7e55c53f5251142f7446eb5b7f726dab313ecc6d56b778d35>	<https://ns.cascadeprotocol.org/cascade#prescribedOrReported>	"prescribed"

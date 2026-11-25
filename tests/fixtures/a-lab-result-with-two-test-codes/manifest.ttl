@@ -15,4 +15,4 @@
   rdfs:comment "An entry with two test codes is two rows, one for each code, alike but for it; the sodium follows, a day older." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20lab%20results.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-lab-results.srj> .
+  mf:result <my-lab-results.tsv> .

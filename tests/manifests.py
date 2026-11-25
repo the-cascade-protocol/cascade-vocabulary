@@ -1,7 +1,7 @@
 """The W3C test manifests of the query fixtures and the shape cases: each entry's action and result, and what its query
 gives over a store."""
 
-import json
+import re
 from collections import Counter
 from dataclasses import dataclass
 from functools import cache
@@ -65,24 +65,47 @@ def lens_name(file):
     return lenses[Path(file).resolve()]
 
 
+TERM = re.compile(r'<(?P<iri>[^\x00-\x20<>"{}|^`\\]*)>'
+                  r'|"(?P<text>(?:[^"\\\n\r]|\\.)*)"(?:@(?P<lang>[A-Za-z]+(?:-[A-Za-z0-9]+)*)|\^\^<(?P<datatype>[^\x00-\x20<>"{}|^`\\]*)>)?')
+ESCAPE = re.compile(r"\\(?:u([0-9A-Fa-f]{4})|U([0-9A-Fa-f]{8})|(.))", re.DOTALL)
+ECHAR = {"t": "\t", "b": "\b", "n": "\n", "r": "\r", "f": "\f", '"': '"', "'": "'", "\\": "\\"}
+
+
 def expected(result):
-    """The rows, as their variables and a multiset of rows, or the boolean, that a .srj file holds."""
-    answer = json.loads(Path(result).read_text(encoding="utf-8"))
-    if "boolean" in answer:
-        return answer["boolean"]
-    return set(answer["head"].get("vars", [])), Counter(row({name: term(value) for name, value in binding.items()})
-                                                        for binding in answer["results"]["bindings"])
+    """The variables and the multiset of rows that a SPARQL 1.1 Query Results TSV file holds: a header of `?variable`s,
+    then a line for each row, a field for each variable, an empty field for one the row leaves unbound. A field is an
+    IRI in angle brackets or a double-quoted string with `^^<datatype>` or `@language`; a blank node or an abbreviated
+    number is refused, since no comparison can match it exactly."""
+    lines = Path(result).read_text(encoding="utf-8").split("\n")
+    if lines.pop() != "":
+        raise ValueError(f"{result} does not end in a newline")
+    header = lines.pop(0).split("\t")
+    if not all(field.startswith("?") for field in header):
+        raise ValueError(f"{result}: the first line must name each variable with a leading ?")
+    names = [field[1:] for field in header]
+    rows = []
+    for line in lines:
+        fields = line.split("\t")
+        if len(fields) != len(names):
+            raise ValueError(f"{result}: a row has {len(fields)} fields, the header {len(names)}")
+        rows.append(row({name: term(field) for name, field in zip(names, fields) if field}))
+    return set(names), Counter(rows)
 
 
-def term(value):
-    if value["type"] == "uri":
-        return URIRef(value["value"])
-    if value["type"] in ("literal", "typed-literal"):
-        if "xml:lang" in value:
-            return literal(value["value"], lang=value["xml:lang"])
-        datatype = value.get("datatype")
-        return literal(value["value"], None if datatype in (None, str(XSD.string)) else URIRef(datatype))
-    raise ValueError(f"an expected row holds a {value['type']}, which no comparison can match exactly")
+def bad_escape(field):
+    raise ValueError(f"an expected row holds {field}, whose backslash is no escape of Turtle")
+
+
+def term(field):
+    found = TERM.fullmatch(field)
+    if found is None:
+        raise ValueError(f"an expected row holds {field}, which no comparison can match exactly")
+    if found["iri"] is not None:
+        return URIRef(found["iri"])
+    text = ESCAPE.sub(lambda e: chr(int(e[1] or e[2], 16)) if e[1] or e[2] else ECHAR.get(e[3]) or bad_escape(field), found["text"])
+    if found["lang"]:
+        return literal(text, lang=found["lang"])
+    return literal(text, None if found["datatype"] in (None, str(XSD.string)) else URIRef(found["datatype"]))
 
 
 def row(binding):
@@ -92,11 +115,7 @@ def row(binding):
 def failure(entry, store):
     """Why the entry's query over the store does not give its result, or None when it does."""
     query = Path(entry.query).read_text(encoding="utf-8")
-    wanted = expected(entry.result)
-    if isinstance(wanted, bool):
-        found = store.ask(query)
-        return None if found == wanted else f"expected {wanted}, found {found}"
-    variables, rows = wanted
+    variables, rows = expected(entry.result)
     names, solutions = store.answer(query, entry.records)
     if variables != set(names):
         return f"expected the variables {sorted(variables)}, found {sorted(names)}"

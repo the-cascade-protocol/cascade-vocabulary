@@ -15,4 +15,4 @@
   rdfs:comment "A download that names an author and a different custodian is named by its author, whichever sorts first; one that names only a custodian is named by it." ;
   mf:action [ qt:query <the-record-version-revision-and-document-labels.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-record-version-revision-and-document-labels.srj> .
+  mf:result <the-record-version-revision-and-document-labels.tsv> .

@@ -16,4 +16,4 @@
   rdfs:comment "Everyday trusts persons and cascade:CascadeMatcher alone, so the other machine's matcher judgment does not count." ;
   mf:action [ qt:query <everyday-counts.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <everyday-counts.srj> .
+  mf:result <everyday-counts.tsv> .

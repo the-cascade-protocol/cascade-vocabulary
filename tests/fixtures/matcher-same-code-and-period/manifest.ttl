@@ -41,4 +41,4 @@
                                   <urn:x:yearEndA> ,
                                   <urn:x:yearEndB> ,
                                   <urn:x:yearEndC> ] ;
-  mf:result <same-code-and-period-read-as-ranges.srj> .
+  mf:result <same-code-and-period-read-as-ranges.tsv> .

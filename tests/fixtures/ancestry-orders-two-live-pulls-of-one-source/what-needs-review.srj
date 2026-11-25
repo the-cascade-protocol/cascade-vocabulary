@@ -1,4 +1,0 @@
-{
-  "head": { "vars": [ "record", "recordLabel", "needs", "finding", "revision", "revisionLabel", "otherRevision", "otherRevisionLabel" ] },
-  "results": { "bindings": [] }
-}

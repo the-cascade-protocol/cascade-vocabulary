@@ -15,4 +15,4 @@
   rdfs:comment "The entry the view names is labelled, with the date of the member its date is taken from; the placeholder, which no view holds, is not." ;
   mf:action [ qt:query <the-entries-labelled.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-entries-labelled.srj> .
+  mf:result <the-entries-labelled.tsv> .

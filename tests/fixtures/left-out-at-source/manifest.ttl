@@ -15,4 +15,4 @@
   rdfs:comment "A record whose current version is entered in error, or an allergy refuted, is left out for that reason; a refuted condition, and a record whose earlier version was in error, are not." ;
   mf:action [ qt:query <left-out-for-the-status-of-its-current-version.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <left-out-for-the-status-of-its-current-version.srj> .
+  mf:result <left-out-for-the-status-of-its-current-version.tsv> .

@@ -23,4 +23,4 @@
                                   <urn:x:strayA> ,
                                   <urn:x:strayB> ,
                                   <urn:x:theirGeneric> ] ;
-  mf:result <same-brand-generic.srj> .
+  mf:result <same-brand-generic.tsv> .

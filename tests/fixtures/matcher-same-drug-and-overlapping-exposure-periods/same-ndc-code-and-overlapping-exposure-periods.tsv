@@ -1,0 +1,9 @@
+?record	?other
+<urn:x:firstCourse>	<urn:x:withinFirst>
+<urn:x:withinFirst>	<urn:x:firstCourse>
+<urn:x:firstCourse>	<urn:x:fromLastDay>
+<urn:x:fromLastDay>	<urn:x:firstCourse>
+<urn:x:secondCourse>	<urn:x:ongoingEarlier>
+<urn:x:ongoingEarlier>	<urn:x:secondCourse>
+<urn:x:ongoingEarlier>	<urn:x:dayInOngoing>
+<urn:x:dayInOngoing>	<urn:x:ongoingEarlier>

@@ -1,0 +1,4 @@
+?file	?thing	?place
+<https://pod.example/provenance/activities/sy/sync.ttl>	<urn:x:misfiled-sync>	<https://pod.example/provenance/syncs/>
+<https://pod.example/records/conditions/re/revision.ttl>	<urn:x:revision>	<https://pod.example/records/allergies/>
+<https://pod.example/references/ju/judgment.ttl>	<urn:x:judgment>	<https://pod.example/judgments/>

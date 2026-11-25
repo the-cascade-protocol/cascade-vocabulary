@@ -15,4 +15,4 @@
   rdfs:comment "The correction stays current: the latest source change time decides before any observation time, and the head the copy wrote is not current." ;
   mf:action [ qt:query <the-current-revision.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-current-revision.srj> .
+  mf:result <the-current-revision.tsv> .

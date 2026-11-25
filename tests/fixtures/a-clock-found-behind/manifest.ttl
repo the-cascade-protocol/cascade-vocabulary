@@ -15,4 +15,4 @@
   rdfs:comment "The second finding is listed with the revision it names, and the acknowledged one is not. The pick is not: ancestry decided it." ;
   mf:action [ qt:query <../../../queries/questions/record/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-needs-review.srj> .
+  mf:result <what-needs-review.tsv> .

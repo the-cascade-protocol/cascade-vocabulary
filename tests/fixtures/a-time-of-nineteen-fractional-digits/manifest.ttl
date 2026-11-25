@@ -22,7 +22,7 @@
                                   <urn:x:potassiumFineOtherTime> ,
                                   <urn:x:potassiumFineOtherUnit> ,
                                   <urn:x:potassiumFineOtherValue> ] ;
-  mf:result <same-code-instant-to-the-second-value-and-unit-others-by-code-and-instant.srj> .
+  mf:result <same-code-instant-to-the-second-value-and-unit-others-by-code-and-instant.tsv> .
 
 <#same-code-instant-to-the-second-different-values-others-by-code-and-instant> a mf:QueryEvaluationTest ;
   mf:name "same-code-instant-to-the-second-different-values-others-by-code-and-instant" ;
@@ -34,7 +34,7 @@
                                   <urn:x:potassiumFineOtherTime> ,
                                   <urn:x:potassiumFineOtherUnit> ,
                                   <urn:x:potassiumFineOtherValue> ] ;
-  mf:result <same-code-instant-to-the-second-different-values-others-by-code-and-instant.srj> .
+  mf:result <same-code-instant-to-the-second-different-values-others-by-code-and-instant.tsv> .
 
 <#same-code-instant-to-the-second-different-units-others-by-code-and-instant> a mf:QueryEvaluationTest ;
   mf:name "same-code-instant-to-the-second-different-units-others-by-code-and-instant" ;
@@ -46,4 +46,4 @@
                                   <urn:x:potassiumFineOtherTime> ,
                                   <urn:x:potassiumFineOtherUnit> ,
                                   <urn:x:potassiumFineOtherValue> ] ;
-  mf:result <same-code-instant-to-the-second-different-units-others-by-code-and-instant.srj> .
+  mf:result <same-code-instant-to-the-second-different-units-others-by-code-and-instant.tsv> .

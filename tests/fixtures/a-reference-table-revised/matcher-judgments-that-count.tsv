@@ -1,0 +1,2 @@
+?judgment	?counts	?lapsed
+<urn:x:byIngredient>	"false"^^<http://www.w3.org/2001/XMLSchema#boolean>	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>

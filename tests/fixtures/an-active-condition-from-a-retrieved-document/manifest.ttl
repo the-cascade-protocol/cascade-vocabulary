@@ -15,4 +15,4 @@
   rdfs:comment "The asthma's record is shown with the document it came from, when that was retrieved, and the hospital that wrote it." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20conditions.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <my-active-conditions.srj> .
+  mf:result <my-active-conditions.tsv> .

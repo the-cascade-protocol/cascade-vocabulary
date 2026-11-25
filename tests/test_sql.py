@@ -542,10 +542,6 @@ def failures(fixture, lens, relative, text):
             continue
         pinned = expected(entry.result)
         given = asked_answer(connection, text, entry.records) if entry.records else found
-        if isinstance(pinned, bool):
-            got = bool(given)
-            lines += [] if got == pinned else [f"{fixture.name}, {entry.name}: expected {pinned}, found {got}"]
-            continue
         rows = Counter(as_rdflib(columns, value) for value in given)
         lines += [f"{fixture.name}, {entry.name}, under {lens}, {relative}: {kind}: "
                   + " ".join(f"?{name}={term}" for name, term in sorted(r))

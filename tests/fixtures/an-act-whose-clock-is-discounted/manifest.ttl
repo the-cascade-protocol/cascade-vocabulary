@@ -17,18 +17,18 @@
   rdfs:comment "Each discounted revision stands beside the other writer's, whichever the clocks put later, and the least IRI picks: gout's other revision, eczema's discounted one." ;
   mf:action [ qt:query <the-current-revisions.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-current-revisions.srj> .
+  mf:result <the-current-revisions.tsv> .
 
 <#the-entry> a mf:QueryEvaluationTest ;
   mf:name "the-entry" ;
   rdfs:comment "The migraine noted on the discounted clock stands beside the one pulled later, and the least IRI makes it the lead and the member the entry takes its status and date from." ;
   mf:action [ qt:query <the-entry.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-entry.srj> .
+  mf:result <the-entry.tsv> .
 
 <#what-needs-review> a mf:QueryEvaluationTest ;
   mf:name "what-needs-review" ;
   rdfs:comment "Gout's and eczema's picks are listed with no basis, eczema's though its shown revision was observed later, and the clock finding, answered by the discount, is not." ;
   mf:action [ qt:query <../../../queries/questions/record/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <what-needs-review.srj> .
+  mf:result <what-needs-review.tsv> .

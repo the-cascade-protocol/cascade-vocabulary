@@ -17,18 +17,18 @@
   rdfs:comment "A matcher judgment counts by the assertions no retraction invalidates: the one asserted again under version 3 counts; the one whose only assertion a release retracted does not." ;
   mf:action [ qt:query <which-count.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <which-count.srj> .
+  mf:result <which-count.tsv> .
 
 <#which-have-lapsed> a mf:QueryEvaluationTest ;
   mf:name "which-have-lapsed" ;
   rdfs:comment "A matcher judgment whose every assertion a release retracted does not lapse, though version 3 runs its rule with another query; the same code matcher judgment, retracted by nothing, lapses." ;
   mf:action [ qt:query <which-have-lapsed.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <which-have-lapsed.srj> .
+  mf:result <which-have-lapsed.tsv> .
 
 <#the-retractions-labelled> a mf:QueryEvaluationTest ;
   mf:name "the-retractions-labelled" ;
   rdfs:comment "A retraction no agent made is named a release, whatever else the pod labels: its name never comes from another thing's label." ;
   mf:action [ qt:query <the-retractions-labelled.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-retractions-labelled.srj> .
+  mf:result <the-retractions-labelled.tsv> .

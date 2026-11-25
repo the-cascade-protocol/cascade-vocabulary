@@ -27,7 +27,7 @@
                                   <urn:x:secondCourse> ,
                                   <urn:x:undated> ,
                                   <urn:x:withinFirst> ] ;
-  mf:result <same-ndc-code-and-overlapping-exposure-periods.srj> .
+  mf:result <same-ndc-code-and-overlapping-exposure-periods.tsv> .
 
 <#same-product-code-in-current-tables-and-overlapping-exposure-periods> a mf:QueryEvaluationTest ;
   mf:name "same-product-code-in-current-tables-and-overlapping-exposure-periods" ;
@@ -37,7 +37,7 @@
               ctm:boundRecord <urn:x:metforminFirst> ,
                                   <urn:x:metforminOverlapping> ,
                                   <urn:x:metforminSince2026> ] ;
-  mf:result <same-product-code-in-current-tables-and-overlapping-exposure-periods.srj> .
+  mf:result <same-product-code-in-current-tables-and-overlapping-exposure-periods.tsv> .
 
 <#same-brand-generic-and-overlapping-exposure-periods> a mf:QueryEvaluationTest ;
   mf:name "same-brand-generic-and-overlapping-exposure-periods" ;
@@ -47,7 +47,7 @@
               ctm:boundRecord <urn:x:amlodipineOverlapping> ,
                                   <urn:x:amlodipineSince2026> ,
                                   <urn:x:norvascFirst> ] ;
-  mf:result <same-brand-generic-and-overlapping-exposure-periods.srj> .
+  mf:result <same-brand-generic-and-overlapping-exposure-periods.tsv> .
 
 <#same-ndc-code-and-a-start-given-to-the-year> a mf:QueryEvaluationTest ;
   mf:name "same-ndc-code-and-a-start-given-to-the-year" ;
@@ -56,7 +56,7 @@
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ;
               ctm:boundRecord <urn:x:firstHalfOf2019> ,
                                   <urn:x:since2019> ] ;
-  mf:result <partial-start-year.srj> .
+  mf:result <partial-start-year.tsv> .
 
 <#same-ndc-code-and-an-end-given-to-the-month> a mf:QueryEvaluationTest ;
   mf:name "same-ndc-code-and-an-end-given-to-the-month" ;
@@ -65,4 +65,4 @@
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ;
               ctm:boundRecord <urn:x:endsMarch2020> ,
                                   <urn:x:startsMid2020> ] ;
-  mf:result <partial-end-month.srj> .
+  mf:result <partial-end-month.tsv> .

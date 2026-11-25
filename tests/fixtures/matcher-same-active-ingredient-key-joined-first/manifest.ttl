@@ -23,4 +23,4 @@
                                   <urn:x:strayA> ,
                                   <urn:x:strayB> ,
                                   <urn:x:strayBrand> ] ;
-  mf:result <same-active-ingredient-key-joined-first.srj> .
+  mf:result <same-active-ingredient-key-joined-first.tsv> .

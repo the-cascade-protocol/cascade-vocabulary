@@ -15,4 +15,4 @@
   rdfs:comment "The pollen entry's lead is the member at the latest source change time, not the one observed last; the latex entry's is the one the person entered, whatever the clocks say; the shellfish entry's is the one the Before shows first." ;
   mf:action [ qt:query <the-lead.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-lead.srj> .
+  mf:result <the-lead.tsv> .

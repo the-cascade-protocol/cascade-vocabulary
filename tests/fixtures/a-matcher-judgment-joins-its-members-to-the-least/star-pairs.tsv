@@ -1,0 +1,7 @@
+?record	?same
+<urn:x:a2>	<urn:x:a1>
+<urn:x:a3>	<urn:x:a1>
+<urn:x:b2>	<urn:x:b1>
+<urn:x:a1>	<urn:x:a2>
+<urn:x:a1>	<urn:x:a3>
+<urn:x:b1>	<urn:x:b2>

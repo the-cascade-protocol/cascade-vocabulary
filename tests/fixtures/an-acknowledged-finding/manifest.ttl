@@ -16,11 +16,11 @@
   rdfs:comment "The acknowledged pair is not listed, by the finding nor alone, though its records are in two entries and the finding's name is not the one the person saw." ;
   mf:action [ qt:query <../../../queries/questions/entry/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <off-the-review-page.srj> .
+  mf:result <off-the-review-page.tsv> .
 
 <#it-still-stands> a mf:QueryEvaluationTest ;
   mf:name "it-still-stands" ;
   rdfs:comment "The finding still names its matcher judgment, the acknowledgement counts, and nothing else changes: the matcher judgment does not count and its records are not joined." ;
   mf:action [ qt:query <it-still-stands.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <it-still-stands.srj> .
+  mf:result <it-still-stands.tsv> .

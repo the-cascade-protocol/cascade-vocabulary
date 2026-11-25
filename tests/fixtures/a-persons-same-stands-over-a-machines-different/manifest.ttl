@@ -16,11 +16,11 @@
   rdfs:comment "The pair a person judged Same is joined, a machine's Different notwithstanding; the pair only a machine judged Same is not." ;
   mf:action [ qt:query <currently-the-same.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <currently-the-same.srj> .
+  mf:result <currently-the-same.tsv> .
 
 <#currently-different> a mf:QueryEvaluationTest ;
   mf:name "currently-different" ;
   rdfs:comment "Only the pair no person judged Same is currently different: among machines a Different outranks a Same." ;
   mf:action [ qt:query <currently-different.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <currently-different.srj> .
+  mf:result <currently-different.tsv> .

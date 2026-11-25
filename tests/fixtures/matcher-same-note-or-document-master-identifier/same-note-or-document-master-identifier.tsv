@@ -1,0 +1,9 @@
+?record	?other
+<urn:x:fromCcda>	<urn:x:fromFhir>
+<urn:x:fromCcda>	<urn:x:fromFhirTypedOtherwise>
+<urn:x:fromFhir>	<urn:x:fromCcda>
+<urn:x:fromFhir>	<urn:x:fromFhirTypedOtherwise>
+<urn:x:fromFhirTypedOtherwise>	<urn:x:fromCcda>
+<urn:x:fromFhirTypedOtherwise>	<urn:x:fromFhir>
+<urn:x:rootAloneFromCcda>	<urn:x:rootAloneFromFhir>
+<urn:x:rootAloneFromFhir>	<urn:x:rootAloneFromCcda>

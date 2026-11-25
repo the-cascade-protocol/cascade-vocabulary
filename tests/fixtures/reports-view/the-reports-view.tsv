@@ -1,0 +1,26 @@
+?entry	?field	?value
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#DiagnosticReport>
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<https://ns.cascadeprotocol.org/cascade#reportName>	"CBC panel - Blood by Automated count"
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<https://ns.cascadeprotocol.org/cascade#reportCode>	<http://loinc.org/rdf/58410-2>
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<https://ns.cascadeprotocol.org/cascade#reportCategory>	"LAB"^^<http://terminology.hl7.org/CodeSystem/v2-0074>
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<https://ns.cascadeprotocol.org/cascade#reportEffectiveTime>	"2025-04-02T08:30:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<https://ns.cascadeprotocol.org/cascade#reportIssuedTime>	"2025-04-02T12:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<https://ns.cascadeprotocol.org/cascade#reportConclusion>	"Normal blood count."
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<https://ns.cascadeprotocol.org/cascade#narrativeText>	"Hemoglobin 13.9 g/dL\nLeukocytes 6.1 10*3/uL"
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<http://purl.obolibrary.org/obo/RO_0002351>	<https://pod.example/clinical/lab-results.ttl#ff9206c9f44bd8e61b396a902a6b644a8774b1e4bc406ee2178c437737da0be9>
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<http://purl.obolibrary.org/obo/RO_0002351>	<https://pod.example/clinical/lab-results.ttl#fb8968b2f87a5f5fa86b52918c41315d0ec737a11760e0e65abbb5d91c2ac6ab>
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<http://www.w3.org/ns/prov#wasAttributedTo>	<urn:x:lab>
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"final"
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:cbc>
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:cbc>
+<https://pod.example/clinical/reports.ttl#c5d07662d21adc2a6deb2042e6d05073435947dfffc67d3ee5c09e5a9a5e3c74>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:cbc>
+<https://pod.example/clinical/reports.ttl#ee44c212ef3e36d0f1a3e21da49b6982ec60732fab50f059ea07f70092673844>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#DiagnosticReport>
+<https://pod.example/clinical/reports.ttl#ee44c212ef3e36d0f1a3e21da49b6982ec60732fab50f059ea07f70092673844>	<https://ns.cascadeprotocol.org/cascade#reportName>	"Cobalamin"
+<https://pod.example/clinical/reports.ttl#ee44c212ef3e36d0f1a3e21da49b6982ec60732fab50f059ea07f70092673844>	<https://ns.cascadeprotocol.org/cascade#reportCode>	<http://loinc.org/rdf/2132-9>
+<https://pod.example/clinical/reports.ttl#ee44c212ef3e36d0f1a3e21da49b6982ec60732fab50f059ea07f70092673844>	<https://ns.cascadeprotocol.org/cascade#reportCodeInOtherSystem>	"B12-SER"^^<urn:oid:2.16.840.1.113883.19.5>
+<https://pod.example/clinical/reports.ttl#ee44c212ef3e36d0f1a3e21da49b6982ec60732fab50f059ea07f70092673844>	<https://ns.cascadeprotocol.org/cascade#reportEffectiveTime>	"2025-03-01T08:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>
+<https://pod.example/clinical/reports.ttl#ee44c212ef3e36d0f1a3e21da49b6982ec60732fab50f059ea07f70092673844>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"final"
+<https://pod.example/clinical/reports.ttl#ee44c212ef3e36d0f1a3e21da49b6982ec60732fab50f059ea07f70092673844>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:cobalamin>
+<https://pod.example/clinical/reports.ttl#ee44c212ef3e36d0f1a3e21da49b6982ec60732fab50f059ea07f70092673844>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:cobalamin>
+<https://pod.example/clinical/reports.ttl#ee44c212ef3e36d0f1a3e21da49b6982ec60732fab50f059ea07f70092673844>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:cobalamin>
+<https://pod.example/clinical/reports.ttl#ee44c212ef3e36d0f1a3e21da49b6982ec60732fab50f059ea07f70092673844>	<https://ns.cascadeprotocol.org/cascade#paddedDateTime>	<https://pod.example/clinical/reports.ttl#ee44c212ef3e36d0f1a3e21da49b6982ec60732fab50f059ea07f70092673844-padded-reportEffectiveTime>

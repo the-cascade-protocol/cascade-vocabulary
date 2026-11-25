@@ -16,11 +16,11 @@
   rdfs:comment "The first profile's record is the subject's again, by the About the retraction leaves outranked by nothing; the second's is not, a NotAbout counting once more." ;
   mf:action [ qt:query <whose-records-are-the-subjects.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <whose-records-are-the-subjects.srj> .
+  mf:result <whose-records-are-the-subjects.tsv> .
 
 <#why-it-is-in-no-view> a mf:QueryEvaluationTest ;
   mf:name "why-it-is-in-no-view" ;
   rdfs:comment "Only the second profile's record is left out, its profile judged not about the subject." ;
   mf:action [ qt:query <../../../queries/questions/record/Why%20it%20is%20in%20no%20view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <why-it-is-in-no-view.srj> .
+  mf:result <why-it-is-in-no-view.tsv> .

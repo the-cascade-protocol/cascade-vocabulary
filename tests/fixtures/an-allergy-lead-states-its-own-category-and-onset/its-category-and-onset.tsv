@@ -1,0 +1,2 @@
+?allergenName	?category	?onset
+"Shellfish allergy"	"environment"	"2020"^^<http://www.w3.org/2001/XMLSchema#gYear>

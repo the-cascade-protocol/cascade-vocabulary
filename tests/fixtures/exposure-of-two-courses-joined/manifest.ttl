@@ -15,4 +15,4 @@
   rdfs:comment "The first course keeps its own start and end, so it is not lost behind the later course's dates; the later course is ongoing and the completed one is not." ;
   mf:action [ qt:query <each-copys-exposure.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <each-copys-exposure.srj> .
+  mf:result <each-copys-exposure.tsv> .
