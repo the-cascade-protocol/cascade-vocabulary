@@ -1,7 +1,6 @@
 ValueAbsentForReason
 absentReasonCode
 absentValueProperty
-acmgEvidenceCode
 addedNoteText
 allergyType
 answersForRecordClass
@@ -17,12 +16,9 @@ contributingSubmitterCount
 coversGene
 dispenseDaysSupply
 dispenseQuantity
-expandedValueSet
-expansionMembersWithoutCodeIriLeftOutCount
 lastEvaluated
 matcherRuleDeclaredWrong
 noLongerReachedUnderRuleListVersion
-objectCondition
 occurrenceCount
 physiologicEffectClass
 procedureCodeInOtherSystem
@@ -35,4 +31,3 @@ vaccinationRouteText
 vaccineDoseQuantityText
 vaccineLotNumber
 valueAbsentForReason
-valueSetDefinitionVersion

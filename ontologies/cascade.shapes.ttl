@@ -850,7 +850,7 @@ cascade:GeneticVariantFindingShape a sh:NodeShape ;
 
 cascade:VariantInterpretationShape a sh:NodeShape ;
     sh:targetClass cascade:VariantInterpretation ;
-    sh:targetSubjectsOf cascade:acmgClassification , cascade:subjectVariant , cascade:variantInterpretationDate , cascade:objectCondition , cascade:acmgEvidenceCode ;
+    sh:targetSubjectsOf cascade:acmgClassification , cascade:subjectVariant , cascade:variantInterpretationDate ;
 
     sh:property [
         sh:path cascade:workflowStatus ;
@@ -874,20 +874,6 @@ cascade:VariantInterpretationShape a sh:NodeShape ;
         sh:nodeKind sh:IRI ;
         sh:maxCount 1 ;
         sh:message "A variant interpretation is about at most one variant, named by the variant record's IRI (its urn:uuid: record name, resolved like cascade:patient), never a version; the record is one in the same document, since a urn:uuid names a record within one document only"@en
-    ] ;
-
-    sh:property [
-        sh:path cascade:objectCondition ;
-        sh:nodeKind sh:IRI ;
-        sh:maxCount 1 ;
-        sh:message "A variant interpretation has at most one object, the condition its statement is about, named by the IRI of a cascade:ProblemOrDiagnosis record in the same document"@en
-    ] ;
-
-    sh:property [
-        sh:path cascade:acmgEvidenceCode ;
-        sh:datatype xsd:string ;
-        sh:pattern "^(?:no_criteria_met|((?:PVS1)(?:_(?:not_met|(?:strong|moderate|supporting)))?|(?:PS[1-4]|BS[1-4])(?:_(?:not_met|(?:very_strong|moderate|supporting)))?|BA1(?:_not_met)?|(?:PM[1-6])(?:_(?:not_met|(?:very_strong|strong|supporting)))?|(PP[1-5]|BP[1-7])(?:_(?:not_met|very_strong|strong|moderate))?))$" ;
-        sh:message "An ACMG evidence code is written as VA-spec's ACMG 2015 profile writes an evidence outcome (e.g. PM2, PS3_moderate, PS3_not_met)"@en
     ] ;
 
     sh:property [
@@ -1817,30 +1803,17 @@ cascade:ReferenceSeriesShape a sh:NodeShape ;
         sh:severity sh:Violation
     ], [
         sh:path cascade:tableKind ;
-        sh:in ( cascade:VaccineGroups cascade:CodeNames cascade:RetiredCodes cascade:ProductIngredients cascade:BrandGenerics cascade:DrugProducts cascade:CodeConversions cascade:VariantClassifications cascade:PanelMembers cascade:DrugClasses cascade:ValueSetExpansions ) ;
+        sh:in ( cascade:VaccineGroups cascade:CodeNames cascade:RetiredCodes cascade:ProductIngredients cascade:BrandGenerics cascade:DrugProducts cascade:CodeConversions cascade:VariantClassifications cascade:PanelMembers cascade:DrugClasses ) ;
         sh:maxCount 1 ;
         sh:message "A reference series is of at most one table kind, one the vocabulary declares."@en ;
         sh:severity sh:Violation
-    ] ;
-    sh:or (
-        [ sh:path cascade:tableKind ; sh:not [ sh:hasValue cascade:ValueSetExpansions ] ]
-        [ sh:path [ sh:inversePath prov:specializationOf ] ;
-          sh:node [ sh:property [ sh:path cascade:expandedValueSet ; sh:minCount 1 ] ] ]
-    ) ;
-    sh:message "Each version of a value set expansions series names the value set it expands with cascade:expandedValueSet, so a version with no member still says what it checked."@en ;
-    sh:severity sh:Violation .
+    ] .
 
 cascade:ReferenceVersionShape a sh:NodeShape ;
     sh:property [ sh:path pav:version ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ,
                 [ sh:path prov:wasRevisionOf ; sh:nodeKind sh:IRI ; sh:maxCount 1 ] ,
                 [ sh:path cascade:coversGene ; sh:datatype xsd:string ; sh:minLength 1 ;
-                  sh:message "A version covers genes by their symbols, each a non-empty plain string"@en ] ,
-                [ sh:path cascade:expandedValueSet ; sh:nodeKind sh:IRI ; sh:maxCount 1 ;
-                  sh:message "A version names the one value set it expands, an IRI"@en ] ,
-                [ sh:path cascade:valueSetDefinitionVersion ; sh:datatype xsd:string ; sh:minLength 1 ; sh:maxCount 1 ;
-                  sh:message "A version gives its value set's definition version once, a non-empty plain string"@en ] ,
-                [ sh:path cascade:expansionMembersWithoutCodeIriLeftOutCount ; sh:datatype xsd:integer ; sh:minInclusive 0 ; sh:maxCount 1 ;
-                  sh:message "A version counts the members it left out for having no code IRI once, a non-negative xsd:integer"@en ] .
+                  sh:message "A version covers genes by their symbols, each a non-empty plain string"@en ] .
 
 cascade:MappingRowShape a sh:NodeShape ;
     sh:nodeKind sh:IRI ;
@@ -1990,32 +1963,6 @@ cascade:DrugClassRowShape a sh:NodeShape ;
         sh:path sssom:mapping_justification ;
         sh:hasValue semapv:ManualMappingCuration ;
         sh:message "A drug class row is justified as the publisher's curated row."@en ;
-        sh:severity sh:Violation
-    ] .
-
-cascade:ValueSetExpansionRowShape a sh:NodeShape ;
-    rdfs:comment "The URL is written exactly as the source's ValueSet.url gives it; an https: variant is another name."@en ;
-    rdfs:seeAlso <https://hl7.org/fhir/R4/valueset-definitions.html#ValueSet.expansion.contains> , <https://hl7.org/fhir/R4/valueset-definitions.html#ValueSet.url> ;
-    sh:node cascade:MappingRowShape ;
-    sh:property [
-        sh:path owl:annotatedSource ;
-        sh:node cascade:CodeShape ;
-        sh:message "A value set expansion row maps a code, an IRI of one of the code systems' forms."@en ;
-        sh:severity sh:Violation
-    ] , [
-        sh:path owl:annotatedProperty ;
-        sh:hasValue obo:RO_0002350 ;
-        sh:message "A value set expansion row puts its code in its value set with obo:RO_0002350, member of."@en ;
-        sh:severity sh:Violation
-    ] , [
-        sh:path owl:annotatedTarget ;
-        sh:pattern "^https?://[^#|]+$" ;
-        sh:message "A value set is named by its canonical URL, an http or https IRI holding neither # nor |, written as the source's ValueSet.url gives it. This is Cascade's rule, one value set one name, not FHIR's: cnl-1 is an R5 warning and R5 allows urn:oid:. A urn:oid: value set from VSAC is written http://cts.nlm.nih.gov/fhir/ValueSet/<OID>."@en ;
-        sh:severity sh:Violation
-    ] , [
-        sh:path sssom:mapping_justification ;
-        sh:hasValue semapv:ManualMappingCuration ;
-        sh:message "A value set expansion row is justified as a manually curated mapping (semapv:ManualMappingCuration), as every row of this kind is whatever the publisher computed it from."@en ;
         sh:severity sh:Violation
     ] .
 

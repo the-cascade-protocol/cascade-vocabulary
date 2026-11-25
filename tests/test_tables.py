@@ -3,7 +3,7 @@ import re
 from functools import cache
 
 import pytest
-from rdflib import Dataset, Graph, Literal, Namespace, URIRef
+from rdflib import Graph, Literal, Namespace, URIRef
 from rdflib.collection import Collection
 from rdflib.namespace import OWL, RDF, SH, XSD
 
@@ -47,8 +47,6 @@ PANEL = ("a owl:Axiom ; owl:annotatedSource <http://loinc.org/rdf/24318-8> ; owl
 CLASSIFIED_DRUG = ("a owl:Axiom ; owl:annotatedSource rxnorm:5640 ; owl:annotatedProperty cascade:establishedPharmacologicClass ; "
                    "owl:annotatedTarget <https://ns.cascadeprotocol.org/codes/medrt/N0000175722>")
 MESH = "<http://id.nlm.nih.gov/mesh/M0006414>"
-DIABETES = "<http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.103.12.1001>"
-MEMBER = f"a owl:Axiom ; owl:annotatedSource <http://snomed.info/id/1481000119100> ; owl:annotatedProperty obo:RO_0002350 ; owl:annotatedTarget {DIABETES}"
 SIXTEEN = {"CVX", "RxNorm", "NDC", "ICD10CM", "SNOMEDCT", "LOINC", "UNII", "CPT", "ICD9CM", "HGVS", "ClinVar", "MEDRT",
            "MeSH", "DataAbsentReason", "NullFlavor", "ObservationInterpretation"}
 PAGES = {"ClinVar": ("90011", "https://www.ncbi.nlm.nih.gov/clinvar/variation/90011/"),
@@ -203,20 +201,6 @@ ROWS = [
      id="drug classes: a broader-match property"),
     pytest.param(CASCADE.DrugClasses, f"<urn:x:r> {CLASSIFIED_DRUG} ; {CHAINED} .", "justified as the publisher's curated row",
      id="drug classes: a justification that is not curation"),
-    pytest.param(CASCADE.ValueSetExpansions, f"<urn:x:r> {MEMBER} ; {CURATED} .", None,
-     id="value-set expansions: a whole row"),
-    pytest.param(CASCADE.ValueSetExpansions, f"<urn:x:r> {MEMBER.replace('<http://snomed.info/id/1481000119100>', '<urn:x:G0108>')} ; {CURATED} .",
-     "maps a code, an IRI of one of the code systems' forms", id="value-set expansions: a member that is no code IRI"),
-    pytest.param(CASCADE.ValueSetExpansions, f"<urn:x:r> {MEMBER.replace('1001>', '1001#20220924>')} ; {CURATED} .", "named by its canonical URL",
-     id="value-set expansions: a value set named with a version after a hash"),
-    pytest.param(CASCADE.ValueSetExpansions, f"<urn:x:r> {MEMBER.replace(DIABETES, '<urn:oid:2.16.840.1.113883.3.464.1003.103.12.1001>')} ; {CURATED} .",
-     "Cascade's rule, one value set one name", id="value-set expansions: a value set named by an OID"),
-    pytest.param(CASCADE.ValueSetExpansions, f"<urn:x:r> {MEMBER.replace('1001>', '1001|20220924>')} ; {CURATED} .", "named by its canonical URL",
-     id="value-set expansions: a value set named with a version after a bar"),
-    pytest.param(CASCADE.ValueSetExpansions, f"<urn:x:r> {MEMBER.replace('obo:RO_0002350', 'skos:exactMatch')} ; {CURATED} .", "with obo:RO_0002350",
-     id="value-set expansions: an exact-match property"),
-    pytest.param(CASCADE.ValueSetExpansions, f"<urn:x:r> {MEMBER} ; {CHAINED} .", "justified as a manually curated mapping",
-     id="value-set expansions: a justification that is not manual curation"),
     pytest.param(CASCADE.CodeNames, '<https://ns.cascadeprotocol.org/codes/medrt/N0000175722> skos:prefLabel "Beta-Adrenergic Blocker [EPC]" ; skos:notation "N0000175722" .', None,
      id="code names: a MED-RT code"),
     pytest.param(CASCADE.CodeNames, f'{MESH} skos:prefLabel "Ibuprofen" ; skos:notation "M0006414" .', None,
@@ -451,16 +435,15 @@ class TestReferenceTables:
             assert marked == {CASCADE.CodeNames, CASCADE.RetiredCodes, CASCADE.VariantClassifications, CASCADE.PanelMembers,
                               CASCADE.DrugClasses}
 
-        def test_leaves_one_that_no_rule_list_names_and_no_page_reads(self):
-            """leaves one, value-set expansions, that no rule list names and no page reads
+        def test_leaves_no_kind_that_no_rule_list_names_and_no_page_reads(self):
+            """leaves no kind that no rule list names and no page reads
 
-            Of the declared kinds, those that no file under `runtime/rule-list/` names and that are not marked as read by an
-            app's pages are compared with value-set expansions; they must be that one.
+            Each declared kind is named by a file under `runtime/rule-list/` or marked as read by an app's pages.
             """
             marked = {kind for kind in table_kinds() if (kind, CASCADE.readByAppPages, Literal(True)) in terms()}
             named = {kind for path in SHARED.glob("*.ttl") if path.name != "references.ttl"
                      for kind in parsed(path).objects(None, CASCADE.tableKind)}
-            assert table_kinds() - named - marked == {CASCADE.ValueSetExpansions}
+            assert table_kinds() - named - marked == set()
 
     class TestGivenARowOfAKind:
         @pytest.mark.parametrize("kind, rows", PASSING)
@@ -613,30 +596,3 @@ class TestReferenceTables:
             The names N12 gives the cases are all different, so two versions are never named alike.
             """
             assert len({case_version_name(case) for case in CASES}) == len(CASES)
-
-    class TestGivenAnyValueSetExpansionOfAFixture:
-        """given any value-set expansion of a fixture"""
-
-        def test_names_one_value_set(self):
-            """names one value set, which every row of it has as its target
-
-            A fixture that holds the rows of a value-set expansion in `rows.trig` names, on its version, one value set. Every
-            row of that version's graph has that value set as its `owl:annotatedTarget`.
-            """
-            checked, offenders = 0, []
-            for index_file in sorted((ROOT / "tests" / "fixtures").glob("*/references.ttl")):
-                if not (index_file.parent / "rows.trig").is_file():
-                    continue
-                index = parsed(index_file)
-                rows = Dataset()
-                rows.parse(data=(index_file.parent / "rows.trig").read_text(encoding="utf-8"), format="trig")
-                for version, series in index.subject_objects(PROV.specializationOf):
-                    if index.value(series, CASCADE.tableKind) != CASCADE.ValueSetExpansions:
-                        continue
-                    named = set(index.objects(version, CASCADE.expandedValueSet))
-                    targets = set(rows.graph(version).objects(None, OWL.annotatedTarget))
-                    if not (len(named) == 1 and targets <= named):
-                        offenders.append((index_file.parent.name, str(version)))
-                    checked += 1
-            assert checked
-            assert offenders == []
