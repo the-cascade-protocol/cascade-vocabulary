@@ -65,8 +65,9 @@ def lens_name(file):
     return lenses[Path(file).resolve()]
 
 
-TERM = re.compile(r'<(?P<iri>[^\x00-\x20<>"{}|^`\\]*)>'
-                  r'|"(?P<text>(?:[^"\\\n\r]|\\.)*)"(?:@(?P<lang>[A-Za-z]+(?:-[A-Za-z0-9]+)*)|\^\^<(?P<datatype>[^\x00-\x20<>"{}|^`\\]*)>)?')
+IRI = r'[^\x00-\x20<>"{}|^`\\]*'
+TERM = re.compile(rf'<(?P<iri>{IRI})>'
+                  r'|"(?P<text>(?:[^"\\\n\r]|\\.)*)"(?:@(?P<lang>[A-Za-z]+(?:-[A-Za-z0-9]+)*)|\^\^<(?P<datatype>' + IRI + r')>)?')
 ESCAPE = re.compile(r"\\(?:u([0-9A-Fa-f]{4})|U([0-9A-Fa-f]{8})|(.))", re.DOTALL)
 ECHAR = {"t": "\t", "b": "\b", "n": "\n", "r": "\r", "f": "\f", '"': '"', "'": "'", "\\": "\\"}
 
@@ -80,9 +81,9 @@ def expected(result):
     if lines.pop() != "":
         raise ValueError(f"{result} does not end in a newline")
     header = lines.pop(0).split("\t")
-    if not all(field.startswith("?") for field in header):
-        raise ValueError(f"{result}: the first line must name each variable with a leading ?")
     names = [field[1:] for field in header]
+    if len(set(names)) != len(names) or not all(field.startswith("?") for field in header):
+        raise ValueError(f"{result}: the first line must name each variable once, with a leading ?")
     rows = []
     for line in lines:
         fields = line.split("\t")
@@ -92,8 +93,12 @@ def expected(result):
     return set(names), Counter(rows)
 
 
-def bad_escape(field):
-    raise ValueError(f"an expected row holds {field}, whose backslash is no escape of Turtle")
+def unescaped(found, field):
+    if found[3] in ECHAR:
+        return ECHAR[found[3]]
+    if found[3]:
+        raise ValueError(f"an expected row holds {field}, whose backslash is no escape of Turtle")
+    return chr(int(found[1] or found[2], 16))
 
 
 def term(field):
@@ -102,7 +107,7 @@ def term(field):
         raise ValueError(f"an expected row holds {field}, which no comparison can match exactly")
     if found["iri"] is not None:
         return URIRef(found["iri"])
-    text = ESCAPE.sub(lambda e: chr(int(e[1] or e[2], 16)) if e[1] or e[2] else ECHAR.get(e[3]) or bad_escape(field), found["text"])
+    text = ESCAPE.sub(lambda escape: unescaped(escape, field), found["text"])
     if found["lang"]:
         return literal(text, lang=found["lang"])
     return literal(text, None if found["datatype"] in (None, str(XSD.string)) else URIRef(found["datatype"]))

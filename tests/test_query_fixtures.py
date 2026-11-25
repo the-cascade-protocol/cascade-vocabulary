@@ -11,7 +11,7 @@ from time import perf_counter
 
 import pytest
 import rdflib
-from rdflib import OWL, RDF, RDFS, Graph, Literal, URIRef
+from rdflib import OWL, RDF, RDFS, XSD, Graph, Literal, URIRef
 
 from contract import CASCADE, PROV, QUERIES, ROOT, built, derivations, named, query, questions
 import engines
@@ -731,14 +731,13 @@ class TestChecksOfTheFixtureTools:
     class TestExpected:
         """`manifests.expected()`"""
 
-        XSD = "http://www.w3.org/2001/XMLSchema#"
         TERMS = [
             ("<urn:x:a>", URIRef("urn:x:a")),
             ('"two words"', engines.literal("two words")),
             ('""', engines.literal("")),
-            (f'"3"^^<{XSD}integer>', engines.literal("3", URIRef(XSD + "integer"))),
-            (f'"007"^^<{XSD}integer>', engines.literal("007", URIRef(XSD + "integer"))),
-            (f'"x"^^<{XSD}string>', engines.literal("x")),
+            (f'"3"^^<{XSD.integer}>', engines.literal("3", XSD.integer)),
+            (f'"007"^^<{XSD.integer}>', engines.literal("007", XSD.integer)),
+            (f'"x"^^<{XSD.string}>', engines.literal("x")),
             ('"chat"@fr', engines.literal("chat", lang="fr")),
             ('"a\\tb\\nc \\"q\\" \\\\ \\u001F"', engines.literal('a\tb\nc "q" \\ \x1f')),
             ("", None),
@@ -757,11 +756,17 @@ class TestChecksOfTheFixtureTools:
             assert expected(answer) == ({"a"}, Counter({row({}): 1, row({"a": URIRef("urn:x:a")}): 1}))
 
         def test_takes_no_term_it_cannot_match_exactly(self, tmp_path):
-            """takes no blank node, no abbreviated number, no long-quoted string and no escape Turtle lacks, which no comparison can match exactly"""
+            """takes no blank node, no abbreviated number, no long-quoted string, no escape Turtle lacks, no short or
+            long row, no missing final newline and no variable twice, which no comparison can match exactly"""
             answer = tmp_path / "answer.tsv"
             for field in ("_:b0", "1", '"""x"""', '"a\\qb"'):
                 answer.write_text(f"?a\n{field}\n", encoding="utf-8")
                 with pytest.raises(ValueError, match=f"holds {re.escape(field)}"):
+                    expected(answer)
+            for text, why in (("?a\t?b\n<urn:x:a>\n", "1 fields"), ("?a\n<urn:x:a>\t<urn:x:b>\n", "2 fields"),
+                              ("?a\n<urn:x:a>", "newline"), ("?a\t?a\n<urn:x:a>\t<urn:x:b>\n", "once")):
+                answer.write_text(text, encoding="utf-8", newline="\n")
+                with pytest.raises(ValueError, match=why):
                     expected(answer)
 
     class TestFailure:

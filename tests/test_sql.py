@@ -540,12 +540,12 @@ def failures(fixture, lens, relative, text):
     for entry in manifest_entries(fixture):
         if entry.query is None or Path(entry.query).resolve() != (ROOT / relative).resolve() or lens_name(entry.lens) != lens:
             continue
-        pinned = expected(entry.result)
+        _, pinned = expected(entry.result)
         given = asked_answer(connection, text, entry.records) if entry.records else found
         rows = Counter(as_rdflib(columns, value) for value in given)
         lines += [f"{fixture.name}, {entry.name}, under {lens}, {relative}: {kind}: "
                   + " ".join(f"?{name}={term}" for name, term in sorted(r))
-                  for kind, side in (("missing", pinned[1] - rows), ("unexpected", rows - pinned[1]))
+                  for kind, side in (("missing", pinned - rows), ("unexpected", rows - pinned))
                   for r in sorted(side.elements(), key=sorted)]
     return lines
 
