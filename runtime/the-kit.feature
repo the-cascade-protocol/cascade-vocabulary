@@ -27,12 +27,10 @@ Feature: The conformance kit
   is #check-5-every-file-is-where-the-layout-says, and check 6 is #check-6-no-view-holds-the-pods-address.
 
   Rule: Check 1. Every example passes
-    No note rules this.
     Every example of the kit's feature file, and every example of the rules' feature files. Check 1 is no test of its
     own: its tests are the examples.
 
   Rule: Check 2. Each final view equals expected/
-    No note rules this.
     Take the view graph the replay builds at the last step under everyday (the graph <address>clinical/<view>.ttl),
     keep each subject that has cascade:entryMember with its triples but its members' current values
     (cascade:memberCurrentValues), which the fixtures of queries/questions/entry/What it shows.rq hold to it, and
@@ -42,7 +40,6 @@ Feature: The conformance kit
     No example states this check: SPARQL cannot compare two graphs up to their blank nodes.
 
   Rule: Check 3. Every RDF file of the pod conforms to the vocabulary's shapes
-    No note rules this.
     Each read with the files that describe what it names, less clinical/labels.ttl. That file gives a label, for people
     to read, to things other files describe, the subject among them, and cascade:SubjectShape is closed: read with the rest,
     it would refuse the subject's rdfs:label.
@@ -50,7 +47,6 @@ Feature: The conformance kit
     No example states this check: SPARQL cannot run SHACL.
 
   Rule: Check 4. Every name follows its rule
-    No note rules this.
     N1 to N7, N9, N10, N14 and N15, computed from that run's own inputs, its random import and matcher run IDs among them.
     Each saved Bridge output is in the pod less its arrivals, with its import replaced by the import its step wrote and
     the runtime that performed it left out (A9, A11), and each revision follows an earlier revision of the same record.
@@ -61,7 +57,6 @@ Feature: The conformance kit
     No example states this check: SPARQL cannot hash a canonical graph.
 
   Rule: Check 5. Every file the runtime wrote is where pod-layout.ttl says
-    decisions/files-held-in-archives.md, row "the kit's check", rules its second sentence; no note rules the rest.
     The check is open-world: the pod may also hold files another app wrote. A file is where the layout says when its
     path is, whether the runtime keeps it at that path or in an archive (X1); an archive is where the layout says when
     it is named as N9 names an archive and holds only files an archive may hold. A pod that holds an archive holds the file O4 names for cascade:ReadingFilesHeldInArchives, with O4's bytes.
@@ -69,7 +64,6 @@ Feature: The conformance kit
     No example states this check: SPARQL cannot read a stored document's bytes.
 
   Rule: Check 6. No view the runtime wrote, nor any view it shares, holds the pod's address
-    decisions/naming.md, row "view entry"; decisions/republishing-sources.md, row "what leaves the pod".
     A view entry is written in the view file as <#hex>, relative to its view
     (N13), never as the derivations' placeholder urn:cascade:entry:<hex>, and no IRI a view file holds, as its bytes
     write it, begins with the pod's address: a view says nothing of where the pod lives.

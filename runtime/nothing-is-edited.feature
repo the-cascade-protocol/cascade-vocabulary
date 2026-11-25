@@ -5,7 +5,6 @@ Feature: Nothing is edited or deleted
   exports that change them.
 
   Rule: X1. No file, once written, changes or goes
-    decisions/files-held-in-archives.md, rows "a file", "an archive", "clean-up", "a loose folder" and "what reading a pod requires".
     A retraction, a later revision and an entered-in-error status each leave everything they follow in the pod.
 
     A file is its path and its bytes, wherever a host keeps it: at its own path, or as the entry at that path of an

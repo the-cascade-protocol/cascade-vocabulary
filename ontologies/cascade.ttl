@@ -81,7 +81,7 @@ foaf:name a owl:DatatypeProperty ;
     dct:source <http://xmlns.com/foaf/spec/20140114.rdf> ;
     dct:license <http://creativecommons.org/licenses/by/1.0/> .
 
-# The person; decisions/the-person.md
+# The person
 
 cascade:administrativeGender a owl:DatatypeProperty ;
     rdfs:label "administrative gender"@en ;
@@ -426,7 +426,7 @@ cascade:medicationUseEndDate a owl:DatatypeProperty ;
     rdfs:range [ a rdfs:Datatype ; owl:unionOf ( xsd:gYear xsd:gYearMonth xsd:date xsd:dateTime ) ] ;
     rdfs:seeAlso <https://hl7.org/fhir/R4/medicationstatement-definitions.html#MedicationStatement.effective_x_> .
 
-# What a record was given for; decisions/reasons.md
+# What a record was given for
 
 cascade:reasonCondition a owl:ObjectProperty ;
     rdfs:label "reason condition"@en ;
@@ -511,7 +511,7 @@ cascade:acmgEvidenceCode a owl:DatatypeProperty ;
     rdfs:range xsd:string ;
     rdfs:seeAlso <https://github.com/ga4gh/va-spec/blob/9d60508c0a7a1ccd79a6312a45b3618ee0121aec/schema/va-spec/acmg-2015-profile-source.yaml> .
 
-# Reports, notes and documents; decisions/reports-and-notes.md
+# Reports, notes and documents
 
 cascade:DiagnosticReport a owl:Class ;
     rdfs:label "diagnostic report"@en ;
@@ -675,7 +675,7 @@ cascade:attachmentUrl a owl:DatatypeProperty ;
     rdfs:range xsd:anyURI ;
     rdfs:seeAlso <https://hl7.org/fhir/R4/datatypes-definitions.html#Attachment.url> .
 
-# A pharmacy's dispense; decisions/medications.md
+# A pharmacy's dispense
 
 cascade:MedicationDispense a owl:Class ;
     rdfs:label "medication dispense"@en ;
@@ -1462,7 +1462,7 @@ pim:ConfigurationFile a rdfs:Class ;
     dct:source <http://www.w3.org/ns/pim/space> ;
     dct:license <https://www.w3.org/Consortium/Legal/copyright-documents> .
 
-# A lab result's value, unit and reference range, typed; decisions/quantities.md
+# A lab result's value, unit and reference range, typed
 
 cascade:Quantity a owl:Class ;
     rdfs:label "quantity"@en ;
@@ -1595,7 +1595,7 @@ cascade:resultInterpretationCode a owl:ObjectProperty ;
     rdfs:domain cascade:LaboratoryTestResult ;
     rdfs:seeAlso <https://hl7.org/fhir/R4/observation-definitions.html#Observation.interpretation> .
 
-# A time written short of the second, and a value absent for a stated reason; decisions/partial-dates-and-absent-reasons.md
+# A time written short of the second, and a value absent for a stated reason
 
 cascade:PaddedDateTime a owl:Class ;
     rdfs:label "padded date-time"@en ;
@@ -1898,7 +1898,7 @@ cascade:RowSubject a rdf:Property ;
 
 cascade:CodeSystem a owl:Class ;
     rdfs:label "code system"@en ;
-    rdfs:comment "A code system whose codes are IRIs of one form: its void:uriSpace, the IRI stem, followed by the code percent-encoded as SPARQL's ENCODE_FOR_URI does, every character but A-Z a-z 0-9 - _ . ~ as % and two upper-case hexadecimal digits of its UTF-8. Unlike R2RML's IRI-safe form (section 7.3), which leaves ucschar unencoded, it encodes every non-ASCII character; no code of a system here holds one, so the two agree on every code today. The stem is the owner's or a community registry's where one passes decisions/code-iris.md, and Cascade's own under https://ns.cascadeprotocol.org/codes/ otherwise; it is never the FHIR Coding.system URI, which cascade:codingSystemUri holds (https://hl7.org/fhir/R5/rdf.html#iri-stem). A stem the owner or HL7 Terminology registers later is recorded on the system beside its void:uriSpace and read as each code's skos:exactMatch; a code's IRI is never renamed. A record's code written as a literal joins a table as that IRI: the stem followed by the literal percent-encoded as ENCODE_FOR_URI does, so a literal of unreserved characters only is its own tail and NM_000249.4:c.2042C>T is https://ns.cascadeprotocol.org/codes/hgvs/NM_000249.4%3Ac.2042C%3ET."@en .
+    rdfs:comment "A code system whose codes are IRIs of one form: its void:uriSpace, the IRI stem, followed by the code percent-encoded as SPARQL's ENCODE_FOR_URI does, every character but A-Z a-z 0-9 - _ . ~ as % and two upper-case hexadecimal digits of its UTF-8. Unlike R2RML's IRI-safe form (section 7.3), which leaves ucschar unencoded, it encodes every non-ASCII character; no code of a system here holds one, so the two agree on every code today. The stem is the owner's or a community registry's where one passes, and Cascade's own under https://ns.cascadeprotocol.org/codes/ otherwise; it is never the FHIR Coding.system URI, which cascade:codingSystemUri holds (https://hl7.org/fhir/R5/rdf.html#iri-stem). A stem the owner or HL7 Terminology registers later is recorded on the system beside its void:uriSpace and read as each code's skos:exactMatch; a code's IRI is never renamed. A record's code written as a literal joins a table as that IRI: the stem followed by the literal percent-encoded as ENCODE_FOR_URI does, so a literal of unreserved characters only is its own tail and NM_000249.4:c.2042C>T is https://ns.cascadeprotocol.org/codes/hgvs/NM_000249.4%3Ac.2042C%3ET."@en .
 
 cascade:codingSystemUri a owl:DatatypeProperty ;
     rdfs:label "coding system URI"@en ;
@@ -2778,32 +2778,32 @@ cascade:SameMappedCodeAndDate a owl:NamedIndividual ;
 
 cascade:SameMedicationCode a owl:NamedIndividual ;
     rdfs:label "same medication code"@en ;
-    rdfs:comment "Both medication records share an NDC code, whether each came from a prescription or from a list of what the person takes. Their exposure periods (cascade:medicationExposureStart) share at least one day as well; rule M15 and decisions/medication-matching.md, row \"same course\", say why."@en ;
+    rdfs:comment "Both medication records share an NDC code, whether each came from a prescription or from a list of what the person takes. Their exposure periods (cascade:medicationExposureStart) share at least one day as well; rule M15 says why."@en ;
     skos:broadMatch semapv:LexicalMatching .
 
 cascade:SameProductCode a owl:NamedIndividual ;
     rdfs:label "same product code"@en ;
-    rdfs:comment "Both medication records carry one RxNorm code that a version of a drug products table says names one drug product (SCD, SBD, GPCK or BPCK); they share no NDC. Their exposure periods (cascade:medicationExposureStart) share at least one day as well; rule M15 and decisions/medication-matching.md, row \"same course\", say why."@en ;
+    rdfs:comment "Both medication records carry one RxNorm code that a version of a drug products table says names one drug product (SCD, SBD, GPCK or BPCK); they share no NDC. Their exposure periods (cascade:medicationExposureStart) share at least one day as well; rule M15 says why."@en ;
     skos:broadMatch semapv:BackgroundKnowledgeBasedMatching .
 
 cascade:SameVariation a owl:NamedIndividual ;
     rdfs:label "same variation"@en ;
-    rdfs:comment "Both variant records carry one ClinVar VariationID. Rule M17 and decisions/variant-identity.md say why."@en ;
+    rdfs:comment "Both variant records carry one ClinVar VariationID. Rule M17 says why."@en ;
     skos:broadMatch semapv:LexicalMatching .
 
 cascade:SameVariationThroughTable a owl:NamedIndividual ;
     rdfs:label "same variation through the table"@en ;
-    rdfs:comment "Both variant records find one row of a version of a variant classifications table: a version that carries a ClinVar VariationID finds the row of that variation, and one that carries none finds the row holding its HGVS expression. The classification plays no part. Rule M17 and decisions/variant-identity.md say why."@en ;
+    rdfs:comment "Both variant records find one row of a version of a variant classifications table: a version that carries a ClinVar VariationID finds the row of that variation, and one that carries none finds the row holding its HGVS expression. The classification plays no part. Rule M17 says why."@en ;
     skos:broadMatch semapv:BackgroundKnowledgeBasedMatching .
 
 cascade:SameSelfAssertedBaseUrlAndAuthorizationEndpointOnOneHost a owl:NamedIndividual ;
     rdfs:label "same self-asserted base URL and authorization endpoint on one host"@en ;
-    rdfs:comment "Both server records have a version, each written by a connect made with one client id, reporting one self-asserted base URL and one authorization endpoint, and the base URLs the client used name one host. Rule M20 and decisions/republishing-sources.md, row \"two servers are one\", say why."@en ;
+    rdfs:comment "Both server records have a version, each written by a connect made with one client id, reporting one self-asserted base URL and one authorization endpoint, and the base URLs the client used name one host. Rule M20 says why."@en ;
     skos:broadMatch semapv:LexicalMatching .
 
 cascade:SameBrandGeneric a owl:NamedIndividual ;
     rdfs:label "same brand generic"@en ;
-    rdfs:comment "One record's branded RxNorm product and the other's generic, or two brands of one generic, by a version of a brand generics table; the records share no code. Their exposure periods (cascade:medicationExposureStart) share at least one day as well; rule M15 and decisions/medication-matching.md, row \"same course\", say why."@en ;
+    rdfs:comment "One record's branded RxNorm product and the other's generic, or two brands of one generic, by a version of a brand generics table; the records share no code. Their exposure periods (cascade:medicationExposureStart) share at least one day as well; rule M15 says why."@en ;
     skos:broadMatch semapv:BackgroundKnowledgeBasedMatching .
 
 cascade:SameResult a owl:NamedIndividual ;
@@ -2813,22 +2813,22 @@ cascade:SameResult a owl:NamedIndividual ;
 
 cascade:SameBusinessIdentifierAndTestCodeWithinOneOrganization a owl:NamedIndividual ;
     rdfs:label "same business identifier and test code within one organization"@en ;
-    rdfs:comment "Both lab results carry one business identifier of a named system and one test code, and one clinically relevant time, or one of them none, and documents they came from name one organization record, or two currently the same organization, as custodian or author: a certain join, ahead of every other rule for lab results. Rule M22 and decisions/quantities.md, row \"matcher\", say why."@en ;
+    rdfs:comment "Both lab results carry one business identifier of a named system and one test code, and one clinically relevant time, or one of them none, and documents they came from name one organization record, or two currently the same organization, as custodian or author: a certain join, ahead of every other rule for lab results. Rule M22 says why."@en ;
     skos:broadMatch semapv:LexicalMatching .
 
 cascade:SameNoteTypeAndTextGrownWithinOneOrganization a owl:NamedIndividual ;
     rdfs:label "same note type and text grown within one organization"@en ;
-    rdfs:comment "Both notes carry one note type, a LOINC code, or a code of another system when neither has a LOINC code, documents they came from name one organization record, or two currently the same organization, as custodian or author, and the shorter one's text, of at least 200 characters, begins or ends the longer one's as whole lines, the longer dated no earlier, and no other note of the type and organization holding the shorter grew apart from the longer: one note its source sent again as it grew. Rule M24 and decisions/reports-and-notes.md, row \"joining\", say why."@en ;
+    rdfs:comment "Both notes carry one note type, a LOINC code, or a code of another system when neither has a LOINC code, documents they came from name one organization record, or two currently the same organization, as custodian or author, and the shorter one's text, of at least 200 characters, begins or ends the longer one's as whole lines, the longer dated no earlier, and no other note of the type and organization holding the shorter grew apart from the longer: one note its source sent again as it grew. Rule M24 says why."@en ;
     skos:broadMatch semapv:LexicalMatching .
 
 cascade:SameNoteTypeAndText a owl:NamedIndividual ;
     rdfs:label "same note type and text"@en ;
-    rdfs:comment "Both notes carry one note type, read as cascade:SameNoteTypeAndTextGrownWithinOneOrganization reads it, and one text of at least 200 characters, every run of white space read as one space, from any sources: one note with two copies. Rule M24 and decisions/reports-and-notes.md, row \"joining\", say why."@en ;
+    rdfs:comment "Both notes carry one note type, read as cascade:SameNoteTypeAndTextGrownWithinOneOrganization reads it, and one text of at least 200 characters, every run of white space read as one space, from any sources: one note with two copies. Rule M24 says why."@en ;
     skos:broadMatch semapv:LexicalMatching .
 
 cascade:SameNoteOrDocumentMasterIdentifier a owl:NamedIndividual ;
     rdfs:label "same note or document master identifier"@en ;
-    rdfs:comment "Both notes carry one master identifier typed by its system, the identifier of one version of one document, from any sources, whatever their types and texts: one document reached twice. Rule M24 and decisions/reports-and-notes.md, row \"joining\", say why."@en ;
+    rdfs:comment "Both notes carry one master identifier typed by its system, the identifier of one version of one document, from any sources, whatever their types and texts: one document reached twice. Rule M24 says why."@en ;
     skos:broadMatch semapv:LexicalMatching .
 
 cascade:SameResultOnOneDay a owl:NamedIndividual ;
@@ -3313,7 +3313,7 @@ cascade:occurrenceCount a owl:DatatypeProperty ;
     rdfs:comment "Of a Bridge finding, how many nodes of the record stand at the path it is about."@en ;
     rdfs:range xsd:integer .
 
-# Consent tiers of the tools a model is offered; decisions/consent-tiers.md
+# Consent tiers of the tools a model is offered
 
 cascade:ConsentTiers a skos:ConceptScheme ;
     rdfs:label "consent tiers"@en ;

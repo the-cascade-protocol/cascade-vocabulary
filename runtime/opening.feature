@@ -16,7 +16,6 @@ Feature: Opening a pod
   same but a version "0b" in place of "0a" that also declares R4 wrong.
 
   Rule: O1. Opening a pod adopts each series' default version that descends from the version the pod names, and judges what the tables newly join
-    No note rules this.
     The default is M10's; a version descends from another along the tables' line of prov:wasRevisionOf. A series the
     pod names no version of is not adopted, since M10 already gives it the default. Opening, at the open's time:
 
@@ -153,7 +152,6 @@ Feature: Opening a pod
         | Matcher rules version 0a |
 
   Rule: O2. A series the tables do not hold the pod's version of is left out, and nothing is written of it
-    No note rules this.
     The tables may not hold the series at all, as for a pod made on other tables, or not the pod's version, as for a
     pod a newer app has opened. Rules reading that series' kind read no version of it, and the rest of the matcher
     runs. Its Sames are not rechecked, since no version the tables hold revises theirs, and they still count; the
@@ -204,7 +202,6 @@ Feature: Opening a pod
         | same code and date | immunization CVX 141 "Fluarix Tetra", immunization CVX 141 "Fluarix" | version 1 of immunization CVX 141 "Fluarix Tetra", version 1 of immunization CVX 141 "Fluarix" |
 
   Rule: O3. What an example reads holds the rows of the tables the pod is opened with, each current version a graph of its own
-    No note rules this.
     A step reads the tables as the matcher's queries read them (runtime/steps.md, "The dataset a Then reads"): the
     rows of each series' current version in the graph named by the version, outside the default graph, and their
     descriptions in it. Until an open, they are Hana's references/, whose "CVX vaccine group table" maps CVX 141 to its
@@ -261,7 +258,6 @@ Feature: Opening a pod
       Then it answers nothing
 
   Rule: O4. A pod that requires what the runtime cannot do is refused at the open, naming the requirement
-    decisions/files-held-in-archives.md, row "what reading a pod requires".
     A pod says what a runtime must be able to do to read it whole, a file for each cascade:RequirementForReadingAPod it
     requires, in the folder pod-layout.ttl gives cascade:holdsRequirementsForReadingAPod. The file is named by N9 from
     the requirement's IRI and holds one statement, that the pod dct:requires the requirement, the pod written <../> so

@@ -1,7 +1,6 @@
 Feature: Write order
 
   Rule: W1. Content-addressed files are written first, the revision files after them, and the act's file last
-    decisions/files-held-in-archives.md, rows "a step's archive" and "what reading a pod requires", rule its second and third paragraphs; no note rules the rest.
     A step that stops partway then leaves nothing that passes for finished: the act's file holds its snapshot (N14), so
     no snapshot names a set the step did not finish writing. The views, the type index and the manifest may be stale
     after a crash, and are rebuilt: the manifest is written last of them, and a build is read back only where each file

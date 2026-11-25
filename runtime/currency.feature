@@ -1,6 +1,6 @@
 Feature: Currency
   Which revision of a record is current, and which member of an entry leads it: derived, never stored, by the ladder
-  decisions/currency.md rules, over the two clocks each revision carries, the source's change time and when the source
+  over the two clocks each revision carries, the source's change time and when the source
   was observed, and the person's Befores and Erroneous judgments.
 
   Each pod starts empty, at https://pod.example/, with Ada as its subject (scripted-input/people.ttl). Ada imports
@@ -9,7 +9,6 @@ Feature: Currency
   copy of the peanut allergy active as its source stamped it on 4 January: an older state, observed later.
 
   Rule: C1. A revision carries when its source was observed saying its state
-    decisions/currency.md, row "two clocks"; decisions/partial-dates-and-absent-reasons.md, row "4. the currency ladder".
     Its cascade:observedAsOf is the first there is of its document's
     cascade:answeredAsOf, the document's pav:retrievedOn, the source's own change time it carries as pav:lastUpdateOn,
     and the start of the act that generated it; for an entry, the session's start. It is one of the revision's own
@@ -31,7 +30,6 @@ Feature: Currency
         | "2026-01-02T10:00:00Z"^^xsd:dateTime | "2026-01-02T10:00:00Z"^^xsd:dateTime |
 
   Rule: C2. A record's current revision is the ladder's pick
-    decisions/currency.md, rows "current", "heads" and "Erroneous", and its ladder; decisions/performance.md, row "the ladder as a maximum"; decisions/variant-interpretation.md, row "which revision is current"; decisions/variant-record.md, row "which revision is current".
     Of the record's revisions, whatever revises what: remove each an Erroneous names; remove each a Before places before another still present,
     unless Befores form a cycle (C4); keep those at the latest source change time with those carrying none; of those,
     the greatest cascade:observedAsOf, but between two imports from documents reached by one path, the one whose act's
@@ -54,7 +52,7 @@ Feature: Currency
         | allergy "Peanut" | version | 2     |
 
   Rule: C3. A person's Before outranks every clock
-    decisions/currency.md, row "Before". A cascade:Judgment with the verdict cascade:Before, by a person, of two
+    A cascade:Judgment with the verdict cascade:Before, by a person, of two
     revisions of one record or of two records a Same joins, names the one it places before the other as
     cascade:earlierMember. The ladder removes the earlier before the clocks rank, so they cannot re-admit it.
 
@@ -68,7 +66,7 @@ Feature: Currency
         | allergy "Peanut" | version | 1     |
 
   Rule: C4. Befores that form a cycle remove nothing, and the record is listed for review
-    decisions/currency.md, rows "Before" and "review page". Two Befores ordering two revisions both ways, directly or
+    Two Befores ordering two revisions both ways, directly or
     through others, remove neither, and queries/questions/record/What needs review.rq lists each such Before, as
     tests/fixtures/a-cycle-of-befores-removes-nothing shows.
 
@@ -83,7 +81,6 @@ Feature: Currency
         | allergy "Peanut" | version | 2     |
 
   Rule: C5. The review page lists every pick the source's change time did not decide
-    decisions/currency.md, row "review page"; decisions/performance.md, row "the review page bounded".
     queries/questions/record/What needs review.rq lists each record whose
     current revision was picked from candidates at other versions by the observation time ("observed later") or the
     least IRI ("no basis"), beside the state shown and each state not shown, but not a pick between two live pulls of
@@ -95,7 +92,7 @@ Feature: Currency
     decides. The fixtures under tests/fixtures/ named for ancestry, two writers and a tie show it.
 
   Rule: C6. An entry shows every member, its lead's first
-    decisions/currency.md, row "entry on a Same group", and its lead. An entry's cascade:leadMember is a record the
+    An entry's cascade:leadMember is a record the
     person entered when it holds one; otherwise the member left once a Before outside a cycle has placed the
     others' current revisions before it, ranked as the ladder's last three steps rank revisions. A view takes the
     entry's name and codes from its lead, and holds each member's current values as a node of its own
@@ -108,7 +105,6 @@ Feature: Currency
     one. Priya's kit shows it, P15 and P11, and tests/fixtures/the-lead-member and allergies-view show the rest.
 
   Rule: C7. A person's ClockDiscounted ranks every revision its act generated as carrying no observation time
-    decisions/currency.md, rows "wrong writer clock" and "review page"; decisions/judgments.md, row "a clock known wrong".
     A cascade:Judgment with the verdict cascade:ClockDiscounted, by a
     person, whose one member is an act, says the times its writer's clock gave are known wrong, usually in answer to a
     finding that the clock was behind (A19). It carries no offset. While it stands, the ladder ranks every revision the
@@ -132,7 +128,7 @@ Feature: Currency
     tests/fixtures/an-act-whose-clock-is-discounted, a-clock-found-behind and a-source-that-went-back show the rest.
 
   Rule: C8. An act rebuilds only what it reached, and the views it leaves are those of a build of the whole pod
-    decisions/currency.md, row "view", and decisions/performance.md, row "current per act, incrementally". After an
+    After an
     act, the derived state, the views and the labels are those a build of the whole pod gives. A runtime need build
     again only the records the act wrote a revision of and those its judgments, retractions, assertions and findings
     reach through what each names, retracts, replaces, asserts or targets: a revision's record, each record an act

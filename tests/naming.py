@@ -1,4 +1,4 @@
-"""The reference implementation of every naming rule of decisions/naming.md, one function per rule term; the vectors
+"""The reference implementation of every naming rule, one function per rule term; the vectors
 under tests/vectors/naming/ are what every other implementation reproduces."""
 
 import base64
@@ -171,7 +171,7 @@ def encoded_for_uri(text):
 
 
 def code_iri(stem, code):
-    """A code joined to its system's stem, as decisions/code-iris.md rules."""
+    """A code joined to its system's stem."""
     return stem + encoded_for_uri(code)
 
 
