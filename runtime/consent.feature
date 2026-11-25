@@ -6,7 +6,6 @@ Feature: Consent tiers
   Each pod starts empty, at https://pod.example/, with Ada as its subject (scripted-input/people.ttl).
 
   Rule: Y1. Each tool a runtime offers a model takes one kind of act and runs at that kind's tier, free or ask
-    decisions/consent-tiers.md, rows "kind of act", "a tool's tier" and "never".
     The kinds are cascade:ModelToolActKinds in ontologies/cascade.ttl, each with its cascade:consentTier. A tool
     declares the one kind it takes and its tier, by the tier's skos:notation, and the tier is its kind's. No tool takes
     a kind whose tier is cascade:ConsentTierNever, so no door offers one, whatever the person says. A runtime that
@@ -33,7 +32,6 @@ Feature: Consent tiers
       Then it answers nothing
 
   Rule: Y2. A tool at ask does nothing until the person says yes to that call
-    decisions/consent-tiers.md, rows "ask" and "a door that cannot ask"; decisions/model-proposed-writes.md, row "asking".
     The door that offers the tool shows the person what this call will do, and runs it only once they say yes to it.
     A no, or a question dismissed or left unanswered, does nothing. A yes is for the one call it answers. A door that
     cannot ask the person offers no tool at cascade:ConsentTierAsk.
@@ -71,7 +69,6 @@ Feature: Consent tiers
       Then it answers nothing
 
   Rule: Y3. A write a model proposed names the model as its proposer, and the person who said yes
-    decisions/model-proposed-writes.md, rows "where it is said", "the model", "the person who said yes", "a judgment's author", "told apart" and "when".
     The act that wrote it, an entry's session, the act that generated a judgment or a retraction, has one
     prov:qualifiedAssociation in cascade:ModelProposerRole, whose prov:agent is the model, a prov:SoftwareAgent named
     by an IRI and typed in the act's file, never the runtime; and one in cascade:PatientRole, whose prov:agent is the

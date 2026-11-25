@@ -5,7 +5,7 @@
     cascade:justifiedAs cascade:SameMedicationCode ;
     cascade:appliesToClass cascade:PrescribedOrReportedMedication ;
     cascade:queryPath "matcher/same-product-code-in-current-tables-and-overlapping-exposure-periods.rq" ;
-    cascade:queryHash <ni:///sha-256;llyHe-qUSKXJjpoi9O6p1GJ2AqOoK-a-vORDvlC5Ric> ;
+    cascade:queryHash <ni:///sha-256;lfrLf8y_Mx7QmCJS9lSD3iw1EkGenEjc0q0bZoEE6_8> ;
     cascade:tableKind cascade:DrugProducts .
 
 [] a cascade:RuleListRow ;
@@ -13,5 +13,5 @@
     cascade:justifiedAs cascade:SameBrandGeneric ;
     cascade:appliesToClass cascade:PrescribedOrReportedMedication ;
     cascade:queryPath "matcher/same-brand-generic-and-overlapping-exposure-periods.rq" ;
-    cascade:queryHash <ni:///sha-256;Q4pmsCsKo_3asbjGBfbSjfi_aEZv3r2y4VBCJ1xGTYk> ;
+    cascade:queryHash <ni:///sha-256;1cPN4KsYopoApVKcnlADL9U0xtm52aMDfTtky2lDxIE> ;
     cascade:tableKind cascade:BrandGenerics .

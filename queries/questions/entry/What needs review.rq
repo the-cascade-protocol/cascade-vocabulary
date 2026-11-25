@@ -17,8 +17,8 @@
 # a pair of which one carries more than one product code (R11 leaves it out, as A with X, B with X and Y, C with Y), a
 # code no held table knows, which is every shared RxNorm code when no drug products table is held, or, from the rule
 # list's version 18, a pair of one product or one NDC whose exposure periods share no day, or of which one has no
-# exposure start: two courses, or one course with a gap, which a person can tell apart and the dates cannot
-# (decisions/medication-matching.md). A pair is listed once,
+# exposure start: two courses, or one course with a gap, which a person can tell apart and the dates cannot.
+# A pair is listed once,
 # from the entry of its smaller record, unless a person judged it different or a lapsed Same of it is listed already.
 # An entry joined by an NDC (R5) and a product code (R11) alone is joined through one kind of sameness, since both are
 # exact identity, and so is an entry joined by a grown note (R19), one note sent twice (R20) and one document

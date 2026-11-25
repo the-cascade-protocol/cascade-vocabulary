@@ -12,7 +12,7 @@
 
 <#what-needs-review> a mf:QueryEvaluationTest ;
   mf:name "what-needs-review" ;
-  rdfs:comment "The finding's pair, x1 and x3, is listed: each acknowledgement answers a warning about its own two records, and x1 and x3 are one record from each." ;
+  rdfs:comment "The finding's pair, x1 and x3, is listed: each acknowledgement answers a warning about its own two records, and x1 and x3 are one record from each; an acknowledgement answers a warning only of things it names, every one of them, and neither names both x1 and x3, the first sharing x1 with the pair without naming x3." ;
   mf:action [ qt:query <../../../queries/questions/entry/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <what-needs-review.tsv> .

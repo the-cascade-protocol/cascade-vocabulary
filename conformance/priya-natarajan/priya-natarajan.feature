@@ -198,12 +198,11 @@ Feature: Priya Natarajan's pod
         | FFC-IMM-FLU | 2025-05-20 at 18:50:04 | 1       |       |
 
   Rule: P10. An entry whose id repeats in its document is named by its document and its place in it
-    decisions/naming.md, row "record from C-CDA": Fernhill writes one id for Claritin and fluticasone, so each is
-    named by its download and its place, and the adapter says the source broke its own definition. Claritin in the
-    second download, FFC-MED-CLARITIN-2, is a record of its own. Neither Claritin states a start (P13), and a record
-    with no start joins no other medication (decisions/medication-matching.md, row "no dates"; M15), so under the rule
-    list's version 19 the matcher keeps the two apart, although they share a product code. "What needs review" lists
-    the pair as possibly the same medication (M16), and Priya joins it with a Same, J5, which outranks the matcher
+    Fernhill writes one id for Claritin and fluticasone, so each is named by its download and its place, and the adapter
+    says the source broke its own definition. Claritin in the second download, FFC-MED-CLARITIN-2, is a record of its
+    own. Neither Claritin states a start (P13), and a record with no start joins no other medication (M15), so under the
+    rule list's version 19 the matcher keeps the two apart, although they share a product code. "What needs review"
+    lists the pair as possibly the same medication (M16), and Priya joins it with a Same, J5, which outranks the matcher
     (P15).
 
     Example: the second download's Claritin is a record of its own

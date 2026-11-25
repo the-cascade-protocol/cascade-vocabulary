@@ -1,7 +1,7 @@
 Feature: Currency
   Which revision of a record is current, and which member of an entry leads it: derived, never stored, by the ladder
-  decisions/currency.md rules, over the two clocks each revision carries, the source's change time and when the source
-  was observed, and the person's Befores and Erroneous judgments.
+  over the two clocks each revision carries, the source's change time and when the source was observed, and the person's
+  Befores and Erroneous judgments.
 
   Each pod starts empty, at https://pod.example/, with Ada as its subject (scripted-input/people.ttl). Ada imports
   Apple Health exports of four allergies, each stamped by its source (pav:lastUpdateOn): first-export, all stamped
@@ -9,7 +9,6 @@ Feature: Currency
   copy of the peanut allergy active as its source stamped it on 4 January: an older state, observed later.
 
   Rule: C1. A revision carries when its source was observed saying its state
-    decisions/currency.md, row "two clocks"; decisions/partial-dates-and-absent-reasons.md, row "4. the currency ladder".
     Its cascade:observedAsOf is the first there is of its document's
     cascade:answeredAsOf, the document's pav:retrievedOn, the source's own change time it carries as pav:lastUpdateOn,
     and the start of the act that generated it; for an entry, the session's start. It is one of the revision's own
@@ -31,7 +30,6 @@ Feature: Currency
         | "2026-01-02T10:00:00Z"^^xsd:dateTime | "2026-01-02T10:00:00Z"^^xsd:dateTime |
 
   Rule: C2. A record's current revision is the ladder's pick
-    decisions/currency.md, rows "current", "heads" and "Erroneous", and its ladder; decisions/performance.md, row "the ladder as a maximum"; decisions/variant-interpretation.md, row "which revision is current"; decisions/variant-record.md, row "which revision is current".
     Of the record's revisions, whatever revises what: remove each an Erroneous names; remove each a Before places before another still present,
     unless Befores form a cycle (C4); keep those at the latest source change time with those carrying none; of those,
     the greatest cascade:observedAsOf, but between two imports from documents reached by one path, the one whose act's
@@ -54,7 +52,7 @@ Feature: Currency
         | allergy "Peanut" | version | 2     |
 
   Rule: C3. A person's Before outranks every clock
-    decisions/currency.md, row "Before". A cascade:Judgment with the verdict cascade:Before, by a person, of two
+    A cascade:Judgment with the verdict cascade:Before, by a person, of two
     revisions of one record or of two records a Same joins, names the one it places before the other as
     cascade:earlierMember. The ladder removes the earlier before the clocks rank, so they cannot re-admit it.
 
@@ -68,8 +66,8 @@ Feature: Currency
         | allergy "Peanut" | version | 1     |
 
   Rule: C4. Befores that form a cycle remove nothing, and the record is listed for review
-    decisions/currency.md, rows "Before" and "review page". Two Befores ordering two revisions both ways, directly or
-    through others, remove neither, and queries/questions/record/What needs review.rq lists each such Before, as
+    Two Befores ordering two revisions both ways, directly or through others, remove neither, and
+    queries/questions/record/What needs review.rq lists each such Before, as
     tests/fixtures/a-cycle-of-befores-removes-nothing shows.
 
     Example: two Befores ordering the two states both ways leave the clocks' pick
@@ -83,7 +81,6 @@ Feature: Currency
         | allergy "Peanut" | version | 2     |
 
   Rule: C5. The review page lists every pick the source's change time did not decide
-    decisions/currency.md, row "review page"; decisions/performance.md, row "the review page bounded".
     queries/questions/record/What needs review.rq lists each record whose
     current revision was picked from candidates at other versions by the observation time ("observed later") or the
     least IRI ("no basis"), beside the state shown and each state not shown, but not a pick between two live pulls of
@@ -95,20 +92,18 @@ Feature: Currency
     decides. The fixtures under tests/fixtures/ named for ancestry, two writers and a tie show it.
 
   Rule: C6. An entry shows every member, its lead's first
-    decisions/currency.md, row "entry on a Same group", and its lead. An entry's cascade:leadMember is a record the
-    person entered when it holds one; otherwise the member left once a Before outside a cycle has placed the
-    others' current revisions before it, ranked as the ladder's last three steps rank revisions. A view takes the
-    entry's name and codes from its lead, and holds each member's current values as a node of its own
-    (cascade:memberCurrentValues), named after the entry and the member (N13), which names the member it came from
-    (cascade:valuesOfMember); queries/questions/entry/What it shows.rq lists them from the view alone, the lead's first.
-    No merged record is stored, and no triple of a version is copied into a view, so no count over the union sees one
-    twice.
+    An entry's cascade:leadMember is a record the person entered when it holds one; otherwise the member left once a
+    Before outside a cycle has placed the others' current revisions before it, ranked as the ladder's last three steps
+    rank revisions. A view takes the entry's name and codes from its lead, and holds each member's current values as a
+    node of its own (cascade:memberCurrentValues), named after the entry and the member (N13), which names the member it
+    came from (cascade:valuesOfMember); queries/questions/entry/What it shows.rq lists them from the view alone, the
+    lead's first. No merged record is stored, and no triple of a version is copied into a view, so no count over the
+    union sees one twice.
 
     No example here shows this rule: no scripted input but a kit's joins a record the person entered to an imported
     one. Priya's kit shows it, P15 and P11, and tests/fixtures/the-lead-member and allergies-view show the rest.
 
   Rule: C7. A person's ClockDiscounted ranks every revision its act generated as carrying no observation time
-    decisions/currency.md, rows "wrong writer clock" and "review page"; decisions/judgments.md, row "a clock known wrong".
     A cascade:Judgment with the verdict cascade:ClockDiscounted, by a
     person, whose one member is an act, says the times its writer's clock gave are known wrong, usually in answer to a
     finding that the clock was behind (A19). It carries no offset. While it stands, the ladder ranks every revision the
@@ -132,31 +127,30 @@ Feature: Currency
     tests/fixtures/an-act-whose-clock-is-discounted, a-clock-found-behind and a-source-that-went-back show the rest.
 
   Rule: C8. An act rebuilds only what it reached, and the views it leaves are those of a build of the whole pod
-    decisions/currency.md, row "view", and decisions/performance.md, row "current per act, incrementally". After an
-    act, the derived state, the views and the labels are those a build of the whole pod gives. A runtime need build
-    again only the records the act wrote a revision of and those its judgments, retractions, assertions and findings
-    reach through what each names, retracts, replaces, asserts or targets: a revision's record, each record an act
-    a judgment names revised, and each record one of whose versions names what a judgment names, as an About's profile; closed
-    over every record currently the same as one, before the act or by a judgment it wrote, each a version of one names
-    or whose version names one, each with one's source record id once two servers are judged the same, and each member
-    of a matcher Same over an older table version with one among its members, which M7 joins by their current versions.
-    An act that changes the current version of a reference series the pod described before, a migration of the rule
-    list versions (N15), an open, which gives the pod the tables it is read with, and a change to the trusted makers
-    change what every record's judgments count, and are built whole; a runtime may build any step whole. The
-    manifest's build activity used the writer's last snapshot (prov:used), and may name by cascade:buildInputsHash a
-    hash of everything the build read: the pod's files it read, the derivations, queries and layout it ran, what the
-    tables it was read with hold of the versions the pod files, and the runtime that ran it, whose IRI (N7) every such
-    hash covers, so no other runtime computes the same one. A runtime that opens a pod again may take the views, the
-    labels and the type index from the pod instead of building them only when the manifest names the hash it computes
-    for the pod as it stands, and only from a build it kept itself under that same hash: the derived state, and the
-    bytes of each file the build wrote, which each of those files must still hold. Otherwise they are stale, and are
-    built again, by a read as by a step. A read that built them writes again each file the build writes whose bytes
-    the pod does not hold: all of them where the manifest names another hash, and where it names the same, those a
-    crash or a sync left holding other bytes. The manifest written again is the one the pod held but for the hash, so
-    a read changes neither the time it names nor its prov:used. A read writes nothing when the manifest or the pod's
-    listing changed since it read them, as when another session's act landed meanwhile. Two runtimes reading one pod
-    compute different hashes, so each rebuilds and rewrites on every read. The manifest is written after the files it
-    describes.
+    After an act, the derived state, the views and the labels are those a build of the whole pod gives. A runtime need
+    build again only the records the act wrote a revision of and those its judgments, retractions, assertions and
+    findings reach through what each names, retracts, replaces, asserts or targets: a revision's record, each record an
+    act a judgment names revised, and each record one of whose versions names what a judgment names, as an About's
+    profile; closed over every record currently the same as one, before the act or by a judgment it wrote, each a
+    version of one names or whose version names one, each with one's source record id once two servers are judged the
+    same, and each member of a matcher Same over an older table version with one among its members, which M7 joins by
+    their current versions. An act that changes the current version of a reference series the pod described before, a
+    migration of the rule list versions (N15), an open, which gives the pod the tables it is read with, and a change to
+    the trusted makers change what every record's judgments count, and are built whole; a runtime may build any step
+    whole. The manifest's build activity used the writer's last snapshot (prov:used), and may name by
+    cascade:buildInputsHash a hash of everything the build read: the pod's files it read, the derivations, queries and
+    layout it ran, what the tables it was read with hold of the versions the pod files, and the runtime that ran it,
+    whose IRI (N7) every such hash covers, so no other runtime computes the same one. A runtime that opens a pod again
+    may take the views, the labels and the type index from the pod instead of building them only when the manifest names
+    the hash it computes for the pod as it stands, and only from a build it kept itself under that same hash: the
+    derived state, and the bytes of each file the build wrote, which each of those files must still hold. Otherwise they
+    are stale, and are built again, by a read as by a step. A read that built them writes again each file the build
+    writes whose bytes the pod does not hold: all of them where the manifest names another hash, and where it names the
+    same, those a crash or a sync left holding other bytes. The manifest written again is the one the pod held but for
+    the hash, so a read changes neither the time it names nor its prov:used. A read writes nothing when the manifest or
+    the pod's listing changed since it read them, as when another session's act landed meanwhile. Two runtimes reading
+    one pod compute different hashes, so each rebuilds and rewrites on every read. The manifest is written after the
+    files it describes.
 
     No example shows this rule: an example reads a dataset built whole from the files its story wrote, so a build in
     part and a build whole give it the same rows. Each runtime tests it itself, replaying every kit and building the
