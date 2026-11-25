@@ -8,9 +8,8 @@ The contract a Cascade pod is built and read by. It holds no code that builds a 
   one in the namespace `https://ns.cascadeprotocol.org/cascade#`: [`cascade.ttl`](ontologies/cascade.ttl) and
   [`cascade.shapes.ttl`](ontologies/cascade.shapes.ttl), under `Apache-2.0 AND CC-BY-4.0`, as [`NOTICE`](NOTICE)
   says. Each term in the namespace says what it is in its `rdfs:comment`; a term copied from another vocabulary
-  carries its `dct:source` and `dct:license`.
-- [`decisions/`](decisions): why a term or a rule is as it is, one note for each, with what others do, the alternatives
-  that lost and what would change our mind.
+  carries its `dct:source` and `dct:license`. An adapter is the converter that turns a source's files, such as FHIR or
+  C-CDA, into a pod's records, and the adapters read these two files by their paths.
 - [`queries/`](queries): the standard queries over a pod: the derivations and lenses, the views and
   labels, the matcher's comparisons, and the questions. Beside a query a runtime answers from SQLite is a `.sql` that
   gives its rows, over the tables [`statements.sql`](queries/statements.sql) makes, calling the functions
@@ -33,14 +32,14 @@ The contract a Cascade pod is built and read by. It holds no code that builds a 
 - [`people/`](people): the hand-written test people, each the one place their name, birth date and gender are written,
   with what each hospital holds of them, checked to agree.
 
-Beside them, [`tests/fixtures/`](tests/fixtures) holds the small hand-made pods each query is tested on.
+Beside them, [`tests/fixtures/`](tests/fixtures) holds the small hand-made pods each query is tested on, and
+[`PRINCIPLES.md`](PRINCIPLES.md) says what a design here is judged by.
 
 ## Docs
 
 - [The Cascade hub](https://the-cascade-protocol.github.io/cascade-runtime-js/): where to go for each thing, and every repository.
 - [Term reference](https://the-cascade-protocol.github.io/cascade-runtime-js/terms/): every term the vocabulary defines or copies.
 - [The rules](https://the-cascade-protocol.github.io/cascade-runtime-js/spec/): the rules, feature by feature.
-- [Decision notes](https://the-cascade-protocol.github.io/cascade-runtime-js/decisions/): why a term or a rule is as it is.
 - [Latest conformance run](https://the-cascade-protocol.github.io/cascade-runtime-js/conformance/): the reference runtime's result for every example of the features and conformance kits.
 - [Unit-test reports](https://the-cascade-protocol.github.io/cascade-runtime-js/conformance/tests/cascade-vocabulary/): each case of the vocabulary's tests, with its result, from the newest run on main; [the runtime's](https://the-cascade-protocol.github.io/cascade-runtime-js/conformance/tests/cascade-runtime-js/) are beside it.
 
