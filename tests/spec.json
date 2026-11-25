@@ -27,6 +27,7 @@
     "Snapshot vectors a runtime reproduces · tests/vectors/snapshot/vectors.json, tests/naming.py",
     "Kinds of record in the queries · queries/derivations/records.rq, queries/views/",
     "The form every query is written in · queries/**/*.rq",
+    "Principles the suite holds the vocabulary to · ontologies/cascade.ttl, queries/, conformance/*/expected/, runtime/*.feature",
     "Terms the shapes and the ontology files agree on · ontologies/cascade.ttl, ontologies/cascade.shapes.ttl",
     "Terms copied from another vocabulary · ontologies/*.ttl",
     "PROV as a pod's records use it · ontologies/cascade.ttl, runtime/pod-layout.ttl",
