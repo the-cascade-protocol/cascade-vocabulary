@@ -1,4 +1,0 @@
-?code	?expansion	?origin	?record
-<http://snomed.info/id/1481000119100>	"2022-12-01T11:00:00.000Z"	<urn:x:diabetes-2>	<urn:x:retinopathyChecked>
-<https://ns.cascadeprotocol.org/codes/icd10cm/E11.9>	"2022-09-24T11:00:00.000Z"	<urn:x:diabetes-1>	<urn:x:uncomplicated>
-<https://ns.cascadeprotocol.org/codes/icd10cm/E11.9>	"2022-12-01T11:00:00.000Z"	<urn:x:diabetes-2>	<urn:x:uncomplicated>
