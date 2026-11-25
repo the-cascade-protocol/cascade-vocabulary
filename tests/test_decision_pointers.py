@@ -33,11 +33,11 @@ def pointers():
 class TestChecksThatNoFilePointsAtARemovedDecisionRecord:
     """Checks that no file points at a removed decision record · tests/test_decision_pointers.py
 
-    The records that were kept in decisions/ are gone, and nothing is checked in them; a tracked file outside decisions/
-    that still names one, or says a rule has none, steers a reader to a page that is not there.
+    The decision notes are deleted. A tracked file outside decisions/ that still names one, says a rule has none, or links
+    the pages that published them sends a reader to a page that is not there.
     """
 
-    def test_no_tracked_file_outside_decisions_names_a_record(self):
-        """no tracked file outside decisions/ names a record"""
+    def test_has_no_tracked_file_outside_decisions_that_names_a_record(self):
+        """has no tracked file outside decisions/ that names a record"""
         found = pointers()
         assert not found, f"{len(found)} lines:\n" + "\n".join(found)
