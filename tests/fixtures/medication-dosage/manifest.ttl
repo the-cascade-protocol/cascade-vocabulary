@@ -5,9 +5,12 @@
 
 <> a mf:Manifest ;
   rdfs:label "medication-dosage" ;
-  rdfs:comment "A medication entry joining a list entry and a later prescription that each state a dosage; one whose later prescription states none beside a list entry that does, which the entry shows; and one whose lead is the earlier list entry beside a later prescription derived from a document, whose dosage the entry shows, not the later one's; and one that states none." ;
+  rdfs:comment "A medication entry joining a list entry and a later prescription that each state a dosage; one whose later prescription states none beside a list entry that does, which the entry shows; and one whose lead is the earlier list entry beside a later prescription derived from a document, whose dosage the entry shows, not the later one's; and one that states none. The later prescription of the first states an intent, a course of therapy, the end of its dispensing window and two structured dosages, one with its dose, the other with none and with bounds, its end padded; the list entry beside it states one with a dose of up to two tablets; the amoxicillin states an intent and a dosage holding nothing; the other members state none of these." ;
   mf:entries (
     <#the-dosage-the-view-shows>
+    <#the-prescription-facts-the-view-shows>
+    <#the-structured-dosages-the-view-shows>
+    <#what-it-shows>
     <#my-active-medications>
     <#my-medication-history>
   ) .
@@ -32,3 +35,24 @@
   mf:action [ qt:query <../../../queries/questions/pod/My%20medication%20history.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <my-medication-history.tsv> .
+
+<#the-prescription-facts-the-view-shows> a mf:QueryEvaluationTest ;
+  mf:name "the-prescription-facts-the-view-shows" ;
+  rdfs:comment "Each member's values hold the intent, the course of therapy and the end of the dispensing window its version states, each beside the member that states it; a member that states none of them has none, and one stating only an intent has that." ;
+  mf:action [ qt:query <the-prescription-facts-the-view-shows.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <the-prescription-facts-the-view-shows.tsv> .
+
+<#the-structured-dosages-the-view-shows> a mf:QueryEvaluationTest ;
+  mf:name "the-structured-dosages-the-view-shows" ;
+  rdfs:comment "Each structured dosage of a member's version is a node of the member's values, named after them and the dosage's number, holding its frequency, period and unit, each route code, each bound with a time written short of the second keeping its padded node, and its dose quantity as a node of its own with the number as typed and as written, its comparator and its units; a dosage with no dose has no dose node and a dosage that holds nothing is still a node; the two members of one medication each keep their own dosages." ;
+  mf:action [ qt:query <the-structured-dosages-the-view-shows.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <the-structured-dosages-the-view-shows.tsv> .
+
+<#what-it-shows> a mf:QueryEvaluationTest ;
+  mf:name "what-it-shows" ;
+  rdfs:comment "A member's intent, course of therapy and end of dispensing window are shown as its values, each with the member that states it; its structured dosages are nodes of their own, so none is a value of the entry, nor of the member as a row with no From." ;
+  mf:action [ qt:query <../../../queries/questions/entry/What%20it%20shows.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <what-it-shows.tsv> .
