@@ -1,9 +1,13 @@
 # An arrival is an import, a session of the person entering things, a connect to a server, or a sync that names acts.
 # The matcher has taken an arrival once a matcher run is prov:wasInformedBy it, whatever that run filed: a recheck and an
-# open's run are informed by none and take none. Rows come in the order the arrivals started: each arrival that brought a
-# revision of a record the matcher takes, one of the subject's or a server's, and that no matcher run is informed by. A
-# sync brought what the acts it names generated. An arrival whose records no About claims for the subject brought none
-# the matcher takes, so it is not listed until one does.
+# open's run are informed by none and take none. A run takes only the subject's records, and names each patient profile,
+# other than the subject, whose records it took as theirs (cascade:tookRecordsOfProfile); a profile an About claims after
+# the run brings records of the arrival no run took. Rows come in the order the arrivals started: each arrival that
+# brought a revision of a record the matcher takes, one of the subject's or a server's, and that no matcher run is
+# informed by; and each that brought a revision whose version names a patient profile, other than the subject, whose
+# records are the subject's, and that no run informed by it took the records of. A sync brought what the acts it names
+# generated. An arrival whose
+# records no About claims for the subject brought none the matcher takes, so it is not listed until one does.
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -13,9 +17,14 @@ WHERE {
   VALUES ?kind { cascade:DocumentImport cascade:HandEntrySession cascade:ConnectToServer cascade:SyncFromAnotherWriter }
   ?arrival a ?kind ; prov:startedAtTime ?started .
   ?arrival prov:wasInformedBy? ?source .
-  ?revision prov:wasGeneratedBy ?source ; cascade:revisionOf ?taken .
-  FILTER (EXISTS { ?taken cascade:subject ?subject } || EXISTS { ?taken a cascade:Server })
-  FILTER NOT EXISTS { ?run a cascade:MatcherRun ; prov:wasInformedBy ?arrival }
+  ?revision prov:wasGeneratedBy ?source .
+  FILTER ((NOT EXISTS { ?run a cascade:MatcherRun ; prov:wasInformedBy ?arrival }
+           && EXISTS { ?revision cascade:revisionOf ?taken .
+                       FILTER (EXISTS { ?taken cascade:subject ?subject } || EXISTS { ?taken a cascade:Server }) })
+          || EXISTS { ?revision cascade:version/cascade:patient ?profile .
+                      FILTER NOT EXISTS { ?profile a cascade:Subject }
+                      FILTER EXISTS { ?claimed cascade:patient ?profile ; prov:specializationOf/cascade:subject ?owner }
+                      FILTER NOT EXISTS { ?used a cascade:MatcherRun ; prov:wasInformedBy ?arrival ; cascade:tookRecordsOfProfile ?profile } })
   OPTIONAL { ?arrival rdfs:label ?arrivalLabel }
 }
 ORDER BY ?started ?arrival

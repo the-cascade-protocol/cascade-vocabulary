@@ -38,12 +38,16 @@ Feature: The matcher's procedure
     Two runs compare the whole pod, with ?record unbound, and no other: a recheck (M7), which follows a new version of a
     table or of the rule list, and an open (O1), which then takes the records of the pairs its tables newly join.
 
-    A run given an activity writes its act, prov:wasInformedBy that activity, whether or not it files anything else, unless
-    a run informed by that activity is already in the pod and finds nothing new (M9): the pod then says that arrival was
-    taken, and queries/questions/pod/Which arrivals has the matcher not taken.rq lists each import, entry session, connect
-    and sync that brought a record the matcher takes (M2) and that no run is informed by, as one is after a stop between
-    the arrival and its run. A recheck and an open's run are informed by no activity and take none, so one that finds
-    nothing new writes nothing, and clears nothing.
+    A run given an activity writes its act, prov:wasInformedBy that activity, naming by cascade:tookRecordsOfProfile each
+    patient profile, other than the subject, that the version of a revision from the step's acts names and whose records
+    are the subject's, whether or not it files anything else, unless a run informed by that activity, and naming each of
+    those profiles, is already in the pod and finds nothing new (M9): the pod then says that arrival was taken, and
+    queries/questions/pod/Which arrivals has the matcher not taken.rq lists each import, entry session, connect and sync
+    that brought a record the matcher takes (M2) and that no run is informed by, as one is after a stop between the
+    arrival and its run, and each that brought a record of a profile no run informed by it names, as one is whose profile
+    an About claimed after its run: that run took none of the profile's records, which were not yet the subject's. A
+    recheck and an open's run are informed by no activity and take none, so one that finds nothing new writes nothing,
+    and clears nothing.
 
     No example can tell this from taking the records whose first revision's file the step wrote, since in a pod that
     follows these rules the two always agree. Each runtime tests it itself.
