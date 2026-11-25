@@ -5,14 +5,14 @@
 
 <> a mf:Manifest ;
   rdfs:label "an import whose run filed nothing is taken" ;
-  rdfs:comment "An import brought one record of the subject, which needs no judgment, and a matcher run informed by it filed none; the run's act is all the pod holds of it." ;
+  rdfs:comment "An import brought one record of the subject, which needs no judgment, and a matcher run informed by it took it, naming the subject as its current version's patient, and filed nothing; the run's act is all the pod holds of it." ;
   mf:entries (
     <#which-arrivals-has-the-matcher-not-taken>
   ) .
 
 <#which-arrivals-has-the-matcher-not-taken> a mf:QueryEvaluationTest ;
   mf:name "which-arrivals-has-the-matcher-not-taken" ;
-  rdfs:comment "The import has a run informed by it, so it is taken, whatever the run filed: no row." ;
+  rdfs:comment "The import has a run informed by it, which named the patient of its record's current version, so it is taken, whatever the run filed: no row." ;
   mf:action [ qt:query <../../../queries/questions/pod/Which%20arrivals%20has%20the%20matcher%20not%20taken.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <which-arrivals-has-the-matcher-not-taken.srj> .

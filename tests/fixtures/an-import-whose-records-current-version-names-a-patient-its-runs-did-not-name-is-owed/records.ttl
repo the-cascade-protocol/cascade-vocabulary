@@ -13,9 +13,9 @@
 :firstRun a prov:Activity, cascade:MatcherRun ; prov:startedAtTime "2026-03-01T09:01:00Z"^^xsd:dateTime ;
     prov:wasInformedBy :first .
 :laterRun a prov:Activity, cascade:MatcherRun ; prov:startedAtTime "2026-03-02T09:01:00Z"^^xsd:dateTime ;
-    prov:wasInformedBy :later ; cascade:tookRecordsOfProfile :laterProfile .
+    prov:wasInformedBy :later ; cascade:tookRecordsWhoseCurrentVersionNamesPatient :laterProfile .
 :firstRunAgain a prov:Activity, cascade:MatcherRun ; prov:startedAtTime "2026-03-02T10:01:00Z"^^xsd:dateTime ;
-    prov:wasInformedBy :first ; cascade:tookRecordsOfProfile :firstProfile .
+    prov:wasInformedBy :first ; cascade:tookRecordsWhoseCurrentVersionNamesPatient :firstProfile .
 
 :a a cascade:AllergyOrIntolerance .
 :aV1 prov:specializationOf :a ; cascade:patient :firstProfile ; cascade:allergenName "Peanut" .

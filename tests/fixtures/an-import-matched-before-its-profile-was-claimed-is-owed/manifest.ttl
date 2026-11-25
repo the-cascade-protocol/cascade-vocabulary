@@ -5,14 +5,14 @@
 
 <> a mf:Manifest ;
   rdfs:label "an import matched before its profile was claimed is owed" ;
-  rdfs:comment "An import brought a record of a patient profile no About claimed when a matcher run informed by the import ran, so that run used no profile; an About now claims the profile for the subject." ;
+  rdfs:comment "An import brought a record of a patient profile no About claimed when a matcher run informed by the import ran, so that run took no record and named no patient; an About now claims the profile for the subject." ;
   mf:entries (
     <#which-arrivals-has-the-matcher-not-taken>
   ) .
 
 <#which-arrivals-has-the-matcher-not-taken> a mf:QueryEvaluationTest ;
   mf:name "which-arrivals-has-the-matcher-not-taken" ;
-  rdfs:comment "The import's record is now the subject's, and no run informed by the import used its profile: the import is listed." ;
+  rdfs:comment "The import's record is now the subject's, and no run informed by the import named its current version's patient: the import is listed." ;
   mf:action [ qt:query <../../../queries/questions/pod/Which%20arrivals%20has%20the%20matcher%20not%20taken.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <which-arrivals-has-the-matcher-not-taken.srj> .
