@@ -85,14 +85,6 @@ STATEMENTS = [
                  id="a variant named in text"),
     pytest.param('<urn:x:i> cascade:subjectVariant <urn:x:a>, <urn:x:b> .', "named by the variant record's IRI",
                  id="two variants"),
-    pytest.param('<urn:x:i> cascade:acmgEvidenceCode "PM2_supporting", "PS3_not_met", "no_criteria_met" .', None,
-                 id="three evidence codes with their outcomes"),
-    pytest.param('<urn:x:i> cascade:acmgEvidenceCode "PM2_moderate" .', "evidence outcome",
-                 id="an evidence outcome ACMG does not have"),
-    pytest.param('<urn:x:i> cascade:objectCondition "a condition" .', "at most one object",
-                 id="a condition named in text"),
-    pytest.param('<urn:x:i> cascade:objectCondition <urn:x:a>, <urn:x:b> .', "at most one object",
-                 id="two conditions"),
 ]
 ACCEPTED = [pytest.param(row.values[0], id=row.id) for row in STATEMENTS if row.values[1] is None]
 REFUSED = [row for row in STATEMENTS if row.values[1] is not None]

@@ -1,7 +1,6 @@
 ValueAbsentForReason
 absentReasonCode
 absentValueProperty
-acmgEvidenceCode
 addedNoteText
 allergyType
 answersForRecordClass
@@ -25,13 +24,10 @@ dosageRepeatPeriod
 dosageRepeatPeriodUnit
 dosageRouteCode
 dosageRouteCodeInOtherSystem
-expandedValueSet
-expansionMembersWithoutCodeIriLeftOutCount
 lastEvaluated
 matcherRuleDeclaredWrong
 medicationRequestIntent
 noLongerReachedUnderRuleListVersion
-objectCondition
 occurrenceCount
 physiologicEffectClass
 procedureCodeInOtherSystem
@@ -44,4 +40,3 @@ vaccinationRouteText
 vaccineDoseQuantityText
 vaccineLotNumber
 valueAbsentForReason
-valueSetDefinitionVersion
