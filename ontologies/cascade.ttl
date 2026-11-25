@@ -3099,6 +3099,11 @@ cascade:MatcherRun a owl:Class ;
     rdfs:comment "An act of the matcher over the records an import, an entry session or a sync brought, or over the pod at an open or a recheck; prov:wasInformedBy the act whose records it takes."@en ;
     rdfs:subClassOf prov:Activity .
 
+cascade:tookRecordsWhoseCurrentVersionNamesPatient a owl:ObjectProperty ;
+    rdfs:label "took records whose current version names patient"@en ;
+    rdfs:comment "Of a matcher run given an activity, the cascade:patient of the current version, as it was when the run ran, of a record the run took as the subject's: a patient profile, or the subject itself."@en ;
+    rdfs:domain cascade:MatcherRun .
+
 cascade:SyncFromAnotherWriter a owl:Class ;
     rdfs:label "sync from another writer"@en ;
     rdfs:comment "An act of a writer that holds acts of another writer of the pod: written whenever it holds an act, other than a sync, whose snapshot is no ancestor of its last snapshot, and prov:wasInformedBy each such act; its snapshot merges every head it holds but its first parent. Its file is in the syncs' folder, outside the set."@en ;

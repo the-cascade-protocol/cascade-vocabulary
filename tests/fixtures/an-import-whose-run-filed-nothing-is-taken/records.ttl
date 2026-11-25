@@ -7,7 +7,8 @@
 :subject a cascade:Subject .
 
 :pull a prov:Activity, cascade:DocumentImport ; rdfs:label "FHIR pull" ; prov:used :bundle ; prov:startedAtTime "2026-03-01T09:00:00Z"^^xsd:dateTime .
-:run a prov:Activity, cascade:MatcherRun ; prov:startedAtTime "2026-03-01T09:01:00Z"^^xsd:dateTime ; prov:wasInformedBy :pull .
+:run a prov:Activity, cascade:MatcherRun ; prov:startedAtTime "2026-03-01T09:01:00Z"^^xsd:dateTime ; prov:wasInformedBy :pull ;
+    cascade:tookRecordsWhoseCurrentVersionNamesPatient :subject .
 
 :a a cascade:AllergyOrIntolerance .
 :aV1 prov:specializationOf :a ; cascade:patient :subject ; cascade:allergenName "Peanut" .

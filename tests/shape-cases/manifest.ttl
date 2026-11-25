@@ -292,6 +292,11 @@
   mf:result [ a sh:ValidationReport ; sh:conforms false ;
               sh:result [ sh:sourceShape cascade:MatcherRunShape ; sh:resultPath prov:wasInformedBy ] ] .
 
+<#matcher-run/patient-not-an-iri> a sht:Validate ;
+  mf:action [ sht:dataGraph <matcher-run/patient-not-an-iri.ttl> ] ;
+  mf:result [ a sh:ValidationReport ; sh:conforms false ;
+              sh:result [ sh:sourceShape cascade:MatcherRunShape ; sh:resultPath cascade:tookRecordsWhoseCurrentVersionNamesPatient ] ] .
+
 <#sync/valid> a sht:Validate ;
   mf:action [ sht:dataGraph <sync/valid.ttl> ] ;
   mf:result [ a sh:ValidationReport ; sh:conforms true ] .

@@ -1,0 +1,31 @@
+@prefix : <urn:x:> .
+@prefix cascade: <https://ns.cascadeprotocol.org/cascade#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:subject a cascade:Subject .
+
+:first a prov:Activity, cascade:DocumentImport ; rdfs:label "first export" ; prov:used :firstBundle ;
+    prov:startedAtTime "2026-03-01T09:00:00Z"^^xsd:dateTime .
+:later a prov:Activity, cascade:DocumentImport ; rdfs:label "later export" ; prov:used :laterBundle ;
+    prov:startedAtTime "2026-03-02T09:00:00Z"^^xsd:dateTime .
+:firstRun a prov:Activity, cascade:MatcherRun ; prov:startedAtTime "2026-03-01T09:01:00Z"^^xsd:dateTime ;
+    prov:wasInformedBy :first .
+:laterRun a prov:Activity, cascade:MatcherRun ; prov:startedAtTime "2026-03-02T09:01:00Z"^^xsd:dateTime ;
+    prov:wasInformedBy :later ; cascade:tookRecordsWhoseCurrentVersionNamesPatient :laterProfile .
+:firstRunAgain a prov:Activity, cascade:MatcherRun ; prov:startedAtTime "2026-03-02T10:01:00Z"^^xsd:dateTime ;
+    prov:wasInformedBy :first ; cascade:tookRecordsWhoseCurrentVersionNamesPatient :firstProfile .
+
+:a a cascade:AllergyOrIntolerance .
+:aV1 prov:specializationOf :a ; cascade:patient :firstProfile ; cascade:allergenName "Peanut" .
+:aR1 a cascade:Revision ; cascade:revisionOf :a ; cascade:version :aV1 ; prov:wasGeneratedBy :first ;
+    prov:generatedAtTime "2026-03-01T09:00:05Z"^^xsd:dateTime ; cascade:observedAsOf "2026-03-01T09:00:05Z"^^xsd:dateTime .
+:aV2 prov:specializationOf :a ; cascade:patient :laterProfile ; cascade:allergenName "Peanut" .
+:aR2 a cascade:Revision ; cascade:revisionOf :a ; cascade:version :aV2 ; prov:wasGeneratedBy :later ; prov:wasRevisionOf :aR1 ;
+    prov:generatedAtTime "2026-03-02T09:00:05Z"^^xsd:dateTime ; cascade:observedAsOf "2026-03-02T09:00:05Z"^^xsd:dateTime .
+
+:b a cascade:AllergyOrIntolerance .
+:bV1 prov:specializationOf :b ; cascade:patient :firstProfile ; cascade:allergenName "Shellfish" .
+:bR1 a cascade:Revision ; cascade:revisionOf :b ; cascade:version :bV1 ; prov:wasGeneratedBy :first ;
+    prov:generatedAtTime "2026-03-01T09:00:06Z"^^xsd:dateTime ; cascade:observedAsOf "2026-03-01T09:00:06Z"^^xsd:dateTime .

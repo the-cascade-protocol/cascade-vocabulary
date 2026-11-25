@@ -1,0 +1,12 @@
+{
+  "head": {
+    "vars": [
+      "started",
+      "arrival",
+      "arrivalLabel"
+    ]
+  },
+  "results": {
+    "bindings": []
+  }
+}

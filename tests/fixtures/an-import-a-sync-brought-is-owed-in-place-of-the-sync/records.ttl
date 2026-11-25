@@ -1,0 +1,18 @@
+@prefix : <urn:x:> .
+@prefix cascade: <https://ns.cascadeprotocol.org/cascade#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:subject a cascade:Subject .
+
+:pull a prov:Activity, cascade:DocumentImport ; rdfs:label "FHIR pull" ; prov:used :bundle ; prov:startedAtTime "2026-03-01T09:00:00Z"^^xsd:dateTime .
+:run a prov:Activity, cascade:MatcherRun ; prov:startedAtTime "2026-03-01T09:01:00Z"^^xsd:dateTime ; prov:wasInformedBy :pull .
+:sync a prov:Activity, cascade:SyncFromAnotherWriter ; rdfs:label "files of the other writer" ; prov:startedAtTime "2026-03-02T10:00:00Z"^^xsd:dateTime ;
+    prov:wasInformedBy :pull, :run .
+:syncRun a prov:Activity, cascade:MatcherRun ; prov:startedAtTime "2026-03-02T10:01:00Z"^^xsd:dateTime ; prov:wasInformedBy :sync .
+
+:a a cascade:AllergyOrIntolerance .
+:aV1 prov:specializationOf :a ; cascade:patient :profile ; cascade:allergenName "Peanut" .
+:aR1 a cascade:Revision ; cascade:revisionOf :a ; cascade:version :aV1 ; prov:wasGeneratedBy :pull ;
+    prov:generatedAtTime "2026-03-01T09:00:05Z"^^xsd:dateTime ; cascade:observedAsOf "2026-03-01T09:00:05Z"^^xsd:dateTime .

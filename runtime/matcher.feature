@@ -38,12 +38,18 @@ Feature: The matcher's procedure
     Two runs compare the whole pod, with ?record unbound, and no other: a recheck (M7), which follows a new version of a
     table or of the rule list, and an open (O1), which then takes the records of the pairs its tables newly join.
 
-    A run given an activity writes its act, prov:wasInformedBy that activity, whether or not it files anything else, unless
-    a run informed by that activity is already in the pod and finds nothing new (M9): the pod then says that arrival was
-    taken, and queries/questions/pod/Which arrivals has the matcher not taken.rq lists each import, entry session, connect
-    and sync that brought a record the matcher takes (M2) and that no run is informed by, as one is after a stop between
-    the arrival and its run. A recheck and an open's run are informed by no activity and take none, so one that finds
-    nothing new writes nothing, and clears nothing.
+    A run given an activity writes its act, prov:wasInformedBy that activity, naming by
+    cascade:tookRecordsWhoseCurrentVersionNamesPatient the cascade:patient of the current version of each of the step's
+    records it took as the subject's, a patient profile or the subject itself, whether or not it files anything else,
+    unless a run informed by that activity, and naming each of those patients, is already in the pod and finds nothing
+    new (M9): the pod then says that arrival was taken, and queries/questions/pod/Which arrivals has the matcher not
+    taken.rq lists each import, entry session, connect and sync that brought a record the matcher takes (M2) and that no
+    run is informed by, as one is after a stop between the arrival and its run, and each import, entry session or connect
+    that brought the first revision of a record that is the subject's and whose current version names a patient no run
+    informed by it, or by a sync informed by it, named: an About claimed that patient after those runs, which could not
+    take the record, or a later version made it the record's current one. A sync is not listed for those records: they
+    are the step's records of the acts it names, which are listed in its place. A recheck and an open's run are informed
+    by no activity and take none, so one that finds nothing new writes nothing, and clears nothing.
 
     No example can tell this from taking the records whose first revision's file the step wrote, since in a pod that
     follows these rules the two always agree. Each runtime tests it itself.

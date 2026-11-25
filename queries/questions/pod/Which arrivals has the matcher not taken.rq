@@ -1,21 +1,42 @@
 # An arrival is an import, a session of the person entering things, a connect to a server, or a sync that names acts.
 # The matcher has taken an arrival once a matcher run is prov:wasInformedBy it, whatever that run filed: a recheck and an
-# open's run are informed by none and take none. Rows come in the order the arrivals started: each arrival that brought a
-# revision of a record the matcher takes, one of the subject's or a server's, and that no matcher run is informed by. A
-# sync brought what the acts it names generated. An arrival whose records no About claims for the subject brought none
-# the matcher takes, so it is not listed until one does.
+# open's run are informed by none and take none. A run takes only the subject's records, and names the patient of the
+# current version of each record it took. Rows come in the order the arrivals started: each arrival that brought a
+# revision of a record the matcher takes, one of the subject's or a server's, and that no matcher run is informed by;
+# and each import, entry session or connect that brought the first revision of a record that is the subject's and whose
+# current version names a patient that no run informed by it, or by a sync informed by it, named. Such a record was not
+# the subject's through that patient when those runs ran. A sync brought what the acts it names generated; the records
+# its run takes began in those acts, each of which is listed in its place.
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
+PREFIX pav: <http://purl.org/pav/>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT DISTINCT ?started ?arrival ?arrivalLabel
 WHERE {
-  VALUES ?kind { cascade:DocumentImport cascade:HandEntrySession cascade:ConnectToServer cascade:SyncFromAnotherWriter }
-  ?arrival a ?kind ; prov:startedAtTime ?started .
-  ?arrival prov:wasInformedBy? ?source .
-  ?revision prov:wasGeneratedBy ?source ; cascade:revisionOf ?taken .
-  FILTER (EXISTS { ?taken cascade:subject ?subject } || EXISTS { ?taken a cascade:Server })
-  FILTER NOT EXISTS { ?run a cascade:MatcherRun ; prov:wasInformedBy ?arrival }
-  OPTIONAL { ?arrival rdfs:label ?arrivalLabel }
+  {
+    VALUES ?kind { cascade:DocumentImport cascade:HandEntrySession cascade:ConnectToServer cascade:SyncFromAnotherWriter }
+    ?arrival a ?kind ; prov:startedAtTime ?started .
+    FILTER NOT EXISTS { ?run a cascade:MatcherRun ; prov:wasInformedBy ?arrival }
+    ?arrival prov:wasInformedBy? ?source .
+    ?revision prov:wasGeneratedBy ?source ; cascade:revisionOf ?taken .
+    FILTER (EXISTS { ?taken cascade:subject ?subject } || EXISTS { ?taken a cascade:Server })
+    OPTIONAL { ?arrival rdfs:label ?arrivalLabel }
+  } UNION {
+    { SELECT DISTINCT ?arrival ?started ?patient
+      WHERE {
+        VALUES ?kind { cascade:DocumentImport cascade:HandEntrySession cascade:ConnectToServer }
+        ?arrival a ?kind ; prov:startedAtTime ?started .
+        ?first prov:wasGeneratedBy ?arrival ; cascade:revisionOf ?record .
+        MINUS { ?first prov:wasRevisionOf ?earlier }
+        ?record cascade:subject ?owner ; pav:hasCurrentVersion/cascade:patient ?patient .
+      } }
+    MINUS { ?run a cascade:MatcherRun ; prov:wasInformedBy ?arrival ; cascade:tookRecordsWhoseCurrentVersionNamesPatient ?patient }
+    MINUS {
+      ?syncRun a cascade:MatcherRun ; prov:wasInformedBy ?sync ; cascade:tookRecordsWhoseCurrentVersionNamesPatient ?patient .
+      ?sync a cascade:SyncFromAnotherWriter ; prov:wasInformedBy ?arrival .
+    }
+    OPTIONAL { ?arrival rdfs:label ?arrivalLabel }
+  }
 }
 ORDER BY ?started ?arrival

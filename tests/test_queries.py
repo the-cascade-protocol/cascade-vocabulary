@@ -1,6 +1,7 @@
 import hashlib
 import json
 import re
+from collections import Counter
 from functools import lru_cache
 from pathlib import Path
 
@@ -284,16 +285,35 @@ def every_question():
     return list(contract.questions().values())
 
 
+def triples_in(tree):
+    """Each triple pattern under the node, whether translated (a BGP's) or, as a NOT EXISTS leaves it, parsed only."""
+    found = []
+    for node in nodes(tree):
+        if node.name == "BGP":
+            found.extend(node["triples"])
+        elif node.name == "TriplesBlock":
+            for subject, *rest in node["triples"]:
+                found.extend((subject, p, o) for p, o in zip(rest[::2], rest[1::2]))
+    return found
+
+
 def restated_absences(text):
     algebra = prepared(text).algebra
     bound = {node["arg"] for node in nodes(algebra) if node.name == "Builtin_BOUND"}
+    everywhere = Counter(term for triple in triples_in(algebra) for term in triple if isinstance(term, Variable))
+
+    def points_at_what_is_bound_outside(pattern):
+        inside = Counter(term for triple in triples_in(pattern) for term in triple if isinstance(term, Variable))
+        return any(not isinstance(o, Variable) or everywhere[o] > inside[o] or o in bound
+                   for _, p, o in triples_in(pattern) if DERIVED_ABSENCES & set(iris(p)))
+
     found = []
     for node in nodes(algebra):
-        if node.name == "Builtin_NOTEXISTS" and DERIVED_ABSENCES & set(iris(node["graph"])):
+        if node.name == "Builtin_NOTEXISTS" and points_at_what_is_bound_outside(node["graph"]):
             found.append("not-exists")
-        if node.name == "Minus" and DERIVED_ABSENCES & set(iris(node["p2"])):
+        if node.name == "Minus" and points_at_what_is_bound_outside(node["p2"]):
             found.append("minus")
-        if node.name == "LeftJoin" and DERIVED_ABSENCES & set(iris(node["p2"])) and bound & node["p2"]["_vars"]:
+        if node.name == "LeftJoin" and points_at_what_is_bound_outside(node["p2"]) and bound & node["p2"]["_vars"]:
             found.append("optional-bound")
     return found
 
@@ -983,6 +1003,16 @@ class TestChecksOfTheQueryChecks:
             """
             assert restated_absences("""SELECT ?j ?by WHERE {
               ?j ?p ?o OPTIONAL { ?by <http://purl.org/dc/terms/replaces> ?j } FILTER (BOUND(?o)) }""") == []
+
+        def test_returns_nothing_for_a_revision_that_points_at_none(self):
+            """returns nothing for a revision that points at none
+
+            Given a MINUS over `prov:wasRevisionOf` from a revision the query binds to an earlier one it binds nowhere
+            else, which keeps a record's first revisions, an absence no derivation records, `restated_absences()` returns
+            an empty list.
+            """
+            assert restated_absences("""SELECT ?first WHERE {
+              ?first ?p ?o MINUS { ?first <http://www.w3.org/ns/prov#wasRevisionOf> ?earlier } }""") == []
 
     class TestJoinsAStemToALiteralWithoutEncoding:
         """`joins_a_stem_to_a_literal_without_encoding()`"""

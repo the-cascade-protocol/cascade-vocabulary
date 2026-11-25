@@ -1,0 +1,18 @@
+@prefix ctm: <https://ns.cascadeprotocol.org/test-manifest#> .
+@prefix mf: <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
+@prefix qt: <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<> a mf:Manifest ;
+  rdfs:label "an import a sync brought is owed in place of the sync" ;
+  rdfs:comment "Another writer imported a record of a patient profile no About claimed, and its own matcher run informed by the import named no patient. This writer received both in a sync, whose matcher run named no patient either. An About now claims the profile for the subject." ;
+  mf:entries (
+    <#which-arrivals-has-the-matcher-not-taken>
+  ) .
+
+<#which-arrivals-has-the-matcher-not-taken> a mf:QueryEvaluationTest ;
+  mf:name "which-arrivals-has-the-matcher-not-taken" ;
+  rdfs:comment "The import brought the record's first revision, which is now the subject's, and no run informed by the import or by the sync named its patient: the import is listed. The sync brought that record through the import, which owes it, and a run is informed by the sync: the sync is not listed." ;
+  mf:action [ qt:query <../../../queries/questions/pod/Which%20arrivals%20has%20the%20matcher%20not%20taken.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <which-arrivals-has-the-matcher-not-taken.srj> .
