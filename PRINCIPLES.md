@@ -15,7 +15,7 @@ A pod is built around one patient and exists to serve that patient's needs. Thos
 ## 2. Translate, don't replace
 Take what sources already send, in the standards they already use. Add only what is needed to relate one source to another. Ask nothing new of a hospital, a lab or a device maker. The original document is always kept whole, so nothing a source sent is lost by leaving it untranslated.
 
-*Example:* [`runtime/pod-layout.ttl`](runtime/pod-layout.ttl) files each document a source sent under `provenance/documents/`, apart from the records made from it.
+*Example:* [`runtime/pod-layout.ttl`](runtime/pod-layout.ttl) keeps the exact bytes a source sent, by hash, under `attachments/sha-256/` (`cascade:storesBytes true`), apart from the records made from them.
 
 - Does this need a source to change anything it does today?
 - Does it restate, in our own words, something a standard already says?
@@ -24,7 +24,7 @@ Take what sources already send, in the standards they already use. Add only what
 ## 3. Reuse before you invent
 Before adding a term, look for one that already says it: first in a standard, then in our own vocabulary. Add a new one only with a written "looked here, and it failed because".
 
-*Example:* `cascade:AuthorRole` is a term of ours because HL7's provenance participant type "author", which it names with `rdfs:seeAlso`, defines a code and no concept IRI, as its comment says.
+*Example:* `cascade:AuthorRole` is a term of ours because HL7's provenance participant type "author", which it names with `rdfs:seeAlso`, gives a code but no web address for the concept, as its comment says.
 
 - Which existing terms were considered, and why did each fail?
 - Is this a new kind of thing, or an existing kind said by a new speaker?
@@ -42,7 +42,7 @@ A pod holds claims and observations from many sources, each with its maker. Wher
 ## 5. Make everything traceable and undoable
 For anything in a pod or shown from it, someone can find out where it came from, who made it, what it rests on, and why something else was left out. Plenty may happen without asking the person. Nothing happens without a trace, and a wrong step can be found and reversed. Removing something is the one step that cannot be reversed: it leaves a record that something was removed and by whom, without the content.
 
-*Example:* the question [`record/Why it is in no view`](queries/questions/record/Why%20it%20is%20in%20no%20view.rq) gives, for a record no view shows, each `cascade:leftOutReason` and the thing it rests on.
+*Example:* the question [`record/Why it is in no view`](queries/questions/record/Why%20it%20is%20in%20no%20view.rq) gives, for a record that appears in no summary of the pod, each `cascade:leftOutReason` and the thing it rests on.
 
 - Six months on, can someone answer "why does it say this?" and "why is that not here?"
 - When this goes wrong, how does anyone find out, and how do they undo it?
@@ -51,7 +51,7 @@ For anything in a pod or shown from it, someone can find out where it came from,
 ## 6. Same files, same answers, for anyone
 A pod is plain files in open formats. Any implementation reading them gets the same answers, anyone can check that with ordinary tools, and the pod stays usable if our software disappears. Where an answer needs outside knowledge, such as which drugs share an ingredient, it comes from a versioned table the pod names: same files, same tables, same answers.
 
-*Example:* `cascade:defaultTableVersion` is the version of a reference table a runtime uses until the pod names another as current, and the question [`pod/Which reference versions are current`](queries/questions/pod/Which%20reference%20versions%20are%20current.rq) asks which versions are current.
+*Example:* `cascade:defaultTableVersion` is the version of a reference table a runtime uses until the pod names another as current. The question [`pod/Which reference versions are current`](queries/questions/pod/Which%20reference%20versions%20are%20current.rq) asks which versions are current.
 
 - Could a second team build this from the written rules alone and get the same result?
 - If our software vanished tomorrow, could the person still open and use their pod?

@@ -8,7 +8,8 @@ The contract a Cascade pod is built and read by. It holds no code that builds a 
   one in the namespace `https://ns.cascadeprotocol.org/cascade#`: [`cascade.ttl`](ontologies/cascade.ttl) and
   [`cascade.shapes.ttl`](ontologies/cascade.shapes.ttl), under `Apache-2.0 AND CC-BY-4.0`, as [`NOTICE`](NOTICE)
   says. Each term in the namespace says what it is in its `rdfs:comment`; a term copied from another vocabulary
-  carries its `dct:source` and `dct:license`.
+  carries its `dct:source` and `dct:license`. An adapter is the converter that turns a source's files, such as FHIR or
+  C-CDA, into a pod's records, and the adapters read these two files by their paths.
 - [`queries/`](queries): the standard queries over a pod: the derivations and lenses, the views and
   labels, the matcher's comparisons, and the questions. Beside a query a runtime answers from SQLite is a `.sql` that
   gives its rows, over the tables [`statements.sql`](queries/statements.sql) makes, calling the functions
