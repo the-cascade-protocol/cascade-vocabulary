@@ -1,0 +1,18 @@
+@prefix ctm: <https://ns.cascadeprotocol.org/test-manifest#> .
+@prefix mf: <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
+@prefix qt: <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<> a mf:Manifest ;
+  rdfs:label "an import whose record's current version names a patient its runs did not name is owed" ;
+  rdfs:comment "A first import brought two records, each with a version naming one patient profile. A later import brought a newer version of the first record naming another profile, which is now that record's current version. An About claims each profile for the subject. A run informed by the first import named the first profile, and none informed by it named the later one." ;
+  mf:entries (
+    <#which-arrivals-has-the-matcher-not-taken>
+  ) .
+
+<#which-arrivals-has-the-matcher-not-taken> a mf:QueryEvaluationTest ;
+  mf:name "which-arrivals-has-the-matcher-not-taken" ;
+  rdfs:comment "The first import brought the first revision of a record that is the subject's and whose current version names a patient no run informed by the first import named: the first import is listed. The later import brought no record's first revision, and a run is informed by it: it is not." ;
+  mf:action [ qt:query <../../../queries/questions/pod/Which%20arrivals%20has%20the%20matcher%20not%20taken.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <which-arrivals-has-the-matcher-not-taken.srj> .
