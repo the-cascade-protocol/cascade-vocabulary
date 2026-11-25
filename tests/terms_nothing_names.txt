@@ -1,14 +1,11 @@
 Attachment
 CodeSystem
-MatcherJudgmentAssertion
 MatcherRule
 NamingRule
 PaddedDateTime
-PodManifest
 Quantity
 RequirementForReadingAPod
 RowSubject
-RuleListRow
 StructuredDosage
 TableKind
 ValueAbsentForReason
@@ -18,7 +15,6 @@ acmgEvidenceCode
 addedNoteText
 allergyType
 answersForRecordClass
-appliesToClass
 attachmentUrl
 authenticatedAsProxy
 authenticatedPatient
@@ -32,7 +28,6 @@ conditionCodeInOtherSystem
 contributingSubmitterCount
 courseOfTherapyType
 coversGene
-defaultTableVersion
 dispenseDaysSupply
 dispenseQuantity
 dispenseRequestValidityPeriodEnd
@@ -44,12 +39,7 @@ dosageRouteCode
 dosageRouteCodeInOtherSystem
 expandedValueSet
 expansionMembersWithoutCodeIriLeftOutCount
-findingKind
 foundBy
-holdsFilesInArchivesOfMediaType
-holdsRecords
-holdsRequirementsForReadingAPod
-justifiedAs
 lastEvaluated
 matcherRuleDeclaredWrong
 medicationRequestIntent
@@ -58,12 +48,10 @@ objectCondition
 occurrenceCount
 physiologicEffectClass
 procedureCodeInOtherSystem
-queryPath
 readByAppPages
 refusedForRecordClass
 rowShape
 sourceFormatVersion
-storesBytes
 submitterCount
 testCodeInOtherSystem
 vaccinationBodySiteText
@@ -72,4 +60,3 @@ vaccineDoseQuantityText
 vaccineLotNumber
 valueAbsentForReason
 valueSetDefinitionVersion
-writtenAlways
