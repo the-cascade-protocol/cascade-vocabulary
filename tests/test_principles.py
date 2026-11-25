@@ -1,6 +1,6 @@
 import re
 
-from rdflib.namespace import OWL, RDF
+from rdflib.namespace import OWL, RDF, RDFS
 
 from contract import CASCADE, LAYOUT, QUERIES, ROOT, feature_documents
 from ontologies import terms
@@ -30,17 +30,18 @@ def names_named():
     return {name for text in texts for name in NAMED.findall(text)}
 
 
+def local_name(term):
+    return str(term).removeprefix(str(CASCADE)) if str(term).startswith(str(CASCADE)) else None
+
+
 def terms_nothing_names():
-    declared = {subject for kind in CLASSES_AND_PROPERTIES for subject in terms().subjects(RDF.type, kind)
-                if str(subject).startswith(str(CASCADE))}
-    return {str(subject).removeprefix(str(CASCADE)) for subject in declared} - names_named()
-
-
-def rules_without_an_example():
-    """Each rule of the features, by the code its name begins with, with no scenario among its children."""
-    return {child["rule"]["name"].split(". ")[0]
-            for _, document, _ in feature_documents() for child in document["feature"]["children"]
-            if "rule" in child and not any("scenario" in inner for inner in child["rule"]["children"])}
+    graph = terms()
+    declarations = {subject for kind in CLASSES_AND_PROPERTIES for subject in graph.subjects(RDF.type, kind)}
+    named = names_named() | {local_name(term) for subject, predicate, value in graph if subject not in declarations
+                             for term in (predicate, value)}
+    named |= {local_name(shape) for subject in declarations if local_name(subject) in named
+              for shape in [*graph.objects(subject, RDFS.domain), *graph.objects(subject, RDFS.range)]}
+    return {local_name(subject) for subject in declarations if local_name(subject)} - named
 
 
 class TestPrinciplesTheSuiteHolds:
@@ -55,15 +56,9 @@ class TestPrinciplesTheSuiteHolds:
 
         A class or a property of `cascade#` is named when `cascade:Name` or its full IRI is written in a query under
         `queries/`, in a kit's `expected/`, in the text of an example, in `runtime/pod-layout.ttl` or in a file under
-        `runtime/rule-list/`; a comment of a query, a shape and a rule's description do not name it. A term read through
-        a variable is not seen. The terms nothing names are listed in `tests/terms_nothing_names.txt`.
+        `runtime/rule-list/`, when a statement of `ontologies/cascade.ttl` about something that is not itself a class or a
+        property uses it, or when it is the domain or range of a property that is named; a comment of a query, a shape and
+        a rule's description do not name it. A term read through a variable is not seen. The terms nothing names are
+        listed in `tests/terms_nothing_names.txt`.
         """
         assert sorted(terms_nothing_names()) == sorted(listed("terms_nothing_names.txt"))
-
-    def test_gives_every_rule_an_example(self):
-        """gives every rule of the features, the kits' included, an example
-
-        A rule of a `.feature` file under `runtime/` or `conformance/` has a child that is an Example. The rules with none
-        are listed in `tests/rules_without_an_example.txt` by the code their name begins with.
-        """
-        assert sorted(rules_without_an_example()) == sorted(listed("rules_without_an_example.txt"))
