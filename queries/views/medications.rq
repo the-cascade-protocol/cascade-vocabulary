@@ -9,7 +9,14 @@
 # lead states no dosage text shows the one of the member the derivations chose (cascade:dosageFrom): none when no member
 # states one. It shows the narrative text of its lead (what the lead's source wrote for it, such as a stop reason), and
 # each member's node its own: an entry whose lead states none shows none, and the member that does shows it there. A time its source wrote short of the second keeps the node saying so (cascade:PaddedDateTime), named after
-# the entry or the member's values and -padded-, so the view never shows a padded time as exact.
+# the entry or the member's values and -padded-, so the view never shows a padded time as exact. Each member's node also
+# says the intent, the course of therapy and the end of the dispensing window its version states, and each structured
+# dosage of its version (cascade:structuredDosage) as a node of the view, named after the member's values and -dosage-
+# and the dosage's number, holding its repeat frequency, period and period unit, its bounds, each route code and each in
+# another system, and its dose quantity as a node of its own, named after the dosage and -dose-quantity, holding the
+# number as typed and as written, its comparator and its units, as lab results' reference bounds do. A dosage that holds
+# nothing is still a node, and a bound written short of the second keeps its padded node, named after the dosage. Only
+# the members say these: the entry's own dosage is the text of the member cascade:dosageFrom names.
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX pav: <http://purl.org/pav/>
 
@@ -45,7 +52,23 @@ CONSTRUCT {
     cascade:prescribedOrReported ?memberPrescribedOrReported ;
     cascade:reasonCondition ?memberReasonCondition ;
     cascade:reasonCode ?memberReasonCode ;
-    cascade:reasonCodeInOtherSystem ?memberReasonCodeInOtherSystem .
+    cascade:reasonCodeInOtherSystem ?memberReasonCodeInOtherSystem ;
+    cascade:medicationRequestIntent ?memberMedicationRequestIntent ;
+    cascade:courseOfTherapyType ?memberCourseOfTherapyType ;
+    cascade:dispenseRequestValidityPeriodEnd ?memberDispenseRequestValidityPeriodEnd ;
+    cascade:structuredDosage ?memberStructuredDosage .
+  ?memberStructuredDosage cascade:dosageRepeatFrequency ?dosageFrequency ;
+    cascade:dosageRepeatPeriod ?dosagePeriod ;
+    cascade:dosageRepeatPeriodUnit ?dosagePeriodUnit ;
+    cascade:dosageBoundsPeriodStart ?dosageBoundsStart ;
+    cascade:dosageBoundsPeriodEnd ?dosageBoundsEnd ;
+    cascade:dosageRouteCode ?dosageRoute ;
+    cascade:dosageRouteCodeInOtherSystem ?dosageRouteInOtherSystem ;
+    cascade:dosageDoseQuantity ?memberDoseQuantity ;
+    cascade:paddedDateTime ?dosagePadded .
+  ?memberDoseQuantity cascade:decimalValue ?doseDecimal ; cascade:writtenValue ?doseWritten ; cascade:quantityComparator ?doseComparator ;
+    cascade:ucumUnit ?doseUcum ; cascade:unitText ?doseUnitText .
+  ?dosagePadded cascade:paddedDateTimeProperty ?dosagePaddedProperty ; cascade:timeAsWritten ?dosageWritten .
   ?entry cascade:paddedDateTime ?startedPadded .
   ?startedPadded cascade:paddedDateTimeProperty cascade:medicationUseStartDate ; cascade:timeAsWritten ?startedWritten .
   ?entry cascade:paddedDateTime ?writtenPadded .
@@ -102,6 +125,29 @@ WHERE {
     OPTIONAL { ?memberVersion cascade:reasonCondition ?memberReasonCondition }
     OPTIONAL { ?memberVersion cascade:reasonCode ?memberReasonCode }
     OPTIONAL { ?memberVersion cascade:reasonCodeInOtherSystem ?memberReasonCodeInOtherSystem }
+    OPTIONAL { ?memberVersion cascade:medicationRequestIntent ?memberMedicationRequestIntent }
+    OPTIONAL { ?memberVersion cascade:courseOfTherapyType ?memberCourseOfTherapyType }
+    OPTIONAL { ?memberVersion cascade:dispenseRequestValidityPeriodEnd ?memberDispenseRequestValidityPeriodEnd }
+    OPTIONAL { ?memberVersion cascade:structuredDosage ?dosageAt .
+               OPTIONAL { ?dosageAt cascade:dosageRepeatFrequency ?dosageFrequency }
+               OPTIONAL { ?dosageAt cascade:dosageRepeatPeriod ?dosagePeriod }
+               OPTIONAL { ?dosageAt cascade:dosageRepeatPeriodUnit ?dosagePeriodUnit }
+               OPTIONAL { ?dosageAt cascade:dosageBoundsPeriodStart ?dosageBoundsStart }
+               OPTIONAL { ?dosageAt cascade:dosageBoundsPeriodEnd ?dosageBoundsEnd }
+               OPTIONAL { ?dosageAt cascade:dosageRouteCode ?dosageRoute }
+               OPTIONAL { ?dosageAt cascade:dosageRouteCodeInOtherSystem ?dosageRouteInOtherSystem }
+               OPTIONAL { ?dosageAt cascade:dosageDoseQuantity ?doseAt .
+                          ?doseAt cascade:decimalValue ?doseDecimal ; cascade:writtenValue ?doseWritten .
+                          OPTIONAL { ?doseAt cascade:quantityComparator ?doseComparator }
+                          OPTIONAL { ?doseAt cascade:ucumUnit ?doseUcum }
+                          OPTIONAL { ?doseAt cascade:unitText ?doseUnitText } }
+               OPTIONAL { ?dosageAt cascade:paddedDateTime ?dosagePaddedAt .
+                          ?dosagePaddedAt cascade:paddedDateTimeProperty ?dosagePaddedProperty ; cascade:timeAsWritten ?dosageWritten } }
+    BIND (IF(BOUND(?dosageAt), IRI(CONCAT(STR(?memberValues), "-dosage-", STRAFTER(STR(?dosageAt), "#dosage-"))), 1/0)
+          AS ?memberStructuredDosage)
+    BIND (IF(BOUND(?doseAt), IRI(CONCAT(STR(?memberStructuredDosage), "-dose-quantity")), 1/0) AS ?memberDoseQuantity)
+    BIND (IF(BOUND(?dosageWritten), IRI(CONCAT(STR(?memberStructuredDosage), "-padded-", STRAFTER(STR(?dosagePaddedProperty), "#"))), 1/0)
+          AS ?dosagePadded)
     OPTIONAL { ?memberVersion cascade:paddedDateTime ?memberPaddedAt .
                ?memberPaddedAt cascade:paddedDateTimeProperty ?memberPaddedProperty ; cascade:timeAsWritten ?memberWritten }
     BIND (IF(BOUND(?memberWritten), IRI(CONCAT(STR(?memberValues), "-padded-", STRAFTER(STR(?memberPaddedProperty), "#"))), 1/0)

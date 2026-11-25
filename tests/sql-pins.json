@@ -1,6 +1,6 @@
 {
   "queries/labels.rq": "19fa00940f4b06f2b11ef66262cea952ff53f065ec12817382bc66461b366ca8",
-  "queries/questions/entry/What it shows.rq": "2e8515e1a92c7678a0c2eb07da71e9d0d431d4367156da40e353415595ee70bf",
+  "queries/questions/entry/What it shows.rq": "08726a92d5e9e0b5fd320ba860e77e324333b8fb97edcc316d1cb19a106537d8",
   "queries/questions/entry/What needs review.rq": "87ace2d9b605e16ac9c9cd22da6ae5687b8e66af96ee90a96490ccbca9d6db2e",
   "queries/questions/entry/Where it came from.rq": "928bd4c6714cabdc391b505016935d1cbceda2c06fcc064115c365fe05f2c185",
   "queries/questions/judgment/What needs review.rq": "0d6e3dcc36f275f049e0178550699f40cff44a16091c084875a4653858cd86d2",
@@ -45,7 +45,7 @@
   "queries/views/immunizations.rq": "2ff91f903d5227945b0ee1d4888405eea226267c0b51729c17bc193dd9314a76",
   "queries/views/lab-results.rq": "19cd422f45e32d33efb1bd377960736f6783f0bc1a5a732c68876f1765d5dfaf",
   "queries/views/medication-dispenses.rq": "0d9e8a96cf325b3499b4fdb935212d16583d1a92a4ea2c58252c66e91f4ad082",
-  "queries/views/medications.rq": "f633d5e96553320c642c0d91a631136712a1ce6350de165944f55e49fff0d756",
+  "queries/views/medications.rq": "4ef6dfe0e2cee9382288d2888559bfeb9585fa084dad0d0f2edec29c089f6581",
   "queries/views/notes-and-documents.rq": "71754602c3a2bc814ca377a11b5ff3af8ec7dfde77cd810fd316b5077083c539",
   "queries/views/patient-profile.rq": "45d2d532122be69558a84f88ad6d58c2e28399129e2cef16b42cd4471cf5d198",
   "queries/views/procedures.rq": "88f18e26da57b6bd611e7f6234d0d689730f3f6d1dafedb25684a93d5f715d1a",
