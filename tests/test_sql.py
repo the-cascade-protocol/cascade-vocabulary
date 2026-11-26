@@ -691,8 +691,7 @@ SCREEN_FIXTURES = (
     "a-dispense-states-a-code-in-another-system-and-a-selected-code", "a-reason-whose-text-holds-the-other-forms-separators",
     "a-note-time-written-short-of-the-second", "reports-view", "conditions-view", "procedures-view",
     "an-active-condition-from-a-document-retrieved-twice",
-    "variant-interpretations-view", "a-medicine-and-a-procedure-given-for-a-condition", "allergies-view", "immunizations-view",
-    "lab-results-view", "medication-dispenses-view", "medications-view", "notes-and-documents-view")
+    "variant-interpretations-view", "a-medicine-and-a-procedure-given-for-a-condition")
 KEYED_KINDS = {"unchanged": r" unchanged$", "moved": r" moved out of entry ", "agent renamed": r"^agent .* renamed$",
                "reasons dropped": r"'s reasons dropped$", "entry renamed": r" its records give reasons for renamed, ",
                "reason given": r" given condition .* as a reason$", "record put in an entry": r"^a record with no reason put in entry ",
@@ -912,6 +911,22 @@ class TestSqlBesideEachQuery:
             fixtures = [fixture for fixture in FIXTURES if fixture.name in SCREEN_FIXTURES]
             made = {keyed_kind(name) for fixture in fixtures for lens in LENSES for name, _ in keyed_changes(pod(fixture, lens))}
             assert made == set(KEYED_KINDS), sorted(set(KEYED_KINDS) - made)
+
+        def test_empties_each_table_a_screen_makes_where_it_fills_the_screen_again(self):
+            """empties each table a screen makes where it fills it, so a fill over a filled screen leaves no row of the last
+
+            Each table a view's `.sql` creates in its tables part has a `DELETE FROM` of it in the fill or finish part:
+            a keyed fill that left a table's rows in place would give a screen that a whole fill of the pod does not, and
+            no fixture need hold rows in the table for this to hold of a table added later.
+            """
+            kept = []
+            for relative in ported():
+                if relative.startswith("queries/views/"):
+                    made = sql.parts(sql_text(relative))
+                    emptied = made["fill"] + made["finish"]
+                    kept += [f"{relative}: {table}" for table in re.findall(r"CREATE TABLE (?:IF NOT EXISTS )?(\w+)", made["tables"])
+                             if not re.search(rf"DELETE FROM {table}\b", emptied)]
+            assert kept == []
 
         def test_pins_each_ported_rq_by_the_hash_its_sql_was_checked_against(self):
             """pins each ported `.rq` by the hash of the bytes its `.sql` was last checked against

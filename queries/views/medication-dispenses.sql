@@ -43,7 +43,6 @@ CREATE VIEW medication_dispense_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#dispenseDaysSupply>') AS dispense_days_supply,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#decimalValue>') AS decimal_value,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#writtenValue>') AS written_value,
-  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#quantityComparator>') AS quantity_comparator,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#ucumUnit>') AS ucum_unit,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#unitText>') AS unit_text,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#valueAbsentForReason>') AS value_absent,
@@ -112,7 +111,6 @@ CREATE TABLE medication_dispense_amount (
   name TEXT NOT NULL,
   decimal_value INTEGER NOT NULL,
   written_value INTEGER NOT NULL,
-  comparator INTEGER,
   ucum INTEGER,
   unit_text INTEGER,
   PRIMARY KEY (entry, property)
@@ -167,7 +165,6 @@ CREATE TABLE medication_dispense_member_values_amount (
   name TEXT NOT NULL,
   decimal_value INTEGER NOT NULL,
   written_value INTEGER NOT NULL,
-  comparator INTEGER,
   ucum INTEGER,
   unit_text INTEGER,
   PRIMARY KEY (entry, member, property)
@@ -194,10 +191,10 @@ CREATE VIEW medication_dispense_triples (s, p, o) AS
 WITH
   entries (s, entry) AS (SELECT e.nt, c.entry FROM medication_dispense c JOIN term e ON e.id = c.entry),
   members (s, node, entry, member) AS (SELECT mv.node, mv.node, mv.entry, mv.member FROM medication_dispense_member_values mv),
-  amounts (holder, link, node, decimal_value, written_value, comparator, ucum, unit_text) AS (
-    SELECT e.s, p.nt, '<' || substr(e.s, 2, length(e.s) - 2) || '-' || a.name || '>', a.decimal_value, a.written_value, a.comparator, a.ucum, a.unit_text
+  amounts (holder, link, node, decimal_value, written_value, ucum, unit_text) AS (
+    SELECT e.s, p.nt, '<' || substr(e.s, 2, length(e.s) - 2) || '-' || a.name || '>', a.decimal_value, a.written_value, a.ucum, a.unit_text
       FROM entries e JOIN medication_dispense_amount a ON a.entry = e.entry JOIN term p ON p.id = a.property
-    UNION ALL SELECT mv.node, p.nt, '<' || substr(mv.node, 2, length(mv.node) - 2) || '-' || a.name || '>', a.decimal_value, a.written_value, a.comparator, a.ucum, a.unit_text
+    UNION ALL SELECT mv.node, p.nt, '<' || substr(mv.node, 2, length(mv.node) - 2) || '-' || a.name || '>', a.decimal_value, a.written_value, a.ucum, a.unit_text
       FROM members mv JOIN medication_dispense_member_values_amount a USING (entry, member) JOIN term p ON p.id = a.property),
   said (s, p, o) AS (
     SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#drugName>', c.name FROM entries e JOIN medication_dispense c ON c.entry = e.entry
@@ -241,7 +238,6 @@ WITH
       FROM entries e JOIN medication_dispense_padded x ON x.entry = e.entry JOIN term p ON p.id = x.property
     UNION ALL SELECT node, '<https://ns.cascadeprotocol.org/cascade#decimalValue>', decimal_value FROM amounts
     UNION ALL SELECT node, '<https://ns.cascadeprotocol.org/cascade#writtenValue>', written_value FROM amounts
-    UNION ALL SELECT node, '<https://ns.cascadeprotocol.org/cascade#quantityComparator>', comparator FROM amounts
     UNION ALL SELECT node, '<https://ns.cascadeprotocol.org/cascade#ucumUnit>', ucum FROM amounts
     UNION ALL SELECT node, '<https://ns.cascadeprotocol.org/cascade#unitText>', unit_text FROM amounts
     UNION ALL SELECT DISTINCT '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
@@ -395,16 +391,19 @@ JOIN quad v ON v.s = c.lead AND v.p = k.current_version JOIN quad d ON d.s = v.o
 JOIN quad dp ON dp.s = d.o AND dp.p = k.padded_property JOIN quad w ON w.s = d.o AND w.p = k.time_as_written
 WHERE c.entry IN (SELECT entry FROM medication_dispense_filled);
 
-INSERT INTO medication_dispense_amount (entry, property, name, decimal_value, written_value, comparator, ucum, unit_text)
-SELECT c.entry, q.p, CASE q.p WHEN k.dispense_quantity THEN 'dispense-quantity' ELSE 'dispense-days-supply' END, d.o, w.o,
-  (SELECT min(x.o) FROM quad x WHERE x.s = q.o AND x.p = k.quantity_comparator),
+INSERT INTO medication_dispense_amount (entry, property, name, decimal_value, written_value, ucum, unit_text)
+SELECT c.entry, q.p, CASE q.p WHEN k.dispense_quantity THEN 'dispense-quantity' ELSE 'dispense-days-supply' END,
+  (SELECT min(x.o) FROM quad x WHERE x.s = q.o AND x.p = k.decimal_value),
+  (SELECT min(x.o) FROM quad x WHERE x.s = q.o AND x.p = k.written_value),
   (SELECT min(x.o) FROM quad x WHERE x.s = q.o AND x.p = k.ucum_unit),
   (SELECT min(x.o) FROM quad x WHERE x.s = q.o AND x.p = k.unit_text)
 FROM medication_dispense_terms k CROSS JOIN medication_dispense c
 JOIN quad v ON v.s = c.lead AND v.p = k.current_version
 JOIN quad q ON q.s = v.o AND q.p IN (k.dispense_quantity, k.dispense_days_supply)
-JOIN quad d ON d.s = q.o AND d.p = k.decimal_value JOIN quad w ON w.s = q.o AND w.p = k.written_value
-WHERE c.entry IN (SELECT entry FROM medication_dispense_filled);
+WHERE c.entry IN (SELECT entry FROM medication_dispense_filled)
+  AND q.o = (SELECT min(r.o) FROM quad r WHERE r.s = v.o AND r.p = q.p
+               AND EXISTS (SELECT 1 FROM quad x WHERE x.s = r.o AND x.p = k.decimal_value)
+               AND EXISTS (SELECT 1 FROM quad x WHERE x.s = r.o AND x.p = k.written_value));
 
 INSERT INTO medication_dispense_member_values (entry, member, node, name, selected, prepared, handed_over, status)
 WITH members (entry, member, version) AS (
@@ -447,16 +446,19 @@ JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad d ON d.s = 
 JOIN quad dp ON dp.s = d.o AND dp.p = k.padded_property JOIN quad w ON w.s = d.o AND w.p = k.time_as_written
 WHERE mv.entry IN (SELECT entry FROM medication_dispense_filled);
 
-INSERT INTO medication_dispense_member_values_amount (entry, member, property, name, decimal_value, written_value, comparator, ucum, unit_text)
-SELECT mv.entry, mv.member, q.p, CASE q.p WHEN k.dispense_quantity THEN 'dispense-quantity' ELSE 'dispense-days-supply' END, d.o, w.o,
-  (SELECT min(x.o) FROM quad x WHERE x.s = q.o AND x.p = k.quantity_comparator),
+INSERT INTO medication_dispense_member_values_amount (entry, member, property, name, decimal_value, written_value, ucum, unit_text)
+SELECT mv.entry, mv.member, q.p, CASE q.p WHEN k.dispense_quantity THEN 'dispense-quantity' ELSE 'dispense-days-supply' END,
+  (SELECT min(x.o) FROM quad x WHERE x.s = q.o AND x.p = k.decimal_value),
+  (SELECT min(x.o) FROM quad x WHERE x.s = q.o AND x.p = k.written_value),
   (SELECT min(x.o) FROM quad x WHERE x.s = q.o AND x.p = k.ucum_unit),
   (SELECT min(x.o) FROM quad x WHERE x.s = q.o AND x.p = k.unit_text)
 FROM medication_dispense_terms k CROSS JOIN medication_dispense_member_values mv
 JOIN quad v ON v.s = mv.member AND v.p = k.current_version
 JOIN quad q ON q.s = v.o AND q.p IN (k.dispense_quantity, k.dispense_days_supply)
-JOIN quad d ON d.s = q.o AND d.p = k.decimal_value JOIN quad w ON w.s = q.o AND w.p = k.written_value
-WHERE mv.entry IN (SELECT entry FROM medication_dispense_filled);
+WHERE mv.entry IN (SELECT entry FROM medication_dispense_filled)
+  AND q.o = (SELECT min(r.o) FROM quad r WHERE r.s = v.o AND r.p = q.p
+               AND EXISTS (SELECT 1 FROM quad x WHERE x.s = r.o AND x.p = k.decimal_value)
+               AND EXISTS (SELECT 1 FROM quad x WHERE x.s = r.o AND x.p = k.written_value));
 
 INSERT INTO medication_dispense_member_values_absent (entry, member, property, reason)
 SELECT DISTINCT mv.entry, mv.member, ap.o, ar.o FROM medication_dispense_terms k CROSS JOIN medication_dispense_member_values mv

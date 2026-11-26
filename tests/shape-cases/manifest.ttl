@@ -872,10 +872,6 @@
   mf:result [ a sh:ValidationReport ; sh:conforms false ;
               sh:result [ sh:sourceShape cascade:VersionWithValueAbsentForReasonShape ] ] .
 
-<#dates-and-absent-values/absent-dosage-bound> a sht:Validate ;
-  mf:action [ sht:dataGraph <dates-and-absent-values/absent-dosage-bound.ttl> ] ;
-  mf:result [ a sh:ValidationReport ; sh:conforms true ] .
-
 <#dates-and-absent-values/absent-report-issued> a sht:Validate ;
   mf:action [ sht:dataGraph <dates-and-absent-values/absent-report-issued.ttl> ] ;
   mf:result [ a sh:ValidationReport ; sh:conforms true ] .
@@ -971,6 +967,16 @@
 
 <#record-medication-dispense/days-supply-in-tablets> a sht:Validate ;
   mf:action [ sht:dataGraph <record-medication-dispense/days-supply-in-tablets.ttl> ] ;
+  mf:result [ a sh:ValidationReport ; sh:conforms false ;
+              sh:result [ sh:sourceShape cascade:MedicationDispenseShape ; sh:resultPath cascade:dispenseDaysSupply ] ] .
+
+<#record-medication-dispense/quantity-with-a-comparator> a sht:Validate ;
+  mf:action [ sht:dataGraph <record-medication-dispense/quantity-with-a-comparator.ttl> ] ;
+  mf:result [ a sh:ValidationReport ; sh:conforms false ;
+              sh:result [ sh:sourceShape cascade:MedicationDispenseShape ; sh:resultPath cascade:dispenseQuantity ] ] .
+
+<#record-medication-dispense/days-supply-with-a-comparator> a sht:Validate ;
+  mf:action [ sht:dataGraph <record-medication-dispense/days-supply-with-a-comparator.ttl> ] ;
   mf:result [ a sh:ValidationReport ; sh:conforms false ;
               sh:result [ sh:sourceShape cascade:MedicationDispenseShape ; sh:resultPath cascade:dispenseDaysSupply ] ] .
 
