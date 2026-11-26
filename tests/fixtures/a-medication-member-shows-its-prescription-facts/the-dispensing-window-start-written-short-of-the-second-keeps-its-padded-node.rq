@@ -1,0 +1,7 @@
+PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
+
+SELECT DISTINCT ?member ?padded ?field ?value
+WHERE { GRAPH <https://pod.example/clinical/medications.ttl> {
+  ?entry cascade:entryMember [] ; cascade:memberCurrentValues ?values .
+  ?values cascade:valuesOfMember ?member ; cascade:paddedDateTime ?padded .
+  ?padded ?field ?value } }

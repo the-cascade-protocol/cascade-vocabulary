@@ -1,0 +1,3 @@
+?member	?padded	?field	?value
+<urn:x:prescribed>	<https://pod.example/clinical/medications.ttl#a95bee7d00ba044dee119e66d2a0b42afaf57e1c7f5b012e7b1c2e7c47f416dd-a95bee7d00ba044dee119e66d2a0b42afaf57e1c7f5b012e7b1c2e7c47f416dd-padded-dispenseRequestValidityPeriodStart>	<https://ns.cascadeprotocol.org/cascade#paddedDateTimeProperty>	<https://ns.cascadeprotocol.org/cascade#dispenseRequestValidityPeriodStart>
+<urn:x:prescribed>	<https://pod.example/clinical/medications.ttl#a95bee7d00ba044dee119e66d2a0b42afaf57e1c7f5b012e7b1c2e7c47f416dd-a95bee7d00ba044dee119e66d2a0b42afaf57e1c7f5b012e7b1c2e7c47f416dd-padded-dispenseRequestValidityPeriodStart>	<https://ns.cascadeprotocol.org/cascade#timeAsWritten>	"2026-02-01T09:30Z"
