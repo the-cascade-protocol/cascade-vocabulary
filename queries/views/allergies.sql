@@ -29,6 +29,8 @@ CREATE VIEW allergy_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#allergenName>') AS allergen_name,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#allergenCode>') AS allergen_code,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#allergyCategory>') AS allergy_category,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#allergyType>') AS allergy_type,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#addedNoteText>') AS added_note_text,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#onsetDate>') AS onset_date,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#reactionManifestationText>') AS reaction_manifestation_text,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#reactionManifestationCode>') AS reaction_manifestation_code,
@@ -57,6 +59,7 @@ CREATE TABLE allergy (
   lead INTEGER NOT NULL,
   status_from INTEGER,
   name INTEGER,
+  type INTEGER,
   category INTEGER,
   onset INTEGER,
   severity INTEGER,
@@ -96,6 +99,7 @@ CREATE TABLE allergy_member_values (
   status INTEGER,
   criticality INTEGER,
   category INTEGER,
+  type INTEGER,
   onset INTEGER,
   PRIMARY KEY (entry, member)
 ) STRICT, WITHOUT ROWID;
@@ -116,6 +120,12 @@ CREATE TABLE allergy_member_values_reaction_code (
   member INTEGER NOT NULL,
   code INTEGER NOT NULL,
   PRIMARY KEY (entry, member, code)
+) STRICT, WITHOUT ROWID;
+CREATE TABLE allergy_member_values_note (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  note INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, note)
 ) STRICT, WITHOUT ROWID;
 CREATE TABLE allergy_member_values_padded (
   entry INTEGER NOT NULL,
@@ -139,6 +149,7 @@ WITH
   members (s, node, entry, member) AS (SELECT mv.node, mv.node, mv.entry, mv.member FROM allergy_member_values mv),
   said (s, p, o) AS (
     SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#allergenName>', c.name FROM entries e JOIN allergy c ON c.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#allergyType>', c.type FROM entries e JOIN allergy c ON c.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#allergyCategory>', c.category FROM entries e JOIN allergy c ON c.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#onsetDate>', c.onset FROM entries e JOIN allergy c ON c.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#allergySeverity>', c.severity FROM entries e JOIN allergy c ON c.entry = e.entry
@@ -156,7 +167,9 @@ WITH
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#clinicalStatus>', v.status FROM members mv JOIN allergy_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#allergyCriticality>', v.criticality FROM members mv JOIN allergy_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#allergyCategory>', v.category FROM members mv JOIN allergy_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#allergyType>', v.type FROM members mv JOIN allergy_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#onsetDate>', v.onset FROM members mv JOIN allergy_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#addedNoteText>', x.note FROM members mv JOIN allergy_member_values_note x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#allergenCode>', x.code FROM members mv JOIN allergy_member_values_code x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reactionManifestationText>', x.code FROM members mv JOIN allergy_member_values_reaction_text x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reactionManifestationCode>', x.code FROM members mv JOIN allergy_member_values_reaction_code x USING (entry, member)
@@ -192,6 +205,7 @@ INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('allergy_member', 'allergy_member_record', '750 1'),
   ('allergy_member_values', 'allergy_member_values', '750 2 1'),
   ('allergy_member_values_code', 'allergy_member_values_code', '750 2 1 1'),
+  ('allergy_member_values_note', 'allergy_member_values_note', '112 1 1 1'),
   ('allergy_member_values_padded', 'allergy_member_values_padded', '112 1 1 1'),
   ('allergy_member_values_reaction_code', 'allergy_member_values_reaction_code', '112 1 1 1'),
   ('allergy_member_values_reaction_text', 'allergy_member_values_reaction_text', '112 1 1 1'),
@@ -228,12 +242,13 @@ DELETE FROM allergy_member_values WHERE entry IN (SELECT entry FROM allergy_fill
 DELETE FROM allergy_member_values_code WHERE entry IN (SELECT entry FROM allergy_filled);
 DELETE FROM allergy_member_values_reaction_text WHERE entry IN (SELECT entry FROM allergy_filled);
 DELETE FROM allergy_member_values_reaction_code WHERE entry IN (SELECT entry FROM allergy_filled);
+DELETE FROM allergy_member_values_note WHERE entry IN (SELECT entry FROM allergy_filled);
 DELETE FROM allergy_member_values_padded WHERE entry IN (SELECT entry FROM allergy_filled);
 
 CREATE TEMP TABLE IF NOT EXISTS allergy_stated (
-  entry INTEGER PRIMARY KEY, lead INTEGER, status_from INTEGER, name INTEGER, category INTEGER, onset INTEGER, severity INTEGER, status INTEGER, criticality INTEGER, onset_written INTEGER) STRICT;
+  entry INTEGER PRIMARY KEY, lead INTEGER, status_from INTEGER, name INTEGER, type INTEGER, category INTEGER, onset INTEGER, severity INTEGER, status INTEGER, criticality INTEGER, onset_written INTEGER) STRICT;
 DELETE FROM allergy_stated;
-INSERT INTO allergy_stated (entry, lead, status_from, name, category, onset, severity, status, criticality, onset_written)
+INSERT INTO allergy_stated (entry, lead, status_from, name, type, category, onset, severity, status, criticality, onset_written)
 WITH
   entries (entry, lead) AS (
     SELECT DISTINCT r.o, (SELECT min(l.o) FROM quad l WHERE l.s = r.o AND l.p = k.lead_member)
@@ -249,6 +264,7 @@ SELECT led.entry, led.lead,
          AND EXISTS (SELECT 1 FROM quad v JOIN quad x ON x.s = v.o AND x.p = k.clinical_status
                      WHERE v.s = f.o AND v.p = k.current_version)),
   (SELECT min(x.o) FROM quad x WHERE x.s = led.version AND x.p = k.allergen_name),
+  (SELECT min(x.o) FROM quad x WHERE x.s = led.version AND x.p = k.allergy_type),
   coalesce((SELECT min(x.o) FROM quad x WHERE x.s = led.version AND x.p = k.allergy_category),
     (SELECT min(x.o) FROM quad f JOIN quad v ON v.s = f.o AND v.p = k.current_version
        JOIN quad x ON x.s = v.o AND x.p = k.allergy_category WHERE f.s = led.entry AND f.p = k.allergy_category_from)),
@@ -267,7 +283,7 @@ SELECT led.entry, led.lead,
        JOIN quad w ON w.s = d.o AND w.p = k.time_as_written WHERE f.s = led.entry AND f.p = k.onset_date_from) END
 FROM allergy_terms k CROSS JOIN led;
 
-INSERT INTO allergy (entry, iri, sort_key, lead, status_from, name, category, onset, severity, status, criticality, onset_written)
+INSERT INTO allergy (entry, iri, sort_key, lead, status_from, name, type, category, onset, severity, status, criticality, onset_written)
 WITH
   named (entry, iri) AS (
     SELECT stated.entry, CASE WHEN substr(e.lex, 1, 18) = 'urn:cascade:entry:'
@@ -275,7 +291,7 @@ WITH
     FROM allergy_terms k CROSS JOIN allergy_stated stated CROSS JOIN term e ON e.id = stated.entry)
 SELECT stated.entry, '<' || named.iri || '>',
   CASE WHEN t_name.id IS NULL THEN '0' ELSE t_name.kind || hex(coalesce(t_name.lex, '')) END || '.' || '2' || hex(named.iri) || '.',
-  stated.lead, stated.status_from, stated.name, stated.category, stated.onset, stated.severity, stated.status, stated.criticality, stated.onset_written
+  stated.lead, stated.status_from, stated.name, stated.type, stated.category, stated.onset, stated.severity, stated.status, stated.criticality, stated.onset_written
 FROM allergy_stated stated JOIN named ON named.entry = stated.entry
 LEFT JOIN term t_name ON t_name.id = stated.name;
 
@@ -299,7 +315,7 @@ SELECT DISTINCT c.entry, x.o FROM allergy_terms k CROSS JOIN allergy c
 JOIN quad v ON v.s = c.lead AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.reaction_manifestation_code
 WHERE c.entry IN (SELECT entry FROM allergy_filled);
 
-INSERT INTO allergy_member_values (entry, member, node, name, severity, status, criticality, category, onset)
+INSERT INTO allergy_member_values (entry, member, node, name, severity, status, criticality, category, type, onset)
 WITH members (entry, member, version) AS (
   SELECT DISTINCT r.o, r.s, (SELECT min(v.o) FROM quad v WHERE v.s = r.s AND v.p = k.current_version)
   FROM allergy_terms k CROSS JOIN quad r
@@ -312,6 +328,7 @@ SELECT members.entry, members.member, '<' || e.lex || '-' || sparql_sha256(m.lex
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.clinical_status),
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.allergy_criticality),
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.allergy_category),
+  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.allergy_type),
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.onset_date)
 FROM allergy_terms k CROSS JOIN members JOIN term e ON e.id = members.entry JOIN term m ON m.id = members.member;
 
@@ -328,6 +345,11 @@ WHERE mv.entry IN (SELECT entry FROM allergy_filled);
 INSERT INTO allergy_member_values_reaction_code (entry, member, code)
 SELECT DISTINCT mv.entry, mv.member, x.o FROM allergy_terms k CROSS JOIN allergy_member_values mv
 JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.reaction_manifestation_code
+WHERE mv.entry IN (SELECT entry FROM allergy_filled);
+
+INSERT INTO allergy_member_values_note (entry, member, note)
+SELECT DISTINCT mv.entry, mv.member, x.o FROM allergy_terms k CROSS JOIN allergy_member_values mv
+JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.added_note_text
 WHERE mv.entry IN (SELECT entry FROM allergy_filled);
 
 INSERT INTO allergy_member_values_padded (entry, member, written)

@@ -1,0 +1,7 @@
+?member	?field	?value
+<urn:x:asthmaNew>	<https://ns.cascadeprotocol.org/cascade#conditionCategory>	"problem-list-item"
+<urn:x:asthmaNew>	<https://ns.cascadeprotocol.org/cascade#conditionCodeInOtherSystem>	"AST-2"^^<urn:oid:2.16.840.1.113883.19.5.99999.1>
+<urn:x:asthmaNew>	<https://ns.cascadeprotocol.org/cascade#conditionCodeInOtherSystem>	"ALG-ASTH"^^<urn:oid:2.16.840.1.113883.19.5.99999.2>
+<urn:x:asthmaNew>	<https://ns.cascadeprotocol.org/cascade#addedNoteText>	"Worse in spring"
+<urn:x:asthmaOld>	<https://ns.cascadeprotocol.org/cascade#conditionCategory>	"encounter-diagnosis"
+<urn:x:asthmaOld>	<https://ns.cascadeprotocol.org/cascade#conditionCodeInOtherSystem>	"AST-1"^^<urn:oid:2.16.840.1.113883.19.5.99999.1>

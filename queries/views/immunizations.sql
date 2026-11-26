@@ -34,6 +34,11 @@ CREATE VIEW immunization_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#reasonCondition>') AS reason_condition,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#reasonCode>') AS reason_code,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#reasonCodeInOtherSystem>') AS reason_code_in_other_system,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#vaccineLotNumber>') AS lot_number,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#vaccinationBodySiteText>') AS body_site_text,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#vaccinationRouteText>') AS route_text,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#vaccineDoseQuantityText>') AS dose_quantity_text,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#addedNoteText>') AS added_note_text,
   (SELECT CASE WHEN count(DISTINCT i.lex) = 1 THEN min(i.lex) END
    FROM quad w JOIN quad x ON x.s = w.s JOIN term i ON i.id = x.o
    WHERE w.p = (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#writtenByQueryPath>')
@@ -76,6 +81,10 @@ CREATE TABLE immunization_member_values (
   name INTEGER,
   status INTEGER,
   date INTEGER,
+  lot_number INTEGER,
+  body_site INTEGER,
+  route INTEGER,
+  dose_quantity INTEGER,
   PRIMARY KEY (entry, member)
 ) STRICT, WITHOUT ROWID;
 CREATE TABLE immunization_member_values_code (
@@ -101,6 +110,12 @@ CREATE TABLE immunization_member_values_reason_other_system (
   member INTEGER NOT NULL,
   code INTEGER NOT NULL,
   PRIMARY KEY (entry, member, code)
+) STRICT, WITHOUT ROWID;
+CREATE TABLE immunization_member_values_note (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  note INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, note)
 ) STRICT, WITHOUT ROWID;
 CREATE TABLE immunization_member_values_padded (
   entry INTEGER NOT NULL,
@@ -139,6 +154,11 @@ WITH
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCondition>', x.record FROM members mv JOIN immunization_member_values_reason_condition x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCode>', x.code FROM members mv JOIN immunization_member_values_reason_code x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCodeInOtherSystem>', x.code FROM members mv JOIN immunization_member_values_reason_other_system x USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#vaccineLotNumber>', v.lot_number FROM members mv JOIN immunization_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#vaccinationBodySiteText>', v.body_site FROM members mv JOIN immunization_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#vaccinationRouteText>', v.route FROM members mv JOIN immunization_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#vaccineDoseQuantityText>', v.dose_quantity FROM members mv JOIN immunization_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#addedNoteText>', x.note FROM members mv JOIN immunization_member_values_note x USING (entry, member)
     UNION ALL SELECT '<' || substr(mv.node, 2, length(mv.node) - 2) || '-padded-' || CASE WHEN instr(p.lex, '#') > 0
                        THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
                      '<https://ns.cascadeprotocol.org/cascade#paddedDateTimeProperty>', x.property
@@ -175,6 +195,7 @@ INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('immunization_member', 'immunization_member_record', '1500 1'),
   ('immunization_member_values', 'immunization_member_values', '1500 2 1'),
   ('immunization_member_values_code', 'immunization_member_values_code', '1500 2 1 1'),
+  ('immunization_member_values_note', 'immunization_member_values_note', '112 1 1 1'),
   ('immunization_member_values_padded', 'immunization_member_values_padded', '112 1 1 1 1'),
   ('immunization_member_values_reason_code', 'immunization_member_values_reason_code', '112 1 1 1'),
   ('immunization_member_values_reason_condition', 'immunization_member_values_reason_condition', '112 1 1 1'),
@@ -209,6 +230,7 @@ DELETE FROM immunization_member_values_code WHERE entry IN (SELECT entry FROM im
 DELETE FROM immunization_member_values_reason_condition WHERE entry IN (SELECT entry FROM immunization_filled);
 DELETE FROM immunization_member_values_reason_code WHERE entry IN (SELECT entry FROM immunization_filled);
 DELETE FROM immunization_member_values_reason_other_system WHERE entry IN (SELECT entry FROM immunization_filled);
+DELETE FROM immunization_member_values_note WHERE entry IN (SELECT entry FROM immunization_filled);
 DELETE FROM immunization_member_values_padded WHERE entry IN (SELECT entry FROM immunization_filled);
 
 CREATE TEMP TABLE IF NOT EXISTS immunization_stated (
@@ -263,7 +285,7 @@ SELECT DISTINCT c.entry, x.o FROM immunization_terms k CROSS JOIN immunization c
 JOIN quad v ON v.s = c.lead AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.vaccine_code
 WHERE c.entry IN (SELECT entry FROM immunization_filled);
 
-INSERT INTO immunization_member_values (entry, member, node, name, status, date)
+INSERT INTO immunization_member_values (entry, member, node, name, status, date, lot_number, body_site, route, dose_quantity)
 WITH members (entry, member, version) AS (
   SELECT DISTINCT r.o, r.s, (SELECT min(v.o) FROM quad v WHERE v.s = r.s AND v.p = k.current_version)
   FROM immunization_terms k CROSS JOIN quad r
@@ -273,7 +295,11 @@ WITH members (entry, member, version) AS (
 SELECT members.entry, members.member, '<' || e.lex || '-' || sparql_sha256(m.lex) || '>',
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.vaccine_name),
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.workflow_status),
-  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.vaccination_occurrence_time)
+  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.vaccination_occurrence_time),
+  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.lot_number),
+  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.body_site_text),
+  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.route_text),
+  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.dose_quantity_text)
 FROM immunization_terms k CROSS JOIN members JOIN term e ON e.id = members.entry JOIN term m ON m.id = members.member;
 
 INSERT INTO immunization_member_values_code (entry, member, code)
@@ -294,6 +320,11 @@ WHERE mv.entry IN (SELECT entry FROM immunization_filled);
 INSERT INTO immunization_member_values_reason_other_system (entry, member, code)
 SELECT DISTINCT mv.entry, mv.member, x.o FROM immunization_terms k CROSS JOIN immunization_member_values mv
 JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.reason_code_in_other_system
+WHERE mv.entry IN (SELECT entry FROM immunization_filled);
+
+INSERT INTO immunization_member_values_note (entry, member, note)
+SELECT DISTINCT mv.entry, mv.member, x.o FROM immunization_terms k CROSS JOIN immunization_member_values mv
+JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.added_note_text
 WHERE mv.entry IN (SELECT entry FROM immunization_filled);
 
 INSERT INTO immunization_member_values_padded (entry, member, property, written)

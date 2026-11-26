@@ -9,11 +9,19 @@
   mf:entries (
     <#the-procedures-view>
     <#my-procedures>
+    <#its-members-other-codes>
   ) .
+
+<#its-members-other-codes> a mf:QueryEvaluationTest ;
+  mf:name "its-members-other-codes" ;
+  rdfs:comment "Each member's current values state the codes it gives in other systems; the entry takes only its lead's, so the earlier member's code is the member's alone." ;
+  mf:action [ qt:query <its-members-other-codes.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <its-members-other-codes.tsv> .
 
 <#the-procedures-view> a mf:QueryEvaluationTest ;
   mf:name "the-procedures-view" ;
-  rdfs:comment "Each entry takes the name and code of its lead, the status of the member chosen for status, and the date of the member chosen for the date." ;
+  rdfs:comment "Each entry takes the name and the codes of its lead, in the vocabulary's systems and in others, the status of the member chosen for status, and the date of the member chosen for the date." ;
   mf:action [ qt:query <the-procedures-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <the-procedures-view.tsv> .

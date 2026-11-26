@@ -14,6 +14,8 @@ CREATE VIEW lab_result_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<http://purl.org/pav/hasCurrentVersion>') AS current_version,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#testName>') AS test_name,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#testCode>') AS test_code,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#testCodeInOtherSystem>') AS test_code_in_other_system,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#addedNoteText>') AS added_note_text,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#resultValueText>') AS value_text,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#resultUnitText>') AS unit_text_of_result,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#narrativeText>') AS narrative_text,
@@ -93,6 +95,11 @@ CREATE TABLE lab_result_code (
   code INTEGER NOT NULL,
   PRIMARY KEY (entry, code)
 ) STRICT, WITHOUT ROWID;
+CREATE TABLE lab_result_code_other_system (
+  entry INTEGER NOT NULL,
+  code INTEGER NOT NULL,
+  PRIMARY KEY (entry, code)
+) STRICT, WITHOUT ROWID;
 CREATE TABLE lab_result_interpretation (
   entry INTEGER NOT NULL,
   code INTEGER NOT NULL,
@@ -125,6 +132,18 @@ CREATE TABLE lab_result_member_values_code (
   member INTEGER NOT NULL,
   code INTEGER NOT NULL,
   PRIMARY KEY (entry, member, code)
+) STRICT, WITHOUT ROWID;
+CREATE TABLE lab_result_member_values_code_other_system (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  code INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, code)
+) STRICT, WITHOUT ROWID;
+CREATE TABLE lab_result_member_values_note (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  note INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, note)
 ) STRICT, WITHOUT ROWID;
 CREATE TABLE lab_result_member_values_interpretation (
   entry INTEGER NOT NULL,
@@ -171,6 +190,7 @@ WITH
   said (s, p, o) AS (
     SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#testName>', c.test FROM entries e JOIN lab_result c ON c.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#testCode>', x.code FROM entries e JOIN lab_result_code x ON x.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#testCodeInOtherSystem>', x.code FROM entries e JOIN lab_result_code_other_system x ON x.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#resultUnitText>', c.unit FROM entries e JOIN lab_result c ON c.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#narrativeText>', c.narrative FROM entries e JOIN lab_result c ON c.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#workflowStatus>', c.status FROM entries e JOIN lab_result c ON c.entry = e.entry
@@ -186,6 +206,8 @@ WITH
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#valuesOfMember>', mv.member FROM members mv
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#testName>', v.test FROM members mv JOIN lab_result_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#testCode>', x.code FROM members mv JOIN lab_result_member_values_code x USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#testCodeInOtherSystem>', x.code FROM members mv JOIN lab_result_member_values_code_other_system x USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#addedNoteText>', x.note FROM members mv JOIN lab_result_member_values_note x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#resultValueText>', v.value_text FROM members mv JOIN lab_result_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#resultUnitText>', v.unit_text FROM members mv JOIN lab_result_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#narrativeText>', v.narrative FROM members mv JOIN lab_result_member_values v USING (entry, member)
@@ -246,11 +268,14 @@ INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('lab_result', 'sqlite_autoindex_lab_result_1', '8100 1'),
   ('lab_result', 'sqlite_autoindex_lab_result_2', '8100 1'),
   ('lab_result_code', 'lab_result_code', '8100 1 1'),
+  ('lab_result_code_other_system', 'lab_result_code_other_system', '112 1 1'),
   ('lab_result_interpretation', 'lab_result_interpretation', '112 1 1'),
   ('lab_result_member', 'lab_result_member', '9000 2 1'),
   ('lab_result_member', 'lab_result_member_record', '9000 1'),
   ('lab_result_member_values', 'lab_result_member_values', '9000 2 1'),
   ('lab_result_member_values_code', 'lab_result_member_values_code', '9000 2 1 1'),
+  ('lab_result_member_values_code_other_system', 'lab_result_member_values_code_other_system', '112 1 1 1'),
+  ('lab_result_member_values_note', 'lab_result_member_values_note', '112 1 1 1'),
   ('lab_result_member_values_interpretation', 'lab_result_member_values_interpretation', '112 1 1 1'),
   ('lab_result_member_values_padded', 'lab_result_member_values_padded', '3000 2 1 1 1'),
   ('lab_result_source', 'lab_result_source', '9000 2 1');
@@ -278,9 +303,12 @@ INSERT INTO lab_result_filled (entry)
 DELETE FROM lab_result WHERE entry IN (SELECT entry FROM lab_result_filled);
 DELETE FROM lab_result_member WHERE entry IN (SELECT entry FROM lab_result_filled);
 DELETE FROM lab_result_code WHERE entry IN (SELECT entry FROM lab_result_filled);
+DELETE FROM lab_result_code_other_system WHERE entry IN (SELECT entry FROM lab_result_filled);
 DELETE FROM lab_result_interpretation WHERE entry IN (SELECT entry FROM lab_result_filled);
 DELETE FROM lab_result_member_values WHERE entry IN (SELECT entry FROM lab_result_filled);
 DELETE FROM lab_result_member_values_code WHERE entry IN (SELECT entry FROM lab_result_filled);
+DELETE FROM lab_result_member_values_code_other_system WHERE entry IN (SELECT entry FROM lab_result_filled);
+DELETE FROM lab_result_member_values_note WHERE entry IN (SELECT entry FROM lab_result_filled);
 DELETE FROM lab_result_member_values_interpretation WHERE entry IN (SELECT entry FROM lab_result_filled);
 DELETE FROM lab_result_member_values_padded WHERE entry IN (SELECT entry FROM lab_result_filled);
 
@@ -414,6 +442,11 @@ SELECT DISTINCT c.entry, x.o FROM lab_result_terms k CROSS JOIN lab_result c
 JOIN quad v ON v.s = c.lead AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.test_code
 WHERE c.entry IN (SELECT entry FROM lab_result_filled);
 
+INSERT INTO lab_result_code_other_system (entry, code)
+SELECT DISTINCT c.entry, x.o FROM lab_result_terms k CROSS JOIN lab_result c
+JOIN quad v ON v.s = c.lead AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.test_code_in_other_system
+WHERE c.entry IN (SELECT entry FROM lab_result_filled);
+
 INSERT INTO lab_result_interpretation (entry, code)
 SELECT DISTINCT c.entry, x.o FROM lab_result_terms k CROSS JOIN lab_result c
 JOIN quad v ON v.s = c.lead AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.interpretation
@@ -461,6 +494,16 @@ FROM lab_result_terms k CROSS JOIN bounded JOIN term e ON e.id = bounded.entry J
 INSERT INTO lab_result_member_values_code (entry, member, code)
 SELECT DISTINCT mv.entry, mv.member, x.o FROM lab_result_terms k CROSS JOIN lab_result_member_values mv
 JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.test_code
+WHERE mv.entry IN (SELECT entry FROM lab_result_filled);
+
+INSERT INTO lab_result_member_values_code_other_system (entry, member, code)
+SELECT DISTINCT mv.entry, mv.member, x.o FROM lab_result_terms k CROSS JOIN lab_result_member_values mv
+JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.test_code_in_other_system
+WHERE mv.entry IN (SELECT entry FROM lab_result_filled);
+
+INSERT INTO lab_result_member_values_note (entry, member, note)
+SELECT DISTINCT mv.entry, mv.member, x.o FROM lab_result_terms k CROSS JOIN lab_result_member_values mv
+JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.added_note_text
 WHERE mv.entry IN (SELECT entry FROM lab_result_filled);
 
 INSERT INTO lab_result_member_values_interpretation (entry, member, code)

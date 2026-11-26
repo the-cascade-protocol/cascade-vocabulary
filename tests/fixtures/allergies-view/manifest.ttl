@@ -11,6 +11,7 @@
     <#where-it-came-from>
     <#my-active-allergies>
     <#its-padded-onset>
+    <#its-type-and-notes>
   ) .
 
 <#its-padded-onset> a mf:QueryEvaluationTest ;
@@ -20,9 +21,16 @@
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <its-padded-onset.tsv> .
 
+<#its-type-and-notes> a mf:QueryEvaluationTest ;
+  mf:name "its-type-and-notes" ;
+  rdfs:comment "An entry takes the type of its lead alone, the intolerance the person's latex entry states, and shows no note of its members: the peanut entry, whose lead states none, shows no type although the member from the document states an allergy; each member shows its own type and notes, in what-it-shows." ;
+  mf:action [ qt:query <its-type-and-notes.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <its-type-and-notes.tsv> .
+
 <#what-it-shows> a mf:QueryEvaluationTest ;
   mf:name "what-it-shows" ;
-  rdfs:comment "Each statement of each allergy entry in its view and each value its members state, with the member that states it and whether that member leads: the allergen, code, reactions and severity from the lead, the category and onset from the lead, else from the member chosen for each, the member the person entered, the other member's allergen, category, onset, reaction and severity beside them, the status from the latest derived from a document, and the highest criticality." ;
+  rdfs:comment "Each statement of each allergy entry in its view and each value its members state, with the member that states it and whether that member leads: the allergen, code, reactions and severity from the lead, the category and onset from the lead, else from the member chosen for each, the member the person entered, the other member's allergen, category, onset, reaction and severity beside them, the status from the latest derived from a document, the highest criticality, and each member's type and the notes added to it." ;
   mf:action [ qt:query <../../../queries/questions/entry/What%20it%20shows.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <what-it-shows.tsv> .

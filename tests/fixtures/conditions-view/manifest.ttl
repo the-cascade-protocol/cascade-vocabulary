@@ -9,11 +9,19 @@
   mf:entries (
     <#the-conditions-view>
     <#my-active-conditions>
+    <#its-members-category-notes-and-other-codes>
   ) .
+
+<#its-members-category-notes-and-other-codes> a mf:QueryEvaluationTest ;
+  mf:name "its-members-category-notes-and-other-codes" ;
+  rdfs:comment "Each member's current values state its own category, the notes added to it and the codes it gives in other systems; the entry takes only its lead's codes in other systems, so the earlier member's code and both categories are the members' alone." ;
+  mf:action [ qt:query <its-members-category-notes-and-other-codes.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <its-members-category-notes-and-other-codes.tsv> .
 
 <#the-conditions-view> a mf:QueryEvaluationTest ;
   mf:name "the-conditions-view" ;
-  rdfs:comment "Each entry takes the name and code of its lead, the status and abatement of the member chosen for status, and the onset of the member chosen for the date." ;
+  rdfs:comment "Each entry takes the name and the codes of its lead, in the vocabulary's systems and in others, the status and abatement of the member chosen for status, and the onset of the member chosen for the date." ;
   mf:action [ qt:query <the-conditions-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <the-conditions-view.tsv> .

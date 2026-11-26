@@ -1,6 +1,6 @@
-# Each entry takes the name and codes of its lead, the clinical status, verification status and abatement date of the
-# member chosen for status, and the onset of the member chosen for the date. Each member's current values are a node of
-# the view of their own, named after the entry and the member, which says the member they came from. A time its source
+# Each entry takes the name and the codes, in any system, of its lead, the clinical status, verification status and
+# abatement date of the member chosen for status, and the onset of the member chosen for the date. Each member's current
+# values are a node of the view of their own, named after the entry and the member, which says the member they came from. A time its source
 # wrote short of the second keeps the node saying so (cascade:PaddedDateTime), named after the entry or the member's
 # values and -padded-, so the view never shows a padded time as exact.
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
@@ -10,6 +10,7 @@ CONSTRUCT {
   ?entry a cascade:ProblemOrDiagnosis ;
     cascade:conditionName ?name ;
     cascade:conditionCode ?code ;
+    cascade:conditionCodeInOtherSystem ?codeInOtherSystem ;
     cascade:clinicalStatus ?status ;
     cascade:verificationStatus ?verification ;
     cascade:abatementDate ?abatement ;
@@ -21,6 +22,9 @@ CONSTRUCT {
   ?memberValues cascade:valuesOfMember ?member ;
     cascade:conditionName ?memberConditionName ;
     cascade:conditionCode ?memberConditionCode ;
+    cascade:conditionCodeInOtherSystem ?memberConditionCodeInOtherSystem ;
+    cascade:conditionCategory ?memberConditionCategory ;
+    cascade:addedNoteText ?memberAddedNoteText ;
     cascade:clinicalStatus ?memberClinicalStatus ;
     cascade:verificationStatus ?memberVerificationStatus ;
     cascade:abatementDate ?memberAbatementDate ;
@@ -37,6 +41,7 @@ WHERE {
     ?entry cascade:leadMember ?lead .
     OPTIONAL { ?lead pav:hasCurrentVersion/cascade:conditionName ?name }
     OPTIONAL { ?lead pav:hasCurrentVersion/cascade:conditionCode ?code }
+    OPTIONAL { ?lead pav:hasCurrentVersion/cascade:conditionCodeInOtherSystem ?codeInOtherSystem }
     OPTIONAL { ?entry cascade:statusFrom ?statusFrom .
                ?statusFrom pav:hasCurrentVersion/cascade:clinicalStatus ?status }
     OPTIONAL { ?entry cascade:statusFrom/pav:hasCurrentVersion/cascade:verificationStatus ?verification }
@@ -55,6 +60,9 @@ WHERE {
     BIND (IRI(CONCAT(STR(?entry), "-", SHA256(STR(?member)))) AS ?memberValues)
     OPTIONAL { ?memberVersion cascade:conditionName ?memberConditionName }
     OPTIONAL { ?memberVersion cascade:conditionCode ?memberConditionCode }
+    OPTIONAL { ?memberVersion cascade:conditionCodeInOtherSystem ?memberConditionCodeInOtherSystem }
+    OPTIONAL { ?memberVersion cascade:conditionCategory ?memberConditionCategory }
+    OPTIONAL { ?memberVersion cascade:addedNoteText ?memberAddedNoteText }
     OPTIONAL { ?memberVersion cascade:clinicalStatus ?memberClinicalStatus }
     OPTIONAL { ?memberVersion cascade:verificationStatus ?memberVerificationStatus }
     OPTIONAL { ?memberVersion cascade:abatementDate ?memberAbatementDate }

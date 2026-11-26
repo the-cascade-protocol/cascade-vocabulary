@@ -1,5 +1,5 @@
-# Each entry takes the allergen, code, reactions and severity of its lead, its category and onset from its lead, and
-# from the members the derivations chose for them (cascade:allergyCategoryFrom, cascade:onsetDateFrom) when its lead
+# Each entry takes the allergen, code, type, reactions and severity of its lead, its category and onset from its lead and,
+# when its lead states none, from the members the derivations chose for them (cascade:allergyCategoryFrom, cascade:onsetDateFrom) when its lead
 # states none, the status of the member chosen for status, and the highest criticality any member states. Each member's
 # current values are a node of the view of their own, named after the entry and the member, which says the member they
 # came from. An onset its source wrote short of the second keeps the node saying so (cascade:PaddedDateTime), named
@@ -11,6 +11,7 @@ CONSTRUCT {
   ?entry a cascade:AllergyOrIntolerance ;
     cascade:allergenName ?allergenName ;
     cascade:allergenCode ?code ;
+    cascade:allergyType ?type ;
     cascade:allergyCategory ?category ;
     cascade:onsetDate ?onset ;
     cascade:reactionManifestationText ?reaction ;
@@ -31,6 +32,8 @@ CONSTRUCT {
     cascade:clinicalStatus ?memberClinicalStatus ;
     cascade:allergyCriticality ?memberAllergyCriticality ;
     cascade:allergyCategory ?memberCategory ;
+    cascade:allergyType ?memberType ;
+    cascade:addedNoteText ?memberAddedNoteText ;
     cascade:onsetDate ?memberOnsetDate .
   ?entry cascade:paddedDateTime ?onsetPadded .
   ?onsetPadded cascade:paddedDateTimeProperty cascade:onsetDate ; cascade:timeAsWritten ?onsetWritten .
@@ -42,6 +45,7 @@ WHERE {
     ?entry cascade:leadMember ?lead .
     OPTIONAL { ?lead pav:hasCurrentVersion/cascade:allergenName ?allergenName }
     OPTIONAL { ?lead pav:hasCurrentVersion/cascade:allergenCode ?code }
+    OPTIONAL { ?lead pav:hasCurrentVersion/cascade:allergyType ?type }
     OPTIONAL { ?lead pav:hasCurrentVersion/cascade:allergyCategory ?leadCategory }
     OPTIONAL { ?entry cascade:allergyCategoryFrom/pav:hasCurrentVersion/cascade:allergyCategory ?fromCategory }
     BIND (COALESCE(?leadCategory, ?fromCategory) AS ?category)
@@ -73,6 +77,8 @@ WHERE {
     OPTIONAL { ?memberVersion cascade:clinicalStatus ?memberClinicalStatus }
     OPTIONAL { ?memberVersion cascade:allergyCriticality ?memberAllergyCriticality }
     OPTIONAL { ?memberVersion cascade:allergyCategory ?memberCategory }
+    OPTIONAL { ?memberVersion cascade:allergyType ?memberType }
+    OPTIONAL { ?memberVersion cascade:addedNoteText ?memberAddedNoteText }
     OPTIONAL { ?memberVersion cascade:onsetDate ?memberOnsetDate }
     OPTIONAL { ?memberVersion cascade:paddedDateTime ?memberPaddedAt .
                ?memberPaddedAt cascade:paddedDateTimeProperty ?memberPaddedProperty ; cascade:timeAsWritten ?memberWritten

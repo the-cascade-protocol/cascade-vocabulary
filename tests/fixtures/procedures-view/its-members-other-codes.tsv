@@ -1,0 +1,4 @@
+?member	?field	?value
+<urn:x:coloNew>	<https://ns.cascadeprotocol.org/cascade#procedureCodeInOtherSystem>	"COL-1"^^<urn:oid:2.16.840.1.113883.19.5.99999.1>
+<urn:x:coloNew>	<https://ns.cascadeprotocol.org/cascade#procedureCodeInOtherSystem>	"SCREEN-COL"^^<urn:oid:2.16.840.1.113883.19.5.99999.2>
+<urn:x:coloOld>	<https://ns.cascadeprotocol.org/cascade#procedureCodeInOtherSystem>	"COL-0"^^<urn:oid:2.16.840.1.113883.19.5.99999.1>
