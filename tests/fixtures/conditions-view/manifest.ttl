@@ -36,7 +36,7 @@
 
 <#its-members-absent-values> a mf:QueryEvaluationTest ;
   mf:name "its-members-absent-values" ;
-  rdfs:comment "A member whose source says why it holds no value for a property shows a node of its values naming the property and each reason, named after its values and -absent- and the property's local name: the later asthma member, for its onset for two reasons, one a data absent reason and one a null flavor, and for its abatement for one; no entry shows it." ;
+  rdfs:comment "A member whose source says why it holds no value for a property shows a node of its values naming the property and each reason, named after its values and -absent- and the property's local name: the later asthma member, for its onset for two reasons, one a data absent reason and one a null flavor, and for its abatement for one." ;
   mf:action [ qt:query <its-members-absent-values.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <its-members-absent-values.tsv> .

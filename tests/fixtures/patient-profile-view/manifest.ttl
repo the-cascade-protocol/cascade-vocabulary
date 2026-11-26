@@ -44,7 +44,7 @@
 
 <#its-members-absent-values> a mf:QueryEvaluationTest ;
   mf:name "its-members-absent-values" ;
-  rdfs:comment "A profile whose source says why it holds no value for a property shows a node of its values naming the property and each reason, named after its values and -absent- and the property's local name: the north profile's date of birth, for two reasons; the entry shows none." ;
+  rdfs:comment "A profile whose source says why it holds no value for a property shows a node of its values naming the property and each reason, named after its values and -absent- and the property's local name: the north profile's date of birth, for two reasons." ;
   mf:action [ qt:query <its-members-absent-values.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <its-members-absent-values.tsv> .
