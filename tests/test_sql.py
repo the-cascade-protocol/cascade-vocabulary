@@ -505,6 +505,11 @@ def rq_over(fixture, lens, relative):
             else built_once(fixture, "oxigraph", lens).store.store)
 
 
+def schema_of(connection):
+    """Each object, of every kind, that the connection's database and its temporary one hold, as its type and name."""
+    return set(connection.execute("SELECT type, name FROM sqlite_temp_master UNION ALL SELECT type, name FROM sqlite_master"))
+
+
 def failures(fixture, lens, relative, text):
     """Why the `.sql` text, over the fixture's pod under the lens, does not give the rows of the `.rq` at the path: in a
     whole run, in its order when it has one; for a question bound to a record, the `.rq` bound to it and the `.sql`
@@ -512,10 +517,12 @@ def failures(fixture, lens, relative, text):
     holds, for a list question each record of its own screen's members and one record of another kind, and a
     record the pod lacks; for a SELECT the `.rq` does not bind and that gives no `?record` column, the `.rq` bound to a record the pod
     lacks and the `.sql` whole; and, through the `.sql`,
-    the rows of each manifest entry under that lens that runs it. A CONSTRUCT's rows are compared as a set of
+    the rows of each manifest entry under that lens that runs it; and the objects the database holds are the same
+    after all of these as before, whatever kind and spelling a `.sql`'s prepare part makes one. A CONSTRUCT's rows are compared as a set of
     triples. labels.rq is run on the pod before the labels are made, as it is written."""
     rq, store = rq_over(fixture, lens, relative)
     connection = pod(fixture, lens)
+    before = schema_of(connection)
     names, wanted, construct = oxigraph_answer(store, rq)
     try:
         columns, found = sql.answer(connection, text)
@@ -556,6 +563,8 @@ def failures(fixture, lens, relative, text):
                   + " ".join(f"?{name}={term}" for name, term in sorted(r))
                   for kind, side in (("missing", pinned - rows), ("unexpected", rows - pinned))
                   for r in sorted(side.elements(), key=sorted)]
+    if left := schema_of(connection) ^ before:
+        lines.append(f"{fixture.name}, under {lens}, {relative}: the .sql leaves in the database, or removes from it: {sorted(left)}")
     return lines
 
 
@@ -941,23 +950,6 @@ class TestSqlBesideEachQuery:
                     emptied = made["fill"] + made["finish"]
                     kept += [f"{relative}: {table}" for table in re.findall(r"CREATE TABLE (?:IF NOT EXISTS )?(\w+)", made["tables"])
                              if not re.search(rf"DELETE FROM {table}\b", emptied)]
-            assert kept == []
-
-        def test_drops_each_temporary_table_a_questions_prepare_part_makes_in_its_cleanup_part(self):
-            """drops, in a question's cleanup part, each temporary table its prepare part makes, so no question reads one another left
-
-            A question asked after another on one connection that reads a table of the same name reads the rows the
-            first left, and only a fixture whose rows the leftover changes shows it: each table a question's prepare part
-            creates has a `DROP TABLE` of it in its cleanup part, whichever fixtures the question is compared on.
-            """
-            kept = []
-            for relative in ported():
-                made = sql.parts(sql_text(relative))
-                if "prepare" in made:
-                    kept += [f"{relative}: {table}" for table in re.findall(
-                        r"CREATE\s+TEMP(?:ORARY)?\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:temp\.)?(\w+)", made["prepare"], re.I)
-                             if not re.search(rf"DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:temp\.)?{table}\b",
-                                              made.get("cleanup", ""), re.I)]
             assert kept == []
 
         def test_pins_each_ported_rq_by_the_hash_its_sql_was_checked_against(self):
@@ -1401,6 +1393,29 @@ class TestTheSqlCheck:
         assert records and not [line for line in found if f"{self.JUDGMENTS}, against the .rq: " in line]
         assert {record for record in records
                 if any(f"keyed to {record}, against the .rq: missing: " in line for line in found)} == records
+
+    PREPARED = "queries/questions/entry/What it shows.rq"
+    WHOLE_POD = next(fixture for fixture in FIXTURES if fixture.name == "files-and-folders")
+
+    @pytest.mark.xdist_group(WHOLE_POD.name)
+    @pytest.mark.parametrize("spelling", ["CREATE TEMP TABLE view_statements", "CREATE TABLE temp.view_statements"])
+    def test_reports_a_sql_that_leaves_an_object_in_the_database_whatever_the_spelling_that_makes_it(self, spelling):
+        """reports a `.sql` that leaves in the database an object its prepare part made, however its statement is spelled
+
+        `What it shows.sql` with its cleanup part cut, and its temporary table made as `CREATE TEMP TABLE` and as
+        `CREATE TABLE temp.`, is checked over a fixture: the check names the table left, and finds nothing left by the
+        `.sql` as it is.
+        """
+        text = sql_beside(self.PREPARED).read_text(encoding="utf-8")
+        leaking = re.sub(r"-- part: cleanup.*", "", text.replace("CREATE TEMP TABLE view_statements", spelling), flags=re.S)
+        assert leaking != text
+        connection = pod(self.WHOLE_POD, "everyday")
+        try:
+            found = [line for line in failures(self.WHOLE_POD, "everyday", self.PREPARED, leaking) if "leaves" in line]
+            assert [line for line in found if "view_statements" in line]
+        finally:
+            connection.execute("DROP TABLE IF EXISTS temp.view_statements")
+        assert [line for line in failures(self.WHOLE_POD, "everyday", self.PREPARED, text) if "leaves" in line] == []
 
     SHOWN_IN = "queries/questions/record/Which entry shows it.rq"
 
