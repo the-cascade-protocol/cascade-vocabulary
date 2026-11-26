@@ -5,12 +5,13 @@
 
 <> a mf:Manifest ;
   rdfs:label "patient-profile-view" ;
-  rdfs:comment "Two patient profiles counting About judgments tie to the subject, each arriving by an import of its own." ;
+  rdfs:comment "Two patient profiles counting About judgments tie to the subject, each arriving by an import of its own, the north one holding no date of birth, for two reasons." ;
   mf:entries (
     <#one-entry-for-the-person>
     <#whose-it-is-counted-as-with-no-record>
     <#where-it-came-from>
     <#no-entry-seen-more-than-once>
+    <#its-members-absent-values>
   ) .
 
 <#one-entry-for-the-person> a mf:QueryEvaluationTest ;
@@ -40,3 +41,10 @@
   mf:action [ qt:query <../../../queries/questions/pod/What%20was%20seen%20more%20than%20once.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <no-entry-seen-more-than-once.tsv> .
+
+<#its-members-absent-values> a mf:QueryEvaluationTest ;
+  mf:name "its-members-absent-values" ;
+  rdfs:comment "A profile whose source says why it holds no value for a property shows a node of its values naming the property and each reason, named after its values and -absent- and the property's local name: the north profile's date of birth, for two reasons; the entry shows none." ;
+  mf:action [ qt:query <its-members-absent-values.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <its-members-absent-values.tsv> .

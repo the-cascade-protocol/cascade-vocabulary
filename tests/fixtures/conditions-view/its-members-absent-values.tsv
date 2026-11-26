@@ -1,0 +1,4 @@
+?member	?property	?reason	?named
+<urn:x:asthmaNew>	<https://ns.cascadeprotocol.org/cascade#onsetDate>	<https://ns.cascadeprotocol.org/codes/data-absent-reason/unknown>	"onsetDate"
+<urn:x:asthmaNew>	<https://ns.cascadeprotocol.org/cascade#onsetDate>	<https://ns.cascadeprotocol.org/codes/nullflavor/UNK>	"onsetDate"
+<urn:x:asthmaNew>	<https://ns.cascadeprotocol.org/cascade#abatementDate>	<https://ns.cascadeprotocol.org/codes/data-absent-reason/not-applicable>	"abatementDate"

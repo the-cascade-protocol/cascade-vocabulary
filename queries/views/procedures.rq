@@ -4,6 +4,9 @@
 # lead states none shows none, and the member that does shows it there; and what it was done for: each condition's
 # record it names (cascade:reasonCondition) and each code of its reason, whether in a system the vocabulary lists
 # (cascade:reasonCode) or in another (cascade:reasonCodeInOtherSystem).
+# A value a member's source says it holds none of, and why, keeps the node saying so (cascade:ValueAbsentForReason),
+# linked from the member's values, named after them and -absent- and the property's local name and holding the
+# property and each reason, so the view never shows a missing value as one nothing said; the entry shows none.
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX pav: <http://purl.org/pav/>
 
@@ -29,6 +32,8 @@ CONSTRUCT {
     cascade:reasonCondition ?memberReasonCondition ;
     cascade:reasonCode ?memberReasonCode ;
     cascade:reasonCodeInOtherSystem ?memberReasonCodeInOtherSystem .
+  ?memberValues cascade:valueAbsentForReason ?memberAbsent .
+  ?memberAbsent cascade:absentValueProperty ?memberAbsentProperty ; cascade:absentReasonCode ?memberAbsentReason .
 }
 WHERE {
   { ?record a cascade:MedicalProcedure ; cascade:inEntry ?entry .
@@ -51,5 +56,9 @@ WHERE {
     OPTIONAL { ?memberVersion cascade:procedureDate ?memberProcedureDate }
     OPTIONAL { ?memberVersion cascade:reasonCondition ?memberReasonCondition }
     OPTIONAL { ?memberVersion cascade:reasonCode ?memberReasonCode }
-    OPTIONAL { ?memberVersion cascade:reasonCodeInOtherSystem ?memberReasonCodeInOtherSystem } }
+    OPTIONAL { ?memberVersion cascade:reasonCodeInOtherSystem ?memberReasonCodeInOtherSystem }
+    OPTIONAL { ?memberVersion cascade:valueAbsentForReason ?memberAbsentAt .
+               ?memberAbsentAt cascade:absentValueProperty ?memberAbsentProperty ; cascade:absentReasonCode ?memberAbsentReason }
+    BIND (IF(BOUND(?memberAbsentAt), IRI(CONCAT(STR(?memberValues), "-absent-", STRAFTER(STR(?memberAbsentProperty), "#"))), 1/0)
+          AS ?memberAbsent) }
 }

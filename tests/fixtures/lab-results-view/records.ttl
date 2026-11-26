@@ -17,7 +17,10 @@
 :resent a cascade:LaboratoryTestResult .
 :resentVersion prov:specializationOf :resent ; cascade:patient :subject ; cascade:testName "Serum potassium" ;
     cascade:testCode <http://loinc.org/rdf/2823-3> ; cascade:resultValueKind cascade:QuantityResultValue ; cascade:resultQuantity <urn:x:resentVersion#value> ;
-    cascade:testCodeInOtherSystem "K-SERUM"^^<urn:oid:2.16.840.1.113883.19.5.99999.1> .
+    cascade:testCodeInOtherSystem "K-SERUM"^^<urn:oid:2.16.840.1.113883.19.5.99999.1> ;
+    cascade:valueAbsentForReason <urn:x:resentVersion#absent-resultClinicallyRelevantTime> .
+<urn:x:resentVersion#absent-resultClinicallyRelevantTime> cascade:absentValueProperty cascade:resultClinicallyRelevantTime ;
+    cascade:absentReasonCode <https://ns.cascadeprotocol.org/codes/data-absent-reason/unknown> .
 <urn:x:resentVersion#value> cascade:decimalValue "4.1"^^xsd:decimal ; cascade:writtenValue "4.1" ; cascade:ucumUnit "mmol/L" ;
     cascade:unitText "mmol/l" .
 :resentRevision a cascade:Revision ; cascade:revisionOf :resent ; cascade:version :resentVersion ;

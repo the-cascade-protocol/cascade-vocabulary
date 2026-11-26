@@ -2,11 +2,17 @@
 # chose of its lead, the times it was prepared and handed over, and the entry of each prescription the lead names: its
 # version names medication records, and each prescription's entry is the one that record is in, none when the record is
 # in no entry. It takes the status of the member chosen for status and the lifecycle class of that status
-# (cascade:lifecycle), so an app reads whether it was handed over without reading the status. The quantity dispensed and
-# the days' supply stay nodes of the version. Each member's current values are a node of the view of their own, named
-# after the entry and the member, which says the member they came from and names its prescriptions by their records. A
-# time its source wrote short of the second keeps the node saying so (cascade:PaddedDateTime), named after the entry or
-# the member's values and -padded-, so the view never shows a padded time as exact.
+# (cascade:lifecycle), so an app reads whether it was handed over without reading the status. It takes the quantity
+# dispensed and the days' supply of its lead, each a node of the view named after the entry and -dispense-quantity or
+# -dispense-days-supply, holding the number as typed and as written, its comparator and its units, as lab results'
+# reference bounds do: an entry whose lead states neither shows neither. Each member's current values are a node of the
+# view of their own, named after the entry and the member, which says the member they came from, names its prescriptions
+# by their records and links the member's own quantity and days' supply, named after the values. A time its source wrote
+# short of the second keeps the node saying so (cascade:PaddedDateTime), named after the entry or the member's values and
+# -padded-, so the view never shows a padded time as exact.
+# A value a member's source says it holds none of, and why, keeps the node saying so (cascade:ValueAbsentForReason),
+# linked from the member's values, named after them and -absent- and the property's local name and holding the
+# property and each reason, so the view never shows a missing value as one nothing said; the entry shows none.
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX pav: <http://purl.org/pav/>
 
@@ -19,6 +25,8 @@ CONSTRUCT {
     cascade:userSelectedCode ?selected ;
     cascade:dispensePreparedTime ?prepared ;
     cascade:dispenseHandedOverTime ?handedOver ;
+    cascade:dispenseQuantity ?quantity ;
+    cascade:dispenseDaysSupply ?daysSupply ;
     cascade:authorizingPrescription ?prescriptionEntry ;
     cascade:workflowStatus ?status ;
     cascade:lifecycle ?lifecycle ;
@@ -35,7 +43,19 @@ CONSTRUCT {
     cascade:dispensePreparedTime ?memberDispensePreparedTime ;
     cascade:dispenseHandedOverTime ?memberDispenseHandedOverTime ;
     cascade:authorizingPrescription ?memberAuthorizingPrescription ;
-    cascade:workflowStatus ?memberWorkflowStatus .
+    cascade:workflowStatus ?memberWorkflowStatus ;
+    cascade:dispenseQuantity ?memberQuantity ;
+    cascade:dispenseDaysSupply ?memberDaysSupply ;
+    cascade:valueAbsentForReason ?memberAbsent .
+  ?quantity cascade:decimalValue ?quantityDecimal ; cascade:writtenValue ?quantityWritten ; cascade:quantityComparator ?quantityComparator ;
+    cascade:ucumUnit ?quantityUcum ; cascade:unitText ?quantityUnitText .
+  ?daysSupply cascade:decimalValue ?daysDecimal ; cascade:writtenValue ?daysWritten ; cascade:quantityComparator ?daysComparator ;
+    cascade:ucumUnit ?daysUcum ; cascade:unitText ?daysUnitText .
+  ?memberQuantity cascade:decimalValue ?memberQuantityDecimal ; cascade:writtenValue ?memberQuantityWritten ;
+    cascade:quantityComparator ?memberQuantityComparator ; cascade:ucumUnit ?memberQuantityUcum ; cascade:unitText ?memberQuantityUnitText .
+  ?memberDaysSupply cascade:decimalValue ?memberDaysDecimal ; cascade:writtenValue ?memberDaysWritten ;
+    cascade:quantityComparator ?memberDaysComparator ; cascade:ucumUnit ?memberDaysUcum ; cascade:unitText ?memberDaysUnitText .
+  ?memberAbsent cascade:absentValueProperty ?memberAbsentProperty ; cascade:absentReasonCode ?memberAbsentReason .
   ?entry cascade:paddedDateTime ?leadPadded .
   ?leadPadded cascade:paddedDateTimeProperty ?leadPaddedProperty ; cascade:timeAsWritten ?leadWritten .
   ?memberValues cascade:paddedDateTime ?memberPadded .
@@ -52,6 +72,18 @@ WHERE {
     OPTIONAL { ?lead pav:hasCurrentVersion/cascade:dispensePreparedTime ?prepared }
     OPTIONAL { ?lead pav:hasCurrentVersion/cascade:dispenseHandedOverTime ?handedOver }
     OPTIONAL { ?lead pav:hasCurrentVersion/cascade:authorizingPrescription/cascade:inEntry ?prescriptionEntry }
+    OPTIONAL { ?lead pav:hasCurrentVersion/cascade:dispenseQuantity ?quantityAt .
+               ?quantityAt cascade:decimalValue ?quantityDecimal ; cascade:writtenValue ?quantityWritten .
+               OPTIONAL { ?quantityAt cascade:quantityComparator ?quantityComparator }
+               OPTIONAL { ?quantityAt cascade:ucumUnit ?quantityUcum }
+               OPTIONAL { ?quantityAt cascade:unitText ?quantityUnitText } }
+    BIND (IF(BOUND(?quantityAt), IRI(CONCAT(STR(?entry), "-dispense-quantity")), 1/0) AS ?quantity)
+    OPTIONAL { ?lead pav:hasCurrentVersion/cascade:dispenseDaysSupply ?daysAt .
+               ?daysAt cascade:decimalValue ?daysDecimal ; cascade:writtenValue ?daysWritten .
+               OPTIONAL { ?daysAt cascade:quantityComparator ?daysComparator }
+               OPTIONAL { ?daysAt cascade:ucumUnit ?daysUcum }
+               OPTIONAL { ?daysAt cascade:unitText ?daysUnitText } }
+    BIND (IF(BOUND(?daysAt), IRI(CONCAT(STR(?entry), "-dispense-days-supply")), 1/0) AS ?daysSupply)
     OPTIONAL { ?entry cascade:statusFrom ?statusFrom .
                ?statusFrom pav:hasCurrentVersion/cascade:workflowStatus ?status }
     OPTIONAL { ?entry cascade:statusLifecycle ?lifecycle }
@@ -71,6 +103,22 @@ WHERE {
     OPTIONAL { ?memberVersion cascade:dispenseHandedOverTime ?memberDispenseHandedOverTime }
     OPTIONAL { ?memberVersion cascade:authorizingPrescription ?memberAuthorizingPrescription }
     OPTIONAL { ?memberVersion cascade:workflowStatus ?memberWorkflowStatus }
+    OPTIONAL { ?memberVersion cascade:dispenseQuantity ?memberQuantityAt .
+               ?memberQuantityAt cascade:decimalValue ?memberQuantityDecimal ; cascade:writtenValue ?memberQuantityWritten .
+               OPTIONAL { ?memberQuantityAt cascade:quantityComparator ?memberQuantityComparator }
+               OPTIONAL { ?memberQuantityAt cascade:ucumUnit ?memberQuantityUcum }
+               OPTIONAL { ?memberQuantityAt cascade:unitText ?memberQuantityUnitText } }
+    BIND (IF(BOUND(?memberQuantityAt), IRI(CONCAT(STR(?memberValues), "-dispense-quantity")), 1/0) AS ?memberQuantity)
+    OPTIONAL { ?memberVersion cascade:dispenseDaysSupply ?memberDaysAt .
+               ?memberDaysAt cascade:decimalValue ?memberDaysDecimal ; cascade:writtenValue ?memberDaysWritten .
+               OPTIONAL { ?memberDaysAt cascade:quantityComparator ?memberDaysComparator }
+               OPTIONAL { ?memberDaysAt cascade:ucumUnit ?memberDaysUcum }
+               OPTIONAL { ?memberDaysAt cascade:unitText ?memberDaysUnitText } }
+    BIND (IF(BOUND(?memberDaysAt), IRI(CONCAT(STR(?memberValues), "-dispense-days-supply")), 1/0) AS ?memberDaysSupply)
+    OPTIONAL { ?memberVersion cascade:valueAbsentForReason ?memberAbsentAt .
+               ?memberAbsentAt cascade:absentValueProperty ?memberAbsentProperty ; cascade:absentReasonCode ?memberAbsentReason }
+    BIND (IF(BOUND(?memberAbsentAt), IRI(CONCAT(STR(?memberValues), "-absent-", STRAFTER(STR(?memberAbsentProperty), "#"))), 1/0)
+          AS ?memberAbsent)
     OPTIONAL { ?memberVersion cascade:paddedDateTime ?memberPaddedAt .
                ?memberPaddedAt cascade:paddedDateTimeProperty ?memberPaddedProperty ; cascade:timeAsWritten ?memberWritten }
     BIND (IF(BOUND(?memberWritten), IRI(CONCAT(STR(?memberValues), "-padded-", STRAFTER(STR(?memberPaddedProperty), "#"))), 1/0)

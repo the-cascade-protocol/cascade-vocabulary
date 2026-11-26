@@ -2,6 +2,7 @@
 -- each entry with a lead, holding what the view states of it; `procedure_member` its records; `procedure_code` its
 -- codes; `procedure_member_values` each member's current values, with their codes and the reasons they were done for.
 -- The columns that read the labels output, filled by finish, are `procedure.label` and `procedure_source`.
+-- `procedure_member_values_absent` why a member's values hold no value for a property, a row for each reason.
 
 -- part: tables
 CREATE VIEW procedure_terms AS SELECT
@@ -35,6 +36,9 @@ CREATE VIEW procedure_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#reasonCondition>') AS reason_condition,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#reasonCode>') AS reason_code,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#reasonCodeInOtherSystem>') AS reason_code_in_other_system,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#valueAbsentForReason>') AS value_absent,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#absentValueProperty>') AS absent_value_property,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#absentReasonCode>') AS absent_reason_code,
   (SELECT CASE WHEN count(DISTINCT i.lex) = 1 THEN min(i.lex) END
    FROM quad w JOIN quad x ON x.s = w.s JOIN term i ON i.id = x.o
    WHERE w.p = (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#writtenByQueryPath>')
@@ -115,6 +119,14 @@ CREATE TABLE procedure_member_values_reason_other_system (
   code INTEGER NOT NULL,
   PRIMARY KEY (entry, member, code)
 ) STRICT, WITHOUT ROWID;
+-- Why a member's source says its values hold none for a property, one row for each reason.
+CREATE TABLE procedure_member_values_absent (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  property INTEGER NOT NULL,
+  reason INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, property, reason)
+) STRICT, WITHOUT ROWID;
 -- Where each of the entry's records came from, `line` as the list questions show it, `shown` the same in N-Triples.
 CREATE TABLE procedure_source (
   entry INTEGER NOT NULL,
@@ -148,12 +160,20 @@ WITH
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#procedureCodeInOtherSystem>', x.code FROM members mv JOIN procedure_member_values_code_other_system x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCondition>', x.record FROM members mv JOIN procedure_member_values_reason_condition x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCode>', x.code FROM members mv JOIN procedure_member_values_reason_code x USING (entry, member)
-    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCodeInOtherSystem>', x.code FROM members mv JOIN procedure_member_values_reason_other_system x USING (entry, member)),
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCodeInOtherSystem>', x.code FROM members mv JOIN procedure_member_values_reason_other_system x USING (entry, member)
+    UNION ALL SELECT DISTINCT '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
+                     '<https://ns.cascadeprotocol.org/cascade#absentValueProperty>', x.property
+      FROM members mv JOIN procedure_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property
+    UNION ALL SELECT '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
+                     '<https://ns.cascadeprotocol.org/cascade#absentReasonCode>', x.reason
+      FROM members mv JOIN procedure_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property),
   made (s, p, o) AS (
     SELECT s, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<https://ns.cascadeprotocol.org/cascade#MedicalProcedure>'
     FROM entries
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#memberCurrentValues>', mv.node
-      FROM members mv JOIN entries e ON e.entry = mv.entry)
+      FROM members mv JOIN entries e ON e.entry = mv.entry
+    UNION ALL SELECT DISTINCT mv.node, '<https://ns.cascadeprotocol.org/cascade#valueAbsentForReason>', '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>'
+      FROM members mv JOIN procedure_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property)
 SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
 UNION ALL SELECT s, p, o FROM made;
 
@@ -165,6 +185,7 @@ INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('procedure_member', 'procedure_member', '750 2 1'),
   ('procedure_member', 'procedure_member_record', '750 1'),
   ('procedure_member_values', 'procedure_member_values', '750 2 1'),
+  ('procedure_member_values_absent', 'procedure_member_values_absent', '112 1 1 1 1'),
   ('procedure_member_values_code', 'procedure_member_values_code', '750 2 1 1'),
   ('procedure_member_values_code_other_system', 'procedure_member_values_code_other_system', '112 1 1 1'),
   ('procedure_member_values_reason_code', 'procedure_member_values_reason_code', '112 1 1 1'),
@@ -202,6 +223,7 @@ DELETE FROM procedure_member_values_code_other_system WHERE entry IN (SELECT ent
 DELETE FROM procedure_member_values_reason_condition WHERE entry IN (SELECT entry FROM procedure_filled);
 DELETE FROM procedure_member_values_reason_code WHERE entry IN (SELECT entry FROM procedure_filled);
 DELETE FROM procedure_member_values_reason_other_system WHERE entry IN (SELECT entry FROM procedure_filled);
+DELETE FROM procedure_member_values_absent WHERE entry IN (SELECT entry FROM procedure_filled);
 
 CREATE TEMP TABLE IF NOT EXISTS procedure_stated (
   entry INTEGER PRIMARY KEY, lead INTEGER, status_from INTEGER, name INTEGER, narrative INTEGER, status INTEGER, date INTEGER) STRICT;
@@ -294,6 +316,12 @@ WHERE mv.entry IN (SELECT entry FROM procedure_filled);
 INSERT INTO procedure_member_values_reason_other_system (entry, member, code)
 SELECT DISTINCT mv.entry, mv.member, x.o FROM procedure_terms k CROSS JOIN procedure_member_values mv
 JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.reason_code_in_other_system
+WHERE mv.entry IN (SELECT entry FROM procedure_filled);
+
+INSERT INTO procedure_member_values_absent (entry, member, property, reason)
+SELECT DISTINCT mv.entry, mv.member, ap.o, ar.o FROM procedure_terms k CROSS JOIN procedure_member_values mv
+JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad a ON a.s = v.o AND a.p = k.value_absent
+JOIN quad ap ON ap.s = a.o AND ap.p = k.absent_value_property JOIN quad ar ON ar.s = a.o AND ar.p = k.absent_reason_code
 WHERE mv.entry IN (SELECT entry FROM procedure_filled);
 
 -- part: finish

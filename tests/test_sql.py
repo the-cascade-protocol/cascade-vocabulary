@@ -691,7 +691,8 @@ SCREEN_FIXTURES = (
     "a-dispense-states-a-code-in-another-system-and-a-selected-code", "a-reason-whose-text-holds-the-other-forms-separators",
     "a-note-time-written-short-of-the-second", "reports-view", "conditions-view", "procedures-view",
     "an-active-condition-from-a-document-retrieved-twice",
-    "variant-interpretations-view", "a-medicine-and-a-procedure-given-for-a-condition")
+    "variant-interpretations-view", "a-medicine-and-a-procedure-given-for-a-condition", "allergies-view", "immunizations-view",
+    "lab-results-view", "medication-dispenses-view", "medications-view", "notes-and-documents-view")
 KEYED_KINDS = {"unchanged": r" unchanged$", "moved": r" moved out of entry ", "agent renamed": r"^agent .* renamed$",
                "reasons dropped": r"'s reasons dropped$", "entry renamed": r" its records give reasons for renamed, ",
                "reason given": r" given condition .* as a reason$", "record put in an entry": r"^a record with no reason put in entry ",

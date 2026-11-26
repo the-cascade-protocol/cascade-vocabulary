@@ -4,6 +4,7 @@
 -- values, with their codes, the reasons they were given for, padded times and structured dosages
 -- (`medication_member_values_dosage`, with its route codes and padded bounds, and its dose quantity in its own
 -- columns). The columns that read the labels output, filled by finish, are `medication.label` and `medication_source`.
+-- `medication_member_values_absent` why a member's values hold no value for a property, a row for each reason.
 
 -- part: tables
 CREATE VIEW medication_terms AS SELECT
@@ -63,6 +64,9 @@ CREATE VIEW medication_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#quantityComparator>') AS quantity_comparator,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#ucumUnit>') AS ucum_unit,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#unitText>') AS unit_text,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#valueAbsentForReason>') AS value_absent,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#absentValueProperty>') AS absent_value_property,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#absentReasonCode>') AS absent_reason_code,
   (SELECT CASE WHEN count(DISTINCT i.lex) = 1 THEN min(i.lex) END
    FROM quad w JOIN quad x ON x.s = w.s JOIN term i ON i.id = x.o
    WHERE w.p = (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#writtenByQueryPath>')
@@ -215,6 +219,14 @@ CREATE TABLE medication_member_values_dosage_padded (
   written INTEGER NOT NULL,
   PRIMARY KEY (entry, member, dosage, property, written)
 ) STRICT, WITHOUT ROWID;
+-- Why a member's source says its values hold none for a property, one row for each reason.
+CREATE TABLE medication_member_values_absent (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  property INTEGER NOT NULL,
+  reason INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, property, reason)
+) STRICT, WITHOUT ROWID;
 -- Where each of the entry's records came from, `line` as the list questions show it, `shown` the same in N-Triples.
 CREATE TABLE medication_source (
   entry INTEGER NOT NULL,
@@ -309,7 +321,13 @@ WITH
       FROM entries e JOIN medication c ON c.entry = e.entry
     UNION ALL SELECT '<' || substr(e.s, 2, length(e.s) - 2) || '-padded-medicationUseEndDate>',
                      '<https://ns.cascadeprotocol.org/cascade#timeAsWritten>', c.ended_written
-      FROM entries e JOIN medication c ON c.entry = e.entry),
+      FROM entries e JOIN medication c ON c.entry = e.entry
+    UNION ALL SELECT DISTINCT '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
+                     '<https://ns.cascadeprotocol.org/cascade#absentValueProperty>', x.property
+      FROM members mv JOIN medication_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property
+    UNION ALL SELECT '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
+                     '<https://ns.cascadeprotocol.org/cascade#absentReasonCode>', x.reason
+      FROM members mv JOIN medication_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property),
   made (s, p, o) AS (
     SELECT s, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<https://ns.cascadeprotocol.org/cascade#PrescribedOrReportedMedication>'
     FROM entries
@@ -339,7 +357,9 @@ WITH
       FROM entries e JOIN medication c ON c.entry = e.entry WHERE c.ended_written IS NOT NULL
     UNION ALL SELECT '<' || substr(e.s, 2, length(e.s) - 2) || '-padded-medicationUseEndDate>',
                      '<https://ns.cascadeprotocol.org/cascade#paddedDateTimeProperty>', '<https://ns.cascadeprotocol.org/cascade#medicationUseEndDate>'
-      FROM entries e JOIN medication c ON c.entry = e.entry WHERE c.ended_written IS NOT NULL)
+      FROM entries e JOIN medication c ON c.entry = e.entry WHERE c.ended_written IS NOT NULL
+    UNION ALL SELECT DISTINCT mv.node, '<https://ns.cascadeprotocol.org/cascade#valueAbsentForReason>', '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>'
+      FROM members mv JOIN medication_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property)
 SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
 UNION ALL SELECT s, p, o FROM made;
 
@@ -351,6 +371,7 @@ INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('medication_member', 'medication_member', '1500 1 1'),
   ('medication_member', 'medication_member_record', '1500 1'),
   ('medication_member_values', 'medication_member_values', '1500 1 1'),
+  ('medication_member_values_absent', 'medication_member_values_absent', '112 1 1 1 1'),
   ('medication_member_values_code', 'medication_member_values_code', '1500 1 1 1'),
   ('medication_member_values_dosage', 'medication_member_values_dosage', '112 1 1 1 1'),
   ('medication_member_values_dosage_padded', 'medication_member_values_dosage_padded', '112 1 1 1 1 1'),
@@ -400,6 +421,7 @@ DELETE FROM medication_member_values_dosage WHERE entry IN (SELECT entry FROM me
 DELETE FROM medication_member_values_dosage_route WHERE entry IN (SELECT entry FROM medication_filled);
 DELETE FROM medication_member_values_dosage_route_other_system WHERE entry IN (SELECT entry FROM medication_filled);
 DELETE FROM medication_member_values_dosage_padded WHERE entry IN (SELECT entry FROM medication_filled);
+DELETE FROM medication_member_values_absent WHERE entry IN (SELECT entry FROM medication_filled);
 
 CREATE TEMP TABLE IF NOT EXISTS medication_stated (
   entry INTEGER PRIMARY KEY, lead INTEGER, status_from INTEGER, name INTEGER, selected INTEGER, dosage INTEGER, narrative INTEGER, status INTEGER, lifecycle INTEGER, ended INTEGER, started INTEGER, written INTEGER, started_written INTEGER, written_written INTEGER, ended_written INTEGER) STRICT;
@@ -575,6 +597,12 @@ SELECT DISTINCT dv.entry, dv.member, dv.dosage, dp.o, w.o FROM medication_terms 
 JOIN quad d ON d.s = dv.dosage AND d.p = k.padded JOIN quad dp ON dp.s = d.o AND dp.p = k.padded_property
 JOIN quad w ON w.s = d.o AND w.p = k.time_as_written
 WHERE dv.entry IN (SELECT entry FROM medication_filled);
+
+INSERT INTO medication_member_values_absent (entry, member, property, reason)
+SELECT DISTINCT mv.entry, mv.member, ap.o, ar.o FROM medication_terms k CROSS JOIN medication_member_values mv
+JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad a ON a.s = v.o AND a.p = k.value_absent
+JOIN quad ap ON ap.s = a.o AND ap.p = k.absent_value_property JOIN quad ar ON ar.s = a.o AND ar.p = k.absent_reason_code
+WHERE mv.entry IN (SELECT entry FROM medication_filled);
 
 -- part: finish
 UPDATE medication SET label = (

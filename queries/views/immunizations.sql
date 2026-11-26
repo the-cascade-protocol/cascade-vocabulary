@@ -3,6 +3,7 @@
 -- `immunization_code` its vaccine codes; `immunization_member_values` each member's current values, with their codes,
 -- the reasons they were given for and padded times. The columns that read the labels output, filled by finish, are
 -- `immunization.label` and `immunization_source`.
+-- `immunization_member_values_absent` why a member's values hold no value for a property, a row for each reason.
 
 -- part: tables
 CREATE VIEW immunization_terms AS SELECT
@@ -39,6 +40,9 @@ CREATE VIEW immunization_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#vaccinationRouteText>') AS route_text,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#vaccineDoseQuantityText>') AS dose_quantity_text,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#addedNoteText>') AS added_note_text,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#valueAbsentForReason>') AS value_absent,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#absentValueProperty>') AS absent_value_property,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#absentReasonCode>') AS absent_reason_code,
   (SELECT CASE WHEN count(DISTINCT i.lex) = 1 THEN min(i.lex) END
    FROM quad w JOIN quad x ON x.s = w.s JOIN term i ON i.id = x.o
    WHERE w.p = (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#writtenByQueryPath>')
@@ -124,6 +128,14 @@ CREATE TABLE immunization_member_values_padded (
   written INTEGER NOT NULL,
   PRIMARY KEY (entry, member, property, written)
 ) STRICT, WITHOUT ROWID;
+-- Why a member's source says its values hold none for a property, one row for each reason.
+CREATE TABLE immunization_member_values_absent (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  property INTEGER NOT NULL,
+  reason INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, property, reason)
+) STRICT, WITHOUT ROWID;
 -- Where each of the entry's records came from, `line` as the list questions show it, `shown` the same in N-Triples.
 CREATE TABLE immunization_source (
   entry INTEGER NOT NULL,
@@ -169,7 +181,13 @@ WITH
       FROM members mv JOIN immunization_member_values_padded x USING (entry, member) JOIN term p ON p.id = x.property
     UNION ALL SELECT '<' || substr(e.s, 2, length(e.s) - 2) || '-padded-vaccinationOccurrenceTime>',
                      '<https://ns.cascadeprotocol.org/cascade#timeAsWritten>', c.date_written
-      FROM entries e JOIN immunization c ON c.entry = e.entry),
+      FROM entries e JOIN immunization c ON c.entry = e.entry
+    UNION ALL SELECT DISTINCT '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
+                     '<https://ns.cascadeprotocol.org/cascade#absentValueProperty>', x.property
+      FROM members mv JOIN immunization_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property
+    UNION ALL SELECT '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
+                     '<https://ns.cascadeprotocol.org/cascade#absentReasonCode>', x.reason
+      FROM members mv JOIN immunization_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property),
   made (s, p, o) AS (
     SELECT s, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<https://ns.cascadeprotocol.org/cascade#Vaccination>'
     FROM entries
@@ -183,7 +201,9 @@ WITH
       FROM entries e JOIN immunization c ON c.entry = e.entry WHERE c.date_written IS NOT NULL
     UNION ALL SELECT '<' || substr(e.s, 2, length(e.s) - 2) || '-padded-vaccinationOccurrenceTime>',
                      '<https://ns.cascadeprotocol.org/cascade#paddedDateTimeProperty>', '<https://ns.cascadeprotocol.org/cascade#vaccinationOccurrenceTime>'
-      FROM entries e JOIN immunization c ON c.entry = e.entry WHERE c.date_written IS NOT NULL)
+      FROM entries e JOIN immunization c ON c.entry = e.entry WHERE c.date_written IS NOT NULL
+    UNION ALL SELECT DISTINCT mv.node, '<https://ns.cascadeprotocol.org/cascade#valueAbsentForReason>', '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>'
+      FROM members mv JOIN immunization_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property)
 SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
 UNION ALL SELECT s, p, o FROM made;
 
@@ -194,6 +214,7 @@ INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('immunization_member', 'immunization_member', '1500 2 1'),
   ('immunization_member', 'immunization_member_record', '1500 1'),
   ('immunization_member_values', 'immunization_member_values', '1500 2 1'),
+  ('immunization_member_values_absent', 'immunization_member_values_absent', '112 1 1 1 1'),
   ('immunization_member_values_code', 'immunization_member_values_code', '1500 2 1 1'),
   ('immunization_member_values_note', 'immunization_member_values_note', '112 1 1 1'),
   ('immunization_member_values_padded', 'immunization_member_values_padded', '112 1 1 1 1'),
@@ -232,6 +253,7 @@ DELETE FROM immunization_member_values_reason_code WHERE entry IN (SELECT entry 
 DELETE FROM immunization_member_values_reason_other_system WHERE entry IN (SELECT entry FROM immunization_filled);
 DELETE FROM immunization_member_values_note WHERE entry IN (SELECT entry FROM immunization_filled);
 DELETE FROM immunization_member_values_padded WHERE entry IN (SELECT entry FROM immunization_filled);
+DELETE FROM immunization_member_values_absent WHERE entry IN (SELECT entry FROM immunization_filled);
 
 CREATE TEMP TABLE IF NOT EXISTS immunization_stated (
   entry INTEGER PRIMARY KEY, lead INTEGER, status_from INTEGER, name INTEGER, status INTEGER, date INTEGER, date_written INTEGER) STRICT;
@@ -331,6 +353,12 @@ INSERT INTO immunization_member_values_padded (entry, member, property, written)
 SELECT DISTINCT mv.entry, mv.member, dp.o, w.o FROM immunization_terms k CROSS JOIN immunization_member_values mv
 JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad d ON d.s = v.o AND d.p = k.padded
 JOIN quad dp ON dp.s = d.o AND dp.p = k.padded_property JOIN quad w ON w.s = d.o AND w.p = k.time_as_written
+WHERE mv.entry IN (SELECT entry FROM immunization_filled);
+
+INSERT INTO immunization_member_values_absent (entry, member, property, reason)
+SELECT DISTINCT mv.entry, mv.member, ap.o, ar.o FROM immunization_terms k CROSS JOIN immunization_member_values mv
+JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad a ON a.s = v.o AND a.p = k.value_absent
+JOIN quad ap ON ap.s = a.o AND ap.p = k.absent_value_property JOIN quad ar ON ar.s = a.o AND ar.p = k.absent_reason_code
 WHERE mv.entry IN (SELECT entry FROM immunization_filled);
 
 -- part: finish

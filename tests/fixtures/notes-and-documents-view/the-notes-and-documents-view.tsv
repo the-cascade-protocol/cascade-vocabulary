@@ -20,3 +20,9 @@
 <https://pod.example/clinical/notes-and-documents.ttl#8daee9bb47ab8892901cf7405a3640be96a76f231a0cf8570a8ae7850e4406d9>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:plan>
 <https://pod.example/clinical/notes-and-documents.ttl#8daee9bb47ab8892901cf7405a3640be96a76f231a0cf8570a8ae7850e4406d9>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:plan>
 <https://pod.example/clinical/notes-and-documents.ttl#8daee9bb47ab8892901cf7405a3640be96a76f231a0cf8570a8ae7850e4406d9>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:plan>
+<https://pod.example/clinical/notes-and-documents.ttl#ab873f49e7e04c1a50985458b77213789f78a135845c12415b3f88da02e5be1e>	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	<https://ns.cascadeprotocol.org/cascade#ClinicalNoteOrDocument>
+<https://pod.example/clinical/notes-and-documents.ttl#ab873f49e7e04c1a50985458b77213789f78a135845c12415b3f88da02e5be1e>	<https://ns.cascadeprotocol.org/cascade#noteOrDocumentTypeName>	"Letter"
+<https://pod.example/clinical/notes-and-documents.ttl#ab873f49e7e04c1a50985458b77213789f78a135845c12415b3f88da02e5be1e>	<https://ns.cascadeprotocol.org/cascade#workflowStatus>	"current"
+<https://pod.example/clinical/notes-and-documents.ttl#ab873f49e7e04c1a50985458b77213789f78a135845c12415b3f88da02e5be1e>	<https://ns.cascadeprotocol.org/cascade#leadMember>	<urn:x:letter>
+<https://pod.example/clinical/notes-and-documents.ttl#ab873f49e7e04c1a50985458b77213789f78a135845c12415b3f88da02e5be1e>	<https://ns.cascadeprotocol.org/cascade#statusFrom>	<urn:x:letter>
+<https://pod.example/clinical/notes-and-documents.ttl#ab873f49e7e04c1a50985458b77213789f78a135845c12415b3f88da02e5be1e>	<https://ns.cascadeprotocol.org/cascade#entryMember>	<urn:x:letter>

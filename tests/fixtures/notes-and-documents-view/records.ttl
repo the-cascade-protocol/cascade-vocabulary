@@ -33,3 +33,10 @@
 :planRevision a cascade:Revision ; cascade:revisionOf :plan ; cascade:version :planVersion ;
     prov:generatedAtTime "2026-01-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:00Z"^^xsd:dateTime .
 
+
+:letter a cascade:ClinicalNoteOrDocument .
+:letterVersion prov:specializationOf :letter ; cascade:patient :subject ; cascade:noteOrDocumentTypeName "Letter" ; cascade:workflowStatus "current" ;
+    cascade:valueAbsentForReason <urn:x:letterVersion#absent-noteOrDocumentDate> .
+<urn:x:letterVersion#absent-noteOrDocumentDate> cascade:absentValueProperty cascade:noteOrDocumentDate ; cascade:absentReasonCode <https://ns.cascadeprotocol.org/codes/nullflavor/NASK> .
+:letterRevision a cascade:Revision ; cascade:revisionOf :letter ; cascade:version :letterVersion ;
+    prov:generatedAtTime "2026-01-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:00Z"^^xsd:dateTime .

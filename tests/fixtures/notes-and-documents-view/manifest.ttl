@@ -5,9 +5,10 @@
 
 <> a mf:Manifest ;
   rdfs:label "notes-and-documents-view" ;
-  rdfs:comment "A final progress note with its title, text and clinic, from a summary its clinic wrote; and a plan of care note the person entered, its type coded in LOINC and in a clinic's own system." ;
+  rdfs:comment "A final progress note with its title, text and clinic, from a summary its clinic wrote; and a plan of care note the person entered, its type coded in LOINC and in a clinic's own system; and a letter stating no date and the reason it holds none." ;
   mf:entries (
     <#the-notes-and-documents-view>
+    <#its-members-absent-values>
   ) .
 
 <#the-notes-and-documents-view> a mf:QueryEvaluationTest ;
@@ -16,3 +17,10 @@
   mf:action [ qt:query <the-notes-and-documents-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <the-notes-and-documents-view.tsv> .
+
+<#its-members-absent-values> a mf:QueryEvaluationTest ;
+  mf:name "its-members-absent-values" ;
+  rdfs:comment "A member whose source says why it holds no value for a property shows a node of its values naming the property and the reason, named after its values and -absent- and the property's local name: the letter, for its date; no entry shows it." ;
+  mf:action [ qt:query <its-members-absent-values.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <its-members-absent-values.tsv> .

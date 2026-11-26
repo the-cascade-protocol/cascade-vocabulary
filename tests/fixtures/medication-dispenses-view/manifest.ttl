@@ -5,14 +5,22 @@
 
 <> a mf:Manifest ;
   rdfs:label "medication-dispenses-view" ;
-  rdfs:comment "A prescription, a completed dispense of it coded in RxNorm and NDC, handed over at a time its pharmacy wrote only to the day, and a dispense of another drug being prepared, which names no prescription." ;
+  rdfs:comment "A prescription, a completed dispense of it coded in RxNorm and NDC, handed over at a time its pharmacy wrote only to the day, stating a quantity and no days' supply; a dispense of another drug being prepared, which names no prescription, stating a days' supply and no quantity; and a refill of two members, the later stating neither, the earlier both, and no time it was prepared or handed over, the first for one reason, the second for two." ;
   mf:entries (
     <#the-medication-dispenses-view>
+    <#what-it-shows>
   ) .
 
 <#the-medication-dispenses-view> a mf:QueryEvaluationTest ;
   mf:name "the-medication-dispenses-view" ;
-  rdfs:comment "Each entry takes the name, codes, times and the entry of the prescription it fills of its lead, and the status and its lifecycle class of the member chosen for status; the time written to the hour keeps a padded node; a dispense naming no prescription names none." ;
+  rdfs:comment "Each entry takes the name, codes, times and the entry of the prescription it fills of its lead, and the status and its lifecycle class of the member chosen for status; the time written to the hour keeps a padded node; a dispense naming no prescription names none; a quantity or a days' supply is a node of the entry only where its lead states it, so the refill shows neither." ;
   mf:action [ qt:query <the-medication-dispenses-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <the-medication-dispenses-view.tsv> .
+
+<#what-it-shows> a mf:QueryEvaluationTest ;
+  mf:name "what-it-shows" ;
+  rdfs:comment "The quantity and the days' supply a member states are nodes of the view that its values name by the link, each of its values a row with the member and its Part, `dispenseQuantity` or `dispenseDaysSupply`: the refill's earlier member shows both although its entry shows none; each time it states none for, with its reasons, is a node named after the member's values, whose rows have the Part `valueAbsentForReason` and the property's local name, the handed-over time's holding both its reasons." ;
+  mf:action [ qt:query <../../../queries/questions/entry/What%20it%20shows.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <what-it-shows.tsv> .
