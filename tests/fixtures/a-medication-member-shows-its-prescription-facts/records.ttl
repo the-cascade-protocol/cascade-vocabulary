@@ -1,0 +1,33 @@
+@prefix : <urn:x:> .
+@prefix cascade: <https://ns.cascadeprotocol.org/cascade#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:subject a cascade:Subject .
+
+:prescribed a cascade:PrescribedOrReportedMedication .
+:prescribedVersion prov:specializationOf :prescribed ; cascade:patient :subject ; cascade:drugName "lisinopril 10 MG Oral Tablet" ;
+    cascade:prescribedOrReported "prescribed" ; cascade:workflowStatus "active" ;
+    cascade:medicationRequestIntent "order" ; cascade:courseOfTherapyType "continuous" ;
+    cascade:dispenseRequestValidityPeriodStart "2026-02-01T09:30:00Z"^^xsd:dateTime ;
+    cascade:dispenseRequestValidityPeriodEnd "2026-08-01"^^xsd:date ;
+    cascade:paddedDateTime <urn:x:prescribedVersion#padded-dispenseRequestValidityPeriodStart> ;
+    cascade:structuredDosage <urn:x:prescribedVersion#dosage-1> .
+<urn:x:prescribedVersion#padded-dispenseRequestValidityPeriodStart> cascade:paddedDateTimeProperty cascade:dispenseRequestValidityPeriodStart ;
+    cascade:timeAsWritten "2026-02-01T09:30Z" .
+<urn:x:prescribedVersion#dosage-1> cascade:dosageRepeatFrequency 1 .
+:prescribedRevision a cascade:Revision ; cascade:revisionOf :prescribed ; cascade:version :prescribedVersion ;
+    prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
+
+:amoxicillin a cascade:PrescribedOrReportedMedication .
+:amoxicillinVersion prov:specializationOf :amoxicillin ; cascade:patient :subject ; cascade:drugName "amoxicillin 500 MG Oral Capsule" ;
+    cascade:prescribedOrReported "prescribed" ; cascade:workflowStatus "active" ;
+    cascade:medicationRequestIntent "order" .
+:amoxicillinRevision a cascade:Revision ; cascade:revisionOf :amoxicillin ; cascade:version :amoxicillinVersion ;
+    prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
+
+:metformin a cascade:PrescribedOrReportedMedication .
+:metforminVersion prov:specializationOf :metformin ; cascade:patient :subject ; cascade:drugName "metformin 500 MG Oral Tablet" ;
+    cascade:prescribedOrReported "prescribed" ; cascade:workflowStatus "active" .
+:metforminRevision a cascade:Revision ; cascade:revisionOf :metformin ; cascade:version :metforminVersion ;
+    prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .

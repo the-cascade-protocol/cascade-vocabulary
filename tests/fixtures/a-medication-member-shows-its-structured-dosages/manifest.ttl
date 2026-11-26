@@ -1,0 +1,42 @@
+@prefix ctm: <https://ns.cascadeprotocol.org/test-manifest#> .
+@prefix mf: <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
+@prefix qt: <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<> a mf:Manifest ;
+  rdfs:label "a-medication-member-shows-its-structured-dosages" ;
+  rdfs:comment "A lisinopril entry joining a list entry and a prescription that each state structured dosages, the list entry's with a dose of up to two tablets (a comparator the shapes allow and no adapter writes today), the prescription's two, one with a dose in two units and a route in two systems and the other bounded with its end written short of the second; an amoxicillin dosage that holds nothing; a metformin that states none; a levothyroxine whose dosages are numbered 2 and 10 and state a frequency or a period alone; a warfarin whose first version states two dosages and whose current version one; and an ibuprofen whose six dosages each state one thing the cell has a branch for: a dose with only a UCUM unit, a dose with no unit, a period unit with no period, a frequency and a period unit with no period, a start written short of the second, and a period with no unit." ;
+  mf:entries (
+    <#the-structured-dosages-the-view-shows>
+    <#a-superseded-versions-dosages-stay-out>
+    <#my-active-medications>
+    <#my-medication-history>
+  ) .
+
+<#the-structured-dosages-the-view-shows> a mf:QueryEvaluationTest ;
+  mf:name "the-structured-dosages-the-view-shows" ;
+  rdfs:comment "Each structured dosage of a member's current version is a node of the member's values, named after them and the dosage's number, holding its frequency, period and unit, each route code, each bound with a time written short of the second keeping its padded node, and its dose quantity as a node of its own with the number as typed and as written, its comparator and its units; a dosage with no dose has no dose node and a dosage that holds nothing is still a node; the two members of one medication each keep their own dosages." ;
+  mf:action [ qt:query <the-structured-dosages-the-view-shows.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <the-structured-dosages-the-view-shows.tsv> .
+
+<#a-superseded-versions-dosages-stay-out> a mf:QueryEvaluationTest ;
+  mf:name "a-superseded-versions-dosages-stay-out" ;
+  rdfs:comment "A member whose first version states two dosages and whose current version states one, differently, shows only the current version's: the first version's dosage 2 is no node, and the dose of its dosage 1 is not on the dosage 1 node beside the current one's." ;
+  mf:action [ qt:query <a-superseded-versions-dosages-stay-out.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <a-superseded-versions-dosages-stay-out.tsv> .
+
+<#my-active-medications> a mf:QueryEvaluationTest ;
+  mf:name "my-active-medications" ;
+  rdfs:comment "Each active entry gives the structured dosages its members state, each as an item of its own saying the record, the dosage's number, how many times in what period, its bounds, each route and its dose, in that order; the entry's two members give theirs side by side, a dosage that holds nothing is the record and its number alone, dosages are in the order of their numbers read as numbers, one stating only a frequency or only a period says only that, and an entry no member gives one has none." ;
+  mf:action [ qt:query <../../../queries/questions/pod/My%20active%20medications.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <my-active-medications.tsv> .
+
+<#my-medication-history> a mf:QueryEvaluationTest ;
+  mf:name "my-medication-history" ;
+  rdfs:comment "Every entry gives the structured dosages its members state as `pod/My active medications` does." ;
+  mf:action [ qt:query <../../../queries/questions/pod/My%20medication%20history.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <my-medication-history.tsv> .

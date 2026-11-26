@@ -1,8 +1,9 @@
 -- The medications screen: the view as tables, in the parts queries/statements.sql names. `medication` has a row for
 -- each entry with a lead, holding what the view states of it; `medication_member` its records; `medication_code`,
 -- `medication_ndc` and `medication_intent` its codes and intents; `medication_member_values` each member's current
--- values, with their codes, the reasons they were given for and padded times. The columns that read the labels
--- output, filled by finish, are `medication.label` and `medication_source`.
+-- values, with their codes, the reasons they were given for, padded times and structured dosages
+-- (`medication_member_values_dosage`, with its route codes and padded bounds, and its dose quantity in its own
+-- columns). The columns that read the labels output, filled by finish, are `medication.label` and `medication_source`.
 
 -- part: tables
 CREATE VIEW medication_terms AS SELECT
@@ -44,6 +45,24 @@ CREATE VIEW medication_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#reasonCondition>') AS reason_condition,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#reasonCode>') AS reason_code,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#reasonCodeInOtherSystem>') AS reason_code_in_other_system,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#medicationRequestIntent>') AS medication_request_intent,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#courseOfTherapyType>') AS course_of_therapy_type,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#dispenseRequestValidityPeriodStart>') AS dispense_request_validity_period_start,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#dispenseRequestValidityPeriodEnd>') AS dispense_request_validity_period_end,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#structuredDosage>') AS structured_dosage,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#dosageDoseQuantity>') AS dosage_dose_quantity,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#dosageRepeatFrequency>') AS dosage_repeat_frequency,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#dosageRepeatPeriod>') AS dosage_repeat_period,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#dosageRepeatPeriodUnit>') AS dosage_repeat_period_unit,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#dosageBoundsPeriodStart>') AS dosage_bounds_period_start,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#dosageBoundsPeriodEnd>') AS dosage_bounds_period_end,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#dosageRouteCode>') AS dosage_route_code,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#dosageRouteCodeInOtherSystem>') AS dosage_route_code_in_other_system,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#decimalValue>') AS decimal_value,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#writtenValue>') AS written_value,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#quantityComparator>') AS quantity_comparator,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#ucumUnit>') AS ucum_unit,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#unitText>') AS unit_text,
   (SELECT CASE WHEN count(DISTINCT i.lex) = 1 THEN min(i.lex) END
    FROM quad w JOIN quad x ON x.s = w.s JOIN term i ON i.id = x.o
    WHERE w.p = (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#writtenByQueryPath>')
@@ -111,6 +130,10 @@ CREATE TABLE medication_member_values (
   written INTEGER,
   ended INTEGER,
   intent INTEGER,
+  request_intent INTEGER,
+  course INTEGER,
+  validity_start INTEGER,
+  validity_end INTEGER,
   PRIMARY KEY (entry, member)
 ) STRICT, WITHOUT ROWID;
 CREATE TABLE medication_member_values_code (
@@ -150,6 +173,48 @@ CREATE TABLE medication_member_values_padded (
   written INTEGER NOT NULL,
   PRIMARY KEY (entry, member, property, written)
 ) STRICT, WITHOUT ROWID;
+-- A member's structured dosages, `number` the dosage's place in its source as its node's name gives it, `dosage` the
+-- node of the version, `dose_written` null when the dosage states no dose quantity with a number as typed and as
+-- written.
+CREATE TABLE medication_member_values_dosage (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  dosage INTEGER NOT NULL,
+  number TEXT NOT NULL,
+  frequency INTEGER,
+  period INTEGER,
+  period_unit INTEGER,
+  bounds_start INTEGER,
+  bounds_end INTEGER,
+  dose_decimal INTEGER,
+  dose_written INTEGER,
+  dose_comparator INTEGER,
+  dose_ucum INTEGER,
+  dose_unit_text INTEGER,
+  PRIMARY KEY (entry, member, dosage)
+) STRICT, WITHOUT ROWID;
+CREATE TABLE medication_member_values_dosage_route (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  dosage INTEGER NOT NULL,
+  code INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, dosage, code)
+) STRICT, WITHOUT ROWID;
+CREATE TABLE medication_member_values_dosage_route_other_system (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  dosage INTEGER NOT NULL,
+  code INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, dosage, code)
+) STRICT, WITHOUT ROWID;
+CREATE TABLE medication_member_values_dosage_padded (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  dosage INTEGER NOT NULL,
+  property INTEGER NOT NULL,
+  written INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, dosage, property, written)
+) STRICT, WITHOUT ROWID;
 -- Where each of the entry's records came from, `line` as the list questions show it, `shown` the same in N-Triples.
 CREATE TABLE medication_source (
   entry INTEGER NOT NULL,
@@ -164,6 +229,13 @@ CREATE VIEW medication_triples (s, p, o) AS
 WITH
   entries (s, entry) AS (SELECT e.nt, c.entry FROM medication c JOIN term e ON e.id = c.entry),
   members (s, node, entry, member) AS (SELECT mv.node, mv.node, mv.entry, mv.member FROM medication_member_values mv),
+  dosages (node, quantity, entry, member, dosage, frequency, period, period_unit, bounds_start, bounds_end, dose_decimal, dose_written,
+           dose_comparator, dose_ucum, dose_unit_text) AS (
+    SELECT '<' || substr(mv.node, 2, length(mv.node) - 2) || '-dosage-' || v.number || '>',
+           '<' || substr(mv.node, 2, length(mv.node) - 2) || '-dosage-' || v.number || '-dose-quantity>',
+           v.entry, v.member, v.dosage, v.frequency, v.period, v.period_unit, v.bounds_start, v.bounds_end, v.dose_decimal,
+           v.dose_written, v.dose_comparator, v.dose_ucum, v.dose_unit_text
+    FROM members mv JOIN medication_member_values_dosage v ON v.entry = mv.entry AND v.member = mv.member),
   said (s, p, o) AS (
     SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#drugName>', c.name FROM entries e JOIN medication c ON c.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#userSelectedCode>', c.selected FROM entries e JOIN medication c ON c.entry = e.entry
@@ -190,11 +262,37 @@ WITH
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#prescriptionWrittenDate>', v.written FROM members mv JOIN medication_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#medicationUseEndDate>', v.ended FROM members mv JOIN medication_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#prescribedOrReported>', v.intent FROM members mv JOIN medication_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#medicationRequestIntent>', v.request_intent FROM members mv JOIN medication_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#courseOfTherapyType>', v.course FROM members mv JOIN medication_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#dispenseRequestValidityPeriodStart>', v.validity_start FROM members mv JOIN medication_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#dispenseRequestValidityPeriodEnd>', v.validity_end FROM members mv JOIN medication_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#rxNormCode>', x.code FROM members mv JOIN medication_member_values_code x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#ndcCode>', x.code FROM members mv JOIN medication_member_values_ndc x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCondition>', x.record FROM members mv JOIN medication_member_values_reason_condition x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCode>', x.code FROM members mv JOIN medication_member_values_reason_code x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCodeInOtherSystem>', x.code FROM members mv JOIN medication_member_values_reason_other_system x USING (entry, member)
+    UNION ALL SELECT d.node, '<https://ns.cascadeprotocol.org/cascade#dosageRepeatFrequency>', d.frequency FROM dosages d
+    UNION ALL SELECT d.node, '<https://ns.cascadeprotocol.org/cascade#dosageRepeatPeriod>', d.period FROM dosages d
+    UNION ALL SELECT d.node, '<https://ns.cascadeprotocol.org/cascade#dosageRepeatPeriodUnit>', d.period_unit FROM dosages d
+    UNION ALL SELECT d.node, '<https://ns.cascadeprotocol.org/cascade#dosageBoundsPeriodStart>', d.bounds_start FROM dosages d
+    UNION ALL SELECT d.node, '<https://ns.cascadeprotocol.org/cascade#dosageBoundsPeriodEnd>', d.bounds_end FROM dosages d
+    UNION ALL SELECT d.quantity, '<https://ns.cascadeprotocol.org/cascade#decimalValue>', d.dose_decimal FROM dosages d
+    UNION ALL SELECT d.quantity, '<https://ns.cascadeprotocol.org/cascade#writtenValue>', d.dose_written FROM dosages d
+    UNION ALL SELECT d.quantity, '<https://ns.cascadeprotocol.org/cascade#quantityComparator>', d.dose_comparator FROM dosages d
+    UNION ALL SELECT d.quantity, '<https://ns.cascadeprotocol.org/cascade#ucumUnit>', d.dose_ucum FROM dosages d
+    UNION ALL SELECT d.quantity, '<https://ns.cascadeprotocol.org/cascade#unitText>', d.dose_unit_text FROM dosages d
+    UNION ALL SELECT d.node, '<https://ns.cascadeprotocol.org/cascade#dosageRouteCode>', x.code
+      FROM dosages d JOIN medication_member_values_dosage_route x USING (entry, member, dosage)
+    UNION ALL SELECT d.node, '<https://ns.cascadeprotocol.org/cascade#dosageRouteCodeInOtherSystem>', x.code
+      FROM dosages d JOIN medication_member_values_dosage_route_other_system x USING (entry, member, dosage)
+    UNION ALL SELECT '<' || substr(d.node, 2, length(d.node) - 2) || '-padded-' || CASE WHEN instr(p.lex, '#') > 0
+                       THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
+                     '<https://ns.cascadeprotocol.org/cascade#paddedDateTimeProperty>', x.property
+      FROM dosages d JOIN medication_member_values_dosage_padded x USING (entry, member, dosage) JOIN term p ON p.id = x.property
+    UNION ALL SELECT '<' || substr(d.node, 2, length(d.node) - 2) || '-padded-' || CASE WHEN instr(p.lex, '#') > 0
+                       THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
+                     '<https://ns.cascadeprotocol.org/cascade#timeAsWritten>', x.written
+      FROM dosages d JOIN medication_member_values_dosage_padded x USING (entry, member, dosage) JOIN term p ON p.id = x.property
     UNION ALL SELECT '<' || substr(mv.node, 2, length(mv.node) - 2) || '-padded-' || CASE WHEN instr(p.lex, '#') > 0
                        THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
                      '<https://ns.cascadeprotocol.org/cascade#paddedDateTimeProperty>', x.property
@@ -217,6 +315,12 @@ WITH
     FROM entries
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#memberCurrentValues>', mv.node
       FROM members mv JOIN entries e ON e.entry = mv.entry
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#structuredDosage>', d.node
+      FROM members mv JOIN dosages d ON d.entry = mv.entry AND d.member = mv.member
+    UNION ALL SELECT d.node, '<https://ns.cascadeprotocol.org/cascade#dosageDoseQuantity>', d.quantity FROM dosages d WHERE d.dose_written IS NOT NULL
+    UNION ALL SELECT d.node, '<https://ns.cascadeprotocol.org/cascade#paddedDateTime>', '<' || substr(d.node, 2, length(d.node) - 2) || '-padded-' || CASE WHEN instr(p.lex, '#') > 0
+                       THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>'
+      FROM dosages d JOIN medication_member_values_dosage_padded x USING (entry, member, dosage) JOIN term p ON p.id = x.property
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#paddedDateTime>',
                      '<' || substr(mv.node, 2, length(mv.node) - 2) || '-padded-' || CASE WHEN instr(p.lex, '#') > 0
                        THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>'
@@ -248,6 +352,10 @@ INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('medication_member', 'medication_member_record', '1500 1'),
   ('medication_member_values', 'medication_member_values', '1500 1 1'),
   ('medication_member_values_code', 'medication_member_values_code', '1500 1 1 1'),
+  ('medication_member_values_dosage', 'medication_member_values_dosage', '112 1 1 1 1'),
+  ('medication_member_values_dosage_padded', 'medication_member_values_dosage_padded', '112 1 1 1 1 1'),
+  ('medication_member_values_dosage_route', 'medication_member_values_dosage_route', '112 1 1 1 1'),
+  ('medication_member_values_dosage_route_other_system', 'medication_member_values_dosage_route_other_system', '112 1 1 1 1'),
   ('medication_member_values_ndc', 'medication_member_values_ndc', '112 1 1 1'),
   ('medication_member_values_padded', 'medication_member_values_padded', '112 1 1 1 1'),
   ('medication_member_values_reason_code', 'medication_member_values_reason_code', '112 1 1 1'),
@@ -288,6 +396,10 @@ DELETE FROM medication_member_values_reason_condition WHERE entry IN (SELECT ent
 DELETE FROM medication_member_values_reason_code WHERE entry IN (SELECT entry FROM medication_filled);
 DELETE FROM medication_member_values_reason_other_system WHERE entry IN (SELECT entry FROM medication_filled);
 DELETE FROM medication_member_values_padded WHERE entry IN (SELECT entry FROM medication_filled);
+DELETE FROM medication_member_values_dosage WHERE entry IN (SELECT entry FROM medication_filled);
+DELETE FROM medication_member_values_dosage_route WHERE entry IN (SELECT entry FROM medication_filled);
+DELETE FROM medication_member_values_dosage_route_other_system WHERE entry IN (SELECT entry FROM medication_filled);
+DELETE FROM medication_member_values_dosage_padded WHERE entry IN (SELECT entry FROM medication_filled);
 
 CREATE TEMP TABLE IF NOT EXISTS medication_stated (
   entry INTEGER PRIMARY KEY, lead INTEGER, status_from INTEGER, name INTEGER, selected INTEGER, dosage INTEGER, narrative INTEGER, status INTEGER, lifecycle INTEGER, ended INTEGER, started INTEGER, written INTEGER, started_written INTEGER, written_written INTEGER, ended_written INTEGER) STRICT;
@@ -368,7 +480,8 @@ SELECT DISTINCT m.entry, x.o FROM medication_terms k CROSS JOIN medication_membe
 JOIN quad v ON v.s = m.record AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.prescribed_or_reported
 WHERE m.entry IN (SELECT entry FROM medication_filled);
 
-INSERT INTO medication_member_values (entry, member, node, name, selected, status, dosage, narrative, started, written, ended, intent)
+INSERT INTO medication_member_values (entry, member, node, name, selected, status, dosage, narrative, started, written, ended, intent,
+                                      request_intent, course, validity_start, validity_end)
 WITH members (entry, member, version) AS (
   SELECT DISTINCT r.o, r.s, (SELECT min(v.o) FROM quad v WHERE v.s = r.s AND v.p = k.current_version)
   FROM medication_terms k CROSS JOIN quad r
@@ -384,7 +497,11 @@ SELECT members.entry, members.member, '<' || e.lex || '-' || sparql_sha256(m.lex
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.medication_use_start_date),
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.prescription_written_date),
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.medication_use_end_date),
-  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.prescribed_or_reported)
+  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.prescribed_or_reported),
+  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.medication_request_intent),
+  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.course_of_therapy_type),
+  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.dispense_request_validity_period_start),
+  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.dispense_request_validity_period_end)
 FROM medication_terms k CROSS JOIN members JOIN term e ON e.id = members.entry JOIN term m ON m.id = members.member;
 
 INSERT INTO medication_member_values_code (entry, member, code)
@@ -417,6 +534,47 @@ SELECT DISTINCT mv.entry, mv.member, dp.o, w.o FROM medication_terms k CROSS JOI
 JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad d ON d.s = v.o AND d.p = k.padded
 JOIN quad dp ON dp.s = d.o AND dp.p = k.padded_property JOIN quad w ON w.s = d.o AND w.p = k.time_as_written
 WHERE mv.entry IN (SELECT entry FROM medication_filled);
+
+INSERT INTO medication_member_values_dosage (entry, member, dosage, number, frequency, period, period_unit, bounds_start, bounds_end,
+                                             dose_decimal, dose_written, dose_comparator, dose_ucum, dose_unit_text)
+WITH dosages (entry, member, dosage, number, quantity) AS (
+  SELECT DISTINCT mv.entry, mv.member, d.o,
+    CASE WHEN instr(dt.lex, '#dosage-') > 0 THEN substr(dt.lex, instr(dt.lex, '#dosage-') + 8) ELSE '' END,
+    (SELECT min(q.o) FROM quad q WHERE q.s = d.o AND q.p = k.dosage_dose_quantity
+       AND EXISTS (SELECT 1 FROM quad x WHERE x.s = q.o AND x.p = k.decimal_value)
+       AND EXISTS (SELECT 1 FROM quad x WHERE x.s = q.o AND x.p = k.written_value))
+  FROM medication_terms k CROSS JOIN medication_member_values mv
+  JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad d ON d.s = v.o AND d.p = k.structured_dosage
+  JOIN term dt ON dt.id = d.o
+  WHERE mv.entry IN (SELECT entry FROM medication_filled))
+SELECT dosages.entry, dosages.member, dosages.dosage, dosages.number,
+  (SELECT min(x.o) FROM quad x WHERE x.s = dosages.dosage AND x.p = k.dosage_repeat_frequency),
+  (SELECT min(x.o) FROM quad x WHERE x.s = dosages.dosage AND x.p = k.dosage_repeat_period),
+  (SELECT min(x.o) FROM quad x WHERE x.s = dosages.dosage AND x.p = k.dosage_repeat_period_unit),
+  (SELECT min(x.o) FROM quad x WHERE x.s = dosages.dosage AND x.p = k.dosage_bounds_period_start),
+  (SELECT min(x.o) FROM quad x WHERE x.s = dosages.dosage AND x.p = k.dosage_bounds_period_end),
+  (SELECT min(x.o) FROM quad x WHERE x.s = dosages.quantity AND x.p = k.decimal_value),
+  (SELECT min(x.o) FROM quad x WHERE x.s = dosages.quantity AND x.p = k.written_value),
+  (SELECT min(x.o) FROM quad x WHERE x.s = dosages.quantity AND x.p = k.quantity_comparator),
+  (SELECT min(x.o) FROM quad x WHERE x.s = dosages.quantity AND x.p = k.ucum_unit),
+  (SELECT min(x.o) FROM quad x WHERE x.s = dosages.quantity AND x.p = k.unit_text)
+FROM medication_terms k CROSS JOIN dosages;
+
+INSERT INTO medication_member_values_dosage_route (entry, member, dosage, code)
+SELECT DISTINCT dv.entry, dv.member, dv.dosage, x.o FROM medication_terms k CROSS JOIN medication_member_values_dosage dv
+JOIN quad x ON x.s = dv.dosage AND x.p = k.dosage_route_code
+WHERE dv.entry IN (SELECT entry FROM medication_filled);
+
+INSERT INTO medication_member_values_dosage_route_other_system (entry, member, dosage, code)
+SELECT DISTINCT dv.entry, dv.member, dv.dosage, x.o FROM medication_terms k CROSS JOIN medication_member_values_dosage dv
+JOIN quad x ON x.s = dv.dosage AND x.p = k.dosage_route_code_in_other_system
+WHERE dv.entry IN (SELECT entry FROM medication_filled);
+
+INSERT INTO medication_member_values_dosage_padded (entry, member, dosage, property, written)
+SELECT DISTINCT dv.entry, dv.member, dv.dosage, dp.o, w.o FROM medication_terms k CROSS JOIN medication_member_values_dosage dv
+JOIN quad d ON d.s = dv.dosage AND d.p = k.padded JOIN quad dp ON dp.s = d.o AND dp.p = k.padded_property
+JOIN quad w ON w.s = d.o AND w.p = k.time_as_written
+WHERE dv.entry IN (SELECT entry FROM medication_filled);
 
 -- part: finish
 UPDATE medication SET label = (

@@ -31,12 +31,12 @@ WITH
     CROSS JOIN currents cu ON cu.node = f.s
     CROSS JOIN leaders ld ON ld.entry = cu.entry
     CROSS JOIN entries en ON en.entry = cu.entry
-    WHERE f.p NOT IN ('<https://ns.cascadeprotocol.org/cascade#valuesOfMember>', '<https://ns.cascadeprotocol.org/cascade#paddedDateTime>', '<https://ns.cascadeprotocol.org/cascade#referenceRangeLow>', '<https://ns.cascadeprotocol.org/cascade#referenceRangeHigh>')),
+    WHERE f.p NOT IN ('<https://ns.cascadeprotocol.org/cascade#valuesOfMember>', '<https://ns.cascadeprotocol.org/cascade#paddedDateTime>', '<https://ns.cascadeprotocol.org/cascade#referenceRangeLow>', '<https://ns.cascadeprotocol.org/cascade#referenceRangeHigh>', '<https://ns.cascadeprotocol.org/cascade#structuredDosage>')),
   -- Every value an entry states that none of its members' current values states too.
   of_entries (address, entry, field, value, from_member, lead) AS (
     SELECT DISTINCT en.address, en.entry, f.p, f.o, NULL, NULL
     FROM view_statements f CROSS JOIN entries en ON en.entry = f.s
-    WHERE f.p NOT IN ('<https://ns.cascadeprotocol.org/cascade#memberCurrentValues>', '<https://ns.cascadeprotocol.org/cascade#paddedDateTime>', '<https://ns.cascadeprotocol.org/cascade#referenceRangeLow>', '<https://ns.cascadeprotocol.org/cascade#referenceRangeHigh>')
+    WHERE f.p NOT IN ('<https://ns.cascadeprotocol.org/cascade#memberCurrentValues>', '<https://ns.cascadeprotocol.org/cascade#paddedDateTime>', '<https://ns.cascadeprotocol.org/cascade#referenceRangeLow>', '<https://ns.cascadeprotocol.org/cascade#referenceRangeHigh>', '<https://ns.cascadeprotocol.org/cascade#structuredDosage>')
       AND NOT EXISTS (SELECT 1 FROM of_members m WHERE m.entry = f.s AND m.field = f.p AND m.value = f.o)),
   -- An entry is named under the address of the view that gives it members, wherever another view names it.
   said (address, entry, field, value, from_member, lead) AS (

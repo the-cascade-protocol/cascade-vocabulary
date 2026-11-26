@@ -27,6 +27,58 @@ WITH
     FROM medication_member_values v JOIN page ON page.entry = v.entry JOIN term m ON m.id = v.member
     JOIN term d ON d.id = v.dosage JOIN strings d_said ON d_said.id = v.dosage
     LEFT JOIN term wr ON wr.id = v.written LEFT JOIN strings wr_said ON wr_said.id = v.written),
+  dosage_routes (entry, member, dosage, k1, k2, part) AS (
+    SELECT x.entry, x.member, x.dosage, t.lex, '', ', route ' || t.lex
+    FROM medication_member_values_dosage_route x JOIN page ON page.entry = x.entry JOIN term t ON t.id = x.code
+    UNION SELECT x.entry, x.member, x.dosage, t.lex, t.datatype, ', route ' || t.datatype || ' ' || s.said
+    FROM medication_member_values_dosage_route_other_system x JOIN page ON page.entry = x.entry
+    JOIN term t ON t.id = x.code JOIN strings s ON s.id = x.code),
+  dosage_bases (entry, member, dosage, number, frequency, period, period_unit, from_id, until_id, dose_written, dose_comparator, dose_unit) AS (
+    SELECT d.entry, d.member, d.dosage, d.number, d.frequency, d.period, d.period_unit,
+      coalesce((SELECT min(w.written) FROM medication_member_values_dosage_padded w
+                WHERE w.entry = d.entry AND w.member = d.member AND w.dosage = d.dosage AND w.property = k.dosage_bounds_period_start),
+               d.bounds_start),
+      coalesce((SELECT min(w.written) FROM medication_member_values_dosage_padded w
+                WHERE w.entry = d.entry AND w.member = d.member AND w.dosage = d.dosage AND w.property = k.dosage_bounds_period_end),
+               d.bounds_end),
+      d.dose_written, d.dose_comparator, coalesce(d.dose_unit_text, d.dose_ucum)
+    FROM medication_terms k CROSS JOIN medication_member_values_dosage d JOIN page ON page.entry = d.entry),
+  structured_dosages (entry, member_lex, len, number, shown) AS (
+    SELECT b.entry, m.lex, length(b.number), b.number,
+      m.lex || ' dosage ' || b.number
+      || CASE WHEN b.frequency IS NOT NULL AND b.period IS NOT NULL AND b.period_unit IS NOT NULL
+              THEN ', ' || fr.said || ' per ' || pe.said || ' ' || pu.said ELSE '' END
+      || CASE WHEN b.frequency IS NOT NULL AND NOT (b.period IS NOT NULL AND b.period_unit IS NOT NULL)
+              THEN ', frequency ' || fr.said ELSE '' END
+      || CASE WHEN b.period IS NOT NULL AND NOT (b.frequency IS NOT NULL AND b.period_unit IS NOT NULL)
+              THEN ', period ' || pe.said || coalesce(' ' || pu.said, '') ELSE '' END
+      || CASE WHEN b.period_unit IS NOT NULL AND b.period IS NULL THEN ', period unit ' || pu.said ELSE '' END
+      || CASE WHEN b.from_id IS NOT NULL THEN ', from ' || fs.said ELSE '' END
+      || CASE WHEN b.until_id IS NOT NULL THEN ', until ' || us.said ELSE '' END
+      || coalesce((SELECT group_concat(r.part, '' ORDER BY r.k1, r.k2) FROM dosage_routes r
+                   WHERE r.entry = b.entry AND r.member = b.member AND r.dosage = b.dosage), '')
+      || CASE WHEN b.dose_written IS NOT NULL
+              THEN ', dose ' || coalesce(cs.said, '') || dw.said || coalesce(' ' || ds.said, '') ELSE '' END
+    FROM dosage_bases b JOIN term m ON m.id = b.member
+    LEFT JOIN strings fr ON fr.id = b.frequency LEFT JOIN strings pe ON pe.id = b.period LEFT JOIN strings pu ON pu.id = b.period_unit
+    LEFT JOIN strings fs ON fs.id = b.from_id LEFT JOIN strings us ON us.id = b.until_id
+    LEFT JOIN strings dw ON dw.id = b.dose_written LEFT JOIN strings cs ON cs.id = b.dose_comparator
+    LEFT JOIN strings ds ON ds.id = b.dose_unit),
+  prescription_details (entry, member_lex, shown) AS (
+    SELECT entry, member_lex, member_lex || ' ' || substr(parts, 3) FROM (
+      SELECT v.entry, m.lex AS member_lex,
+        coalesce(', intent ' || ri.said, '') || coalesce(', course ' || co.said, '')
+        || coalesce(', dispense request valid from ' || vf.said, '')
+        || coalesce(', dispense request valid until ' || vu.said, '') AS parts
+      FROM medication_terms k CROSS JOIN medication_member_values v JOIN page ON page.entry = v.entry JOIN term m ON m.id = v.member
+      LEFT JOIN strings ri ON ri.id = v.request_intent LEFT JOIN strings co ON co.id = v.course
+      LEFT JOIN strings vf ON vf.id = coalesce((SELECT min(w.written) FROM medication_member_values_padded w
+                                                WHERE w.entry = v.entry AND w.member = v.member
+                                                  AND w.property = k.dispense_request_validity_period_start), v.validity_start)
+      LEFT JOIN strings vu ON vu.id = coalesce((SELECT min(w.written) FROM medication_member_values_padded w
+                                                WHERE w.entry = v.entry AND w.member = v.member
+                                                  AND w.property = k.dispense_request_validity_period_end), v.validity_end))
+    WHERE parts <> ''),
   said (entry, line, shown) AS (
     SELECT v.entry, m.lex || ' ' || n.lex || char(31), m.lex || ' ' || n_said.said
     FROM medication_member_values v JOIN page ON page.entry = v.entry JOIN term m ON m.id = v.member
@@ -65,6 +117,10 @@ SELECT name.nt AS medication,
     AS statuses,
   (SELECT '"' || group_concat(s.shown, '' ORDER BY s.key, s.line) || '"' FROM dosages s WHERE s.entry = page.entry)
     AS dosages,
+  (SELECT '"' || group_concat(s.shown, char(31) ORDER BY s.member_lex, s.len, s.number) || '"' FROM structured_dosages s WHERE s.entry = page.entry)
+    AS structuredDosages,
+  (SELECT '"' || group_concat(s.shown, char(31) ORDER BY s.member_lex) || '"' FROM prescription_details s WHERE s.entry = page.entry)
+    AS prescriptionDetails,
   (SELECT '"' || group_concat(s.shown, '' ORDER BY s.line) || '"' FROM said s WHERE s.entry = page.entry)
     AS narrativeTexts,
   (SELECT '"' || group_concat(s.shown, '' ORDER BY s.k1, s.k2, s.member, s.line) || '"'

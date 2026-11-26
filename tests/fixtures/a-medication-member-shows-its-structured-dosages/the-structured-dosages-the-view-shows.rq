@@ -1,0 +1,8 @@
+PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
+
+SELECT DISTINCT ?member ?dosage ?holder ?field ?value
+WHERE { GRAPH <https://pod.example/clinical/medications.ttl> {
+  ?entry cascade:entryMember [] ; cascade:memberCurrentValues ?values .
+  ?values cascade:valuesOfMember ?member ; cascade:structuredDosage ?dosage .
+  OPTIONAL { ?dosage (cascade:dosageDoseQuantity | cascade:paddedDateTime)? ?holder . ?holder ?field ?value }
+  FILTER (?member NOT IN (<urn:x:warfarin>, <urn:x:ibuprofen>)) } }

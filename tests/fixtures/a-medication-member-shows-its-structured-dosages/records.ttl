@@ -1,0 +1,100 @@
+@prefix : <urn:x:> .
+@prefix cascade: <https://ns.cascadeprotocol.org/cascade#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:subject a cascade:Subject .
+
+:listed a cascade:PrescribedOrReportedMedication .
+:listedVersion prov:specializationOf :listed ; cascade:patient :subject ; cascade:drugName "Lisinopril 10 mg tablet" ;
+    cascade:prescribedOrReported "reportedUse" ; cascade:workflowStatus "active" ;
+    cascade:dosageInstructionText "Take 1 tablet daily" ;
+    cascade:structuredDosage <urn:x:listedVersion#dosage-1> .
+<urn:x:listedVersion#dosage-1> cascade:dosageRepeatFrequency 1 ; cascade:dosageRepeatPeriod "1"^^xsd:decimal ; cascade:dosageRepeatPeriodUnit "d" ;
+    cascade:dosageRouteCode <http://snomed.info/id/26643006> ;
+    cascade:dosageDoseQuantity <urn:x:listedVersion#dosage-1-dose-quantity> .
+<urn:x:listedVersion#dosage-1-dose-quantity> cascade:decimalValue "2"^^xsd:decimal ; cascade:writtenValue "2" ; cascade:quantityComparator "<=" ;
+    cascade:unitText "tablet" .
+:listedRevision a cascade:Revision ; cascade:revisionOf :listed ; cascade:version :listedVersion ;
+    prov:generatedAtTime "2026-01-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:00Z"^^xsd:dateTime .
+
+:prescribed a cascade:PrescribedOrReportedMedication .
+:prescribedVersion prov:specializationOf :prescribed ; cascade:patient :subject ; cascade:drugName "lisinopril 10 MG Oral Tablet" ;
+    cascade:prescribedOrReported "prescribed" ; cascade:workflowStatus "active" ;
+    cascade:dosageInstructionText "1 tablet by mouth every morning" ;
+    cascade:structuredDosage <urn:x:prescribedVersion#dosage-1> , <urn:x:prescribedVersion#dosage-2> .
+<urn:x:prescribedVersion#dosage-1> cascade:dosageRepeatFrequency 1 ; cascade:dosageRepeatPeriod "1"^^xsd:decimal ; cascade:dosageRepeatPeriodUnit "d" ;
+    cascade:dosageRouteCode <http://snomed.info/id/26643006> ;
+    cascade:dosageRouteCodeInOtherSystem "C38288"^^<http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl> ;
+    cascade:dosageDoseQuantity <urn:x:prescribedVersion#dosage-1-dose-quantity> .
+<urn:x:prescribedVersion#dosage-1-dose-quantity> cascade:decimalValue "10"^^xsd:decimal ; cascade:writtenValue "10.0" ;
+    cascade:ucumUnit "mg" ; cascade:unitText "milligram" .
+<urn:x:prescribedVersion#dosage-2> cascade:dosageRepeatFrequency 2 ; cascade:dosageRepeatPeriod "1"^^xsd:decimal ; cascade:dosageRepeatPeriodUnit "d" ;
+    cascade:dosageBoundsPeriodStart "2026-02-01"^^xsd:date ;
+    cascade:dosageBoundsPeriodEnd "2026-03-01T10:00:00Z"^^xsd:dateTime ;
+    cascade:paddedDateTime <urn:x:prescribedVersion#dosage-2-padded-dosageBoundsPeriodEnd> .
+<urn:x:prescribedVersion#dosage-2-padded-dosageBoundsPeriodEnd> cascade:paddedDateTimeProperty cascade:dosageBoundsPeriodEnd ;
+    cascade:timeAsWritten "2026-03-01T10:00Z" .
+:prescribedRevision a cascade:Revision ; cascade:revisionOf :prescribed ; cascade:version :prescribedVersion ;
+    prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
+
+:amoxicillin a cascade:PrescribedOrReportedMedication .
+:amoxicillinVersion prov:specializationOf :amoxicillin ; cascade:patient :subject ; cascade:drugName "amoxicillin 500 MG Oral Capsule" ;
+    cascade:prescribedOrReported "prescribed" ; cascade:workflowStatus "active" ;
+    cascade:structuredDosage <urn:x:amoxicillinVersion#dosage-1> .
+:amoxicillinRevision a cascade:Revision ; cascade:revisionOf :amoxicillin ; cascade:version :amoxicillinVersion ;
+    prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
+
+:metformin a cascade:PrescribedOrReportedMedication .
+:metforminVersion prov:specializationOf :metformin ; cascade:patient :subject ; cascade:drugName "metformin 500 MG Oral Tablet" ;
+    cascade:prescribedOrReported "prescribed" ; cascade:workflowStatus "active" .
+:metforminRevision a cascade:Revision ; cascade:revisionOf :metformin ; cascade:version :metforminVersion ;
+    prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
+
+:levothyroxine a cascade:PrescribedOrReportedMedication .
+:levothyroxineVersion prov:specializationOf :levothyroxine ; cascade:patient :subject ; cascade:drugName "levothyroxine 50 MCG Oral Tablet" ;
+    cascade:prescribedOrReported "prescribed" ; cascade:workflowStatus "active" ;
+    cascade:structuredDosage <urn:x:levothyroxineVersion#dosage-10> , <urn:x:levothyroxineVersion#dosage-2> .
+<urn:x:levothyroxineVersion#dosage-10> cascade:dosageRepeatFrequency 3 .
+<urn:x:levothyroxineVersion#dosage-2> cascade:dosageRepeatPeriod "1"^^xsd:decimal ; cascade:dosageRepeatPeriodUnit "wk" .
+:levothyroxineRevision a cascade:Revision ; cascade:revisionOf :levothyroxine ; cascade:version :levothyroxineVersion ;
+    prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
+
+:warfarin a cascade:PrescribedOrReportedMedication .
+:warfarinFirstVersion prov:specializationOf :warfarin ; cascade:patient :subject ; cascade:drugName "warfarin 5 MG Oral Tablet" ;
+    cascade:prescribedOrReported "prescribed" ; cascade:workflowStatus "active" ;
+    cascade:structuredDosage <urn:x:warfarinFirstVersion#dosage-1> , <urn:x:warfarinFirstVersion#dosage-2> .
+<urn:x:warfarinFirstVersion#dosage-1> cascade:dosageRepeatFrequency 1 ; cascade:dosageRepeatPeriod "1"^^xsd:decimal ; cascade:dosageRepeatPeriodUnit "d" ;
+    cascade:dosageDoseQuantity <urn:x:warfarinFirstVersion#dosage-1-dose-quantity> .
+<urn:x:warfarinFirstVersion#dosage-1-dose-quantity> cascade:decimalValue "5"^^xsd:decimal ; cascade:writtenValue "5" ; cascade:unitText "milligram" .
+<urn:x:warfarinFirstVersion#dosage-2> cascade:dosageRepeatFrequency 3 ; cascade:dosageRepeatPeriod "1"^^xsd:decimal ; cascade:dosageRepeatPeriodUnit "d" .
+:warfarinSecondVersion prov:specializationOf :warfarin ; cascade:patient :subject ; cascade:drugName "warfarin 5 MG Oral Tablet" ;
+    cascade:prescribedOrReported "prescribed" ; cascade:workflowStatus "active" ;
+    cascade:structuredDosage <urn:x:warfarinSecondVersion#dosage-1> .
+<urn:x:warfarinSecondVersion#dosage-1> cascade:dosageRepeatFrequency 2 ; cascade:dosageRepeatPeriod "1"^^xsd:decimal ; cascade:dosageRepeatPeriodUnit "d" ;
+    cascade:dosageDoseQuantity <urn:x:warfarinSecondVersion#dosage-1-dose-quantity> .
+<urn:x:warfarinSecondVersion#dosage-1-dose-quantity> cascade:decimalValue "2.5"^^xsd:decimal ; cascade:writtenValue "2.5" ; cascade:unitText "milligram" .
+:warfarinFirstRevision a cascade:Revision ; cascade:revisionOf :warfarin ; cascade:version :warfarinFirstVersion ;
+    prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
+:warfarinSecondRevision a cascade:Revision ; cascade:revisionOf :warfarin ; cascade:version :warfarinSecondVersion ;
+    prov:wasRevisionOf :warfarinFirstRevision ;
+    prov:generatedAtTime "2026-03-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-03-01T00:00:00Z"^^xsd:dateTime .
+
+:ibuprofen a cascade:PrescribedOrReportedMedication .
+:ibuprofenVersion prov:specializationOf :ibuprofen ; cascade:patient :subject ; cascade:drugName "ibuprofen 200 MG Oral Tablet" ;
+    cascade:prescribedOrReported "prescribed" ; cascade:workflowStatus "active" ;
+    cascade:structuredDosage <urn:x:ibuprofenVersion#dosage-1> , <urn:x:ibuprofenVersion#dosage-2> , <urn:x:ibuprofenVersion#dosage-3> ,
+        <urn:x:ibuprofenVersion#dosage-4> , <urn:x:ibuprofenVersion#dosage-5> , <urn:x:ibuprofenVersion#dosage-6> .
+<urn:x:ibuprofenVersion#dosage-1> cascade:dosageDoseQuantity <urn:x:ibuprofenVersion#dosage-1-dose-quantity> .
+<urn:x:ibuprofenVersion#dosage-1-dose-quantity> cascade:decimalValue "200"^^xsd:decimal ; cascade:writtenValue "200" ; cascade:ucumUnit "mg" .
+<urn:x:ibuprofenVersion#dosage-2> cascade:dosageDoseQuantity <urn:x:ibuprofenVersion#dosage-2-dose-quantity> .
+<urn:x:ibuprofenVersion#dosage-2-dose-quantity> cascade:decimalValue "3"^^xsd:decimal ; cascade:writtenValue "3" .
+<urn:x:ibuprofenVersion#dosage-3> cascade:dosageRepeatPeriodUnit "d" .
+<urn:x:ibuprofenVersion#dosage-4> cascade:dosageRepeatFrequency 2 ; cascade:dosageRepeatPeriodUnit "h" .
+<urn:x:ibuprofenVersion#dosage-5> cascade:dosageBoundsPeriodStart "2026-04-01T08:30:00Z"^^xsd:dateTime ;
+    cascade:paddedDateTime <urn:x:ibuprofenVersion#dosage-5-padded-dosageBoundsPeriodStart> .
+<urn:x:ibuprofenVersion#dosage-5-padded-dosageBoundsPeriodStart> cascade:paddedDateTimeProperty cascade:dosageBoundsPeriodStart ;
+    cascade:timeAsWritten "2026-04-01T08:30Z" .
+<urn:x:ibuprofenVersion#dosage-6> cascade:dosageRepeatPeriod "2"^^xsd:decimal .
+:ibuprofenRevision a cascade:Revision ; cascade:revisionOf :ibuprofen ; cascade:version :ibuprofenVersion ;
+    prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .

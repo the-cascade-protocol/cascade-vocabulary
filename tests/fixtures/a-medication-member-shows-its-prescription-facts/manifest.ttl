@@ -1,0 +1,50 @@
+@prefix ctm: <https://ns.cascadeprotocol.org/test-manifest#> .
+@prefix mf: <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
+@prefix qt: <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<> a mf:Manifest ;
+  rdfs:label "a-medication-member-shows-its-prescription-facts" ;
+  rdfs:comment "A lisinopril prescription that states its intent, its course of therapy, the start of its dispensing window written to the minute and the end of it, and a structured dosage that states only a frequency; an amoxicillin prescription that states only an intent; and a metformin that states none of them." ;
+  mf:entries (
+    <#the-prescription-facts-the-view-shows>
+    <#a-window-start-short-of-the-second-keeps-its-padded-node>
+    <#what-it-shows>
+    <#my-active-medications>
+    <#my-medication-history>
+  ) .
+
+<#the-prescription-facts-the-view-shows> a mf:QueryEvaluationTest ;
+  mf:name "the-prescription-facts-the-view-shows" ;
+  rdfs:comment "Each member's values hold the intent, the course of therapy and the start and end of the dispensing window its version states, each beside the member that states it; a member that states none of them has none, and one stating only an intent has that." ;
+  mf:action [ qt:query <the-prescription-facts-the-view-shows.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <the-prescription-facts-the-view-shows.tsv> .
+
+<#a-window-start-short-of-the-second-keeps-its-padded-node> a mf:QueryEvaluationTest ;
+  mf:name "a-window-start-short-of-the-second-keeps-its-padded-node" ;
+  rdfs:comment "The start of a dispensing window its source wrote to the minute keeps the node saying so, named after the member's values and -padded- and the property, so the view never shows it as exact." ;
+  mf:action [ qt:query <a-window-start-short-of-the-second-keeps-its-padded-node.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <a-window-start-short-of-the-second-keeps-its-padded-node.tsv> .
+
+<#what-it-shows> a mf:QueryEvaluationTest ;
+  mf:name "what-it-shows" ;
+  rdfs:comment "A member's intent, course of therapy and the start and end of its dispensing window are shown as its values, each with the member that states it; its structured dosage is a node of its own, so no value of the entry, nor of the member." ;
+  mf:action [ qt:query <../../../queries/questions/entry/What%20it%20shows.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <what-it-shows.tsv> .
+
+<#my-active-medications> a mf:QueryEvaluationTest ;
+  mf:name "my-active-medications" ;
+  rdfs:comment "Each active entry gives, for each record that states any of its intent, course of therapy and the start and end of its dispensing window, an item saying the record and what it states, in that order, a time written short of the second as its source wrote it; an entry no record states them for has none." ;
+  mf:action [ qt:query <../../../queries/questions/pod/My%20active%20medications.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <my-active-medications.tsv> .
+
+<#my-medication-history> a mf:QueryEvaluationTest ;
+  mf:name "my-medication-history" ;
+  rdfs:comment "Every entry gives what its records state of their intent, course of therapy and dispensing window as `pod/My active medications` does." ;
+  mf:action [ qt:query <../../../queries/questions/pod/My%20medication%20history.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <my-medication-history.tsv> .
