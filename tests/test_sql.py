@@ -15,7 +15,7 @@ import sql
 from contract import QUERIES, ROOT, named, query
 from engines import TOKEN, Oxigraph, bound_to_records, marked_groups
 from manifests import entries, expected, lens_name, row
-from pods import FIXTURES, built_once, on_its_worker
+from pods import FIXTURES, Fixture, built_once, on_its_worker
 
 LENSES = sorted(named("lenses"))
 UNPORTED = ROOT / "tests" / "sql-unported.txt"
@@ -1298,6 +1298,40 @@ class TestTheSqlCheck:
                  if fixture.name == "matcher-same-business-identifier-and-test-code-within-one-organization-bound-per-side")
     EXPOSURE = "queries/derivations/medication-exposure-periods.rq"
     ZERO_SUPPLY = next(fixture for fixture in FIXTURES if fixture.name == "exposure-from-a-supply-of-zero")
+
+    def test_compares_a_sql_on_a_fixture_only_where_its_manifest_names_its_query_a_folder_of_it_or_an_entry_running_it(self, tmp_path):
+        """compares a `.sql` over a fixture under each lens where the manifest names its query, or a folder holding it, by `ctm:comparesSqlBeside`; under an entry's lens where an entry runs it; and nowhere else
+
+        Three manifests: the first names `How many judgments count.rq`, the second the folder queries/views/, the third
+        runs `How many judgments count.rq` in an entry under everyday. The `.sql` beside it is compared under each lens
+        over the first, under everyday over the third, and not over the second; the conditions view's over the second
+        alone; and `labels.rq`'s over none of them, which the check of each query compared on some fixture names.
+        """
+        def manifest(name, said):
+            folder = tmp_path / name
+            folder.mkdir()
+            (folder / "manifest.ttl").write_text(
+                "@prefix ctm: <https://ns.cascadeprotocol.org/test-manifest#> .\n"
+                "@prefix mf: <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .\n"
+                "@prefix qt: <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .\n"
+                f"<> a mf:Manifest {said} .\n", encoding="utf-8")
+            return Fixture(folder / "manifest.ttl")
+
+        judgments = (ROOT / self.JUDGMENTS).as_uri()
+        everyday = (QUERIES / "lenses/everyday.rq").as_uri()
+        named = manifest("names-the-query", f"; ctm:comparesSqlBeside <{judgments}> ; mf:entries ()")
+        folder = manifest("names-the-views", f"; ctm:comparesSqlBeside <{(ROOT / 'queries/views').as_uri()}/> ; mf:entries ()")
+        entry = manifest("runs-it-in-an-entry", f"; mf:entries ( <#count> ) . <#count> mf:name \"count\" ; mf:action "
+                                                f"[ qt:query <{judgments}> ; ctm:lensQueryPath <{everyday}> ]")
+        relatives = [self.JUDGMENTS, "queries/views/conditions.rq", "queries/labels.rq"]
+        assert {relative: [(fixture.name, lenses_compared(fixture, relative)) for fixture in (named, folder, entry)]
+                for relative in relatives} == {
+            self.JUDGMENTS: [("names-the-query", LENSES), ("names-the-views", []), ("runs-it-in-an-entry", ["everyday"])],
+            "queries/views/conditions.rq": [("names-the-query", []), ("names-the-views", LENSES), ("runs-it-in-an-entry", [])],
+            "queries/labels.rq": [("names-the-query", []), ("names-the-views", []), ("runs-it-in-an-entry", [])]}
+        compared = {relative: [(fixture, lens) for fixture in (named, folder, entry)
+                               for lens in lenses_compared(fixture, relative)] for relative in relatives}
+        assert uncovered(compared, lambda fixture, lens, relative: True) == ["queries/labels.rq"]
 
     @pytest.mark.xdist_group(PINNED.name)
     def test_reports_the_fixture_query_and_row_of_a_sql_that_drops_a_value_from_a_row(self):
