@@ -8,7 +8,7 @@
   rdfs:comment "A lisinopril prescription that states its intent, its course of therapy, the start of its dispensing window written to the minute and the end of it, and a structured dosage that states only a frequency; an amoxicillin prescription that states only an intent; and a metformin that states none of them." ;
   mf:entries (
     <#the-prescription-facts-the-view-shows>
-    <#the-dispensing-window-start-written-short-of-the-second-keeps-its-padded-node>
+    <#a-window-start-short-of-the-second-keeps-its-padded-node>
     <#what-it-shows>
     <#my-active-medications>
     <#my-medication-history>
@@ -21,12 +21,12 @@
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <the-prescription-facts-the-view-shows.tsv> .
 
-<#the-dispensing-window-start-written-short-of-the-second-keeps-its-padded-node> a mf:QueryEvaluationTest ;
-  mf:name "the-dispensing-window-start-written-short-of-the-second-keeps-its-padded-node" ;
+<#a-window-start-short-of-the-second-keeps-its-padded-node> a mf:QueryEvaluationTest ;
+  mf:name "a-window-start-short-of-the-second-keeps-its-padded-node" ;
   rdfs:comment "The start of a dispensing window its source wrote to the minute keeps the node saying so, named after the member's values and -padded- and the property, so the view never shows it as exact." ;
-  mf:action [ qt:query <the-dispensing-window-start-written-short-of-the-second-keeps-its-padded-node.rq> ;
+  mf:action [ qt:query <a-window-start-short-of-the-second-keeps-its-padded-node.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
-  mf:result <the-dispensing-window-start-written-short-of-the-second-keeps-its-padded-node.tsv> .
+  mf:result <a-window-start-short-of-the-second-keeps-its-padded-node.tsv> .
 
 <#what-it-shows> a mf:QueryEvaluationTest ;
   mf:name "what-it-shows" ;
