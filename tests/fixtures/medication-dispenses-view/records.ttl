@@ -30,7 +30,7 @@
 :waitingVersion prov:specializationOf :waiting ; cascade:patient :subject ; cascade:drugName "amoxicillin 500 MG Oral Capsule" ;
     cascade:workflowStatus "preparation" ; cascade:dispensePreparedTime "2026-02-01"^^xsd:date ;
     cascade:dispenseDaysSupply <urn:x:waitingVersion#dispense-days-supply> .
-<urn:x:waitingVersion#dispense-days-supply> cascade:decimalValue "30"^^xsd:decimal ; cascade:writtenValue "30" ; cascade:quantityComparator ">=" ;
+<urn:x:waitingVersion#dispense-days-supply> cascade:decimalValue "30"^^xsd:decimal ; cascade:writtenValue "30" ;
     cascade:ucumUnit "d" ; cascade:unitText "days" .
 :waitingRevision a cascade:Revision ; cascade:revisionOf :waiting ; cascade:version :waitingVersion ;
     prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
