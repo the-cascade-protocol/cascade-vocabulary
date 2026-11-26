@@ -32,6 +32,8 @@
 :covid a cascade:Vaccination .
 :covidVersion prov:specializationOf :covid ; cascade:patient :subject ; cascade:vaccineName "COVID-19, at two" ; cascade:workflowStatus "completed" ;
     cascade:vaccinationOccurrenceTime "2025-11-03T14:00:00"^^xsd:dateTime ;
+    cascade:vaccineLotNumber "EW0553" ; cascade:vaccinationBodySiteText "Left deltoid" ; cascade:vaccinationRouteText "Intramuscular" ;
+    cascade:vaccineDoseQuantityText "0.3 mL" ; cascade:addedNoteText "Given with the flu shot" , "Second dose due in three weeks" ;
     cascade:paddedDateTime <urn:x:covidVersion#padded-vaccinationOccurrenceTime> .
 <urn:x:covidVersion#padded-vaccinationOccurrenceTime> cascade:paddedDateTimeProperty cascade:vaccinationOccurrenceTime ; cascade:timeAsWritten "2025110314" .
 :covidRevision a cascade:Revision ; cascade:revisionOf :covid ; cascade:version :covidVersion ;

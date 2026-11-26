@@ -15,7 +15,7 @@
 
 <#the-lab-results-view> a mf:QueryEvaluationTest ;
   mf:name "the-lab-results-view" ;
-  rdfs:comment "Each entry takes the test, code, value, unit and time of its lead, so the potassium shows no time and its unit text, and the status of the member chosen for status; a bound shows its comparator, a ratio its two parts and a range its two bounds. The MCV shows both flags its source gave, as codes, and its reference range's text and bounds." ;
+  rdfs:comment "Each entry takes the test, code, value, unit and time of its lead, so the potassium shows no time and its unit text, and the status of the member chosen for status; a bound shows its comparator, a ratio its two parts and a range its two bounds. The MCV shows both flags its source gave, as codes, and its reference range's text and bounds; the potassium shows its lead's code in another system, never the earlier member's." ;
   mf:action [ qt:query <the-lab-results-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <the-lab-results-view.tsv> .
@@ -29,7 +29,7 @@
 
 <#what-it-shows> a mf:QueryEvaluationTest ;
   mf:name "what-it-shows" ;
-  rdfs:comment "The MCV's reference range is shown by its text and by each bound, a node of its own that the member's values name by the link, each of its values a row with the member and its Part, `referenceRangeLow` or `referenceRangeHigh`; the entry's own bound nodes repeat the member's and are not shown." ;
+  rdfs:comment "The MCV's reference range is shown by its text and by each bound, a node of its own that the member's values name by the link, each of its values a row with the member and its Part, `referenceRangeLow` or `referenceRangeHigh`; the entry's own bound nodes repeat the member's and are not shown. Each member's own code in another system and the note added to it are rows of that member." ;
   mf:action [ qt:query <../../../queries/questions/entry/What%20it%20shows.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <what-it-shows.tsv> .

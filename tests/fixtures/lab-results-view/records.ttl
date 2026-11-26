@@ -8,14 +8,16 @@
 :drawn a cascade:LaboratoryTestResult .
 :drawnVersion prov:specializationOf :drawn ; cascade:patient :subject ; cascade:testName "Potassium" ;
     cascade:testCode <http://loinc.org/rdf/2823-3> ; cascade:resultValueKind cascade:QuantityResultValue ; cascade:resultQuantity <urn:x:drawnVersion#value> ;
-    cascade:workflowStatus "final" ; cascade:resultClinicallyRelevantTime "2025-03-27T12:00:00Z"^^xsd:dateTime .
+    cascade:workflowStatus "final" ; cascade:resultClinicallyRelevantTime "2025-03-27T12:00:00Z"^^xsd:dateTime ;
+    cascade:testCodeInOtherSystem "K-PL"^^<urn:oid:2.16.840.1.113883.19.5.99999.1> ; cascade:addedNoteText "Sample hemolyzed" .
 <urn:x:drawnVersion#value> cascade:decimalValue "4.1"^^xsd:decimal ; cascade:writtenValue "4.10" ; cascade:ucumUnit "mmol/L" .
 :drawnRevision a cascade:Revision ; cascade:revisionOf :drawn ; cascade:version :drawnVersion ;
     prov:generatedAtTime "2026-01-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:00Z"^^xsd:dateTime .
 
 :resent a cascade:LaboratoryTestResult .
 :resentVersion prov:specializationOf :resent ; cascade:patient :subject ; cascade:testName "Serum potassium" ;
-    cascade:testCode <http://loinc.org/rdf/2823-3> ; cascade:resultValueKind cascade:QuantityResultValue ; cascade:resultQuantity <urn:x:resentVersion#value> .
+    cascade:testCode <http://loinc.org/rdf/2823-3> ; cascade:resultValueKind cascade:QuantityResultValue ; cascade:resultQuantity <urn:x:resentVersion#value> ;
+    cascade:testCodeInOtherSystem "K-SERUM"^^<urn:oid:2.16.840.1.113883.19.5.99999.1> .
 <urn:x:resentVersion#value> cascade:decimalValue "4.1"^^xsd:decimal ; cascade:writtenValue "4.1" ; cascade:ucumUnit "mmol/L" ;
     cascade:unitText "mmol/l" .
 :resentRevision a cascade:Revision ; cascade:revisionOf :resent ; cascade:version :resentVersion ;

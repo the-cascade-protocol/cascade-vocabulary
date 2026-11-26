@@ -7,13 +7,15 @@
 
 :coloOld a cascade:MedicalProcedure .
 :coloOldVersion prov:specializationOf :coloOld ; cascade:patient :subject ; cascade:procedureName "Colonoscopy" ; cascade:workflowStatus "completed" ;
-    cascade:procedureDate "2024-03-01"^^xsd:date .
+    cascade:procedureDate "2024-03-01"^^xsd:date ;
+    cascade:procedureCodeInOtherSystem "COL-0"^^<urn:oid:2.16.840.1.113883.19.5.99999.1> .
 :coloOldRevision a cascade:Revision ; cascade:revisionOf :coloOld ; cascade:version :coloOldVersion ;
     prov:generatedAtTime "2026-01-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:00Z"^^xsd:dateTime .
 
 :coloNew a cascade:MedicalProcedure .
 :coloNewVersion prov:specializationOf :coloNew ; cascade:patient :subject ; cascade:procedureName "Colonoscopy, screening" ;
-    cascade:procedureCode <http://snomed.info/id/73761001> .
+    cascade:procedureCode <http://snomed.info/id/73761001> ;
+    cascade:procedureCodeInOtherSystem "COL-1"^^<urn:oid:2.16.840.1.113883.19.5.99999.1> , "SCREEN-COL"^^<urn:oid:2.16.840.1.113883.19.5.99999.2> .
 :coloNewRevision a cascade:Revision ; cascade:revisionOf :coloNew ; cascade:version :coloNewVersion ;
     prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
 

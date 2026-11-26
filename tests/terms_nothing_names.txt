@@ -1,8 +1,6 @@
 ValueAbsentForReason
 absentReasonCode
 absentValueProperty
-addedNoteText
-allergyType
 answersForRecordClass
 attachmentUrl
 authenticatedAsProxy
@@ -10,8 +8,6 @@ authenticatedPatient
 basis
 buildInputsHash
 clinvarReviewStatus
-conditionCategory
-conditionCodeInOtherSystem
 contributingSubmitterCount
 coversGene
 dispenseDaysSupply
@@ -21,13 +17,7 @@ matcherRuleDeclaredWrong
 noLongerReachedUnderRuleListVersion
 occurrenceCount
 physiologicEffectClass
-procedureCodeInOtherSystem
 refusedForRecordClass
 sourceFormatVersion
 submitterCount
-testCodeInOtherSystem
-vaccinationBodySiteText
-vaccinationRouteText
-vaccineDoseQuantityText
-vaccineLotNumber
 valueAbsentForReason

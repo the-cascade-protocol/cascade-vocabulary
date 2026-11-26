@@ -14,7 +14,8 @@
 :peanutFromDocumentVersion prov:specializationOf :peanutFromDocument ; cascade:patient :subject ; cascade:allergenName "Peanut" ;
     cascade:clinicalStatus "active" ; cascade:allergyCriticality "high" ; cascade:reactionManifestationText "Anaphylaxis" ;
     cascade:reactionManifestationCode <http://snomed.info/id/39579001> ; cascade:allergySeverity "severe" ;
-    cascade:allergyCategory "environment" ; cascade:onsetDate "2018"^^xsd:gYear .
+    cascade:allergyCategory "environment" ; cascade:onsetDate "2018"^^xsd:gYear ;
+    cascade:allergyType "allergy" ; cascade:addedNoteText "Carries an epinephrine pen" , "Seen by an allergist in 2018" .
 :peanutFromDocumentRevision a cascade:Revision ; cascade:revisionOf :peanutFromDocument ;
     cascade:version :peanutFromDocumentVersion ; prov:wasDerivedFrom :peanutDocument ; prov:wasGeneratedBy :northImport ;
     prov:generatedAtTime "2026-01-01T00:00:05Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:05Z"^^xsd:dateTime .
@@ -32,6 +33,7 @@
 :latex a cascade:AllergyOrIntolerance .
 :latexVersion prov:specializationOf :latex ; cascade:patient :subject ; cascade:allergenName "Latex" ;
     cascade:clinicalStatus "inactive" ; cascade:onsetDate "2020-02-14T09:00:00"^^xsd:dateTime ;
+    cascade:allergyType "intolerance" ; cascade:addedNoteText "Reaction at the dentist" ;
     cascade:paddedDateTime <urn:x:latexVersion#padded-onsetDate> .
 <urn:x:latexVersion#padded-onsetDate> cascade:paddedDateTimeProperty cascade:onsetDate ; cascade:timeAsWritten "2020021409" .
 :latexRevision a cascade:Revision ; cascade:revisionOf :latex ; cascade:version :latexVersion ;

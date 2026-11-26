@@ -9,7 +9,15 @@
   mf:entries (
     <#the-procedures-view>
     <#my-procedures>
+    <#its-members-other-codes>
   ) .
+
+<#its-members-other-codes> a mf:QueryEvaluationTest ;
+  mf:name "its-members-other-codes" ;
+  rdfs:comment "Each member's current values state the codes it gives in other systems; the entry takes only its lead's, so the earlier member's code is the member's alone." ;
+  mf:action [ qt:query <its-members-other-codes.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <its-members-other-codes.tsv> .
 
 <#the-procedures-view> a mf:QueryEvaluationTest ;
   mf:name "the-procedures-view" ;

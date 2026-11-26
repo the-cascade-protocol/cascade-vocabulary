@@ -1,0 +1,9 @@
+PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
+
+SELECT ?entry ?field ?value
+WHERE {
+  GRAPH <https://pod.example/clinical/allergies.ttl> {
+    ?entry cascade:entryMember [] ; ?field ?value
+    FILTER (?field IN (cascade:allergyType, cascade:addedNoteText))
+  }
+}
