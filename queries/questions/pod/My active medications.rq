@@ -23,14 +23,25 @@
 # A pod holds no table, so it cannot tell a product from an ingredient among several, and no code stands in for the
 # choice. A list holds its values in order, separated by U+001F, which no value holds;
 # a value's own parts are ended by ", ".
+# The structured dosages each record states are in `structuredDosages`, one item for each dosage, as "<record> dosage <n>",
+# n the dosage's number in its source, and then, each introduced by ", " and in this order, what it states: "<frequency> per
+# <period> <unit>" (a dosage that states only some of the three has "frequency <frequency>", "period <period> <unit>" or "period
+# unit <unit>" in its place), "from <start>" and "until <end>" of its bounds, "route <code IRI>" for each route code in a listed
+# system and "route <system IRI> <code>" for each in another, and last "dose <comparator><number as written> <unit>", the unit being
+# its text as its source wrote it, else its UCUM code. Each is as the record states it, none computed or rounded, and a time its source
+# wrote short of the second is as written. A dosage that states nothing is "<record> dosage <n>" alone. The dose is last because its
+# unit text may hold anything; a route is read as a reason is, by the token after "route " (a code in another system as written).
+# Items are in code point order of the record, then by n. `prescriptionDetails` has one item for each record that states any of its
+# intent, course of therapy and dispensing window, as "<record> intent <intent>, course <course>, dispense request valid from
+# <start>, dispense request valid until <end>" with the parts it states (none when no record states one).
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX pav: <http://purl.org/pav/>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT ?medication ?code ?started ?written ?statuses ?dosages ?narrativeTexts ?reasons (COUNT(?record) AS ?records) ?entry
-       ?entryLabel ?sources
+SELECT ?medication ?code ?started ?written ?statuses ?dosages ?structuredDosages ?prescriptionDetails ?narrativeTexts ?reasons
+       (COUNT(?record) AS ?records) ?entry ?entryLabel ?sources
 WHERE {
   { SELECT ?entry (REPLACE(GROUP_CONCAT(DISTINCT CONCAT(?statusText, "\u001F"); separator=""), "\u001F$", "") AS ?statuses)
     WHERE {
@@ -61,6 +72,98 @@ WHERE {
           BIND (COALESCE(STR(?memberWritten), "~") AS ?writtenKey)
         }
         ORDER BY ?entry ?writtenKey ?dosageText }
+    }
+    GROUP BY ?entry }
+  { SELECT ?entry (REPLACE(GROUP_CONCAT(DISTINCT ?dosageLine; separator=""), "\u001F$", "") AS ?structured)
+    WHERE {
+      { SELECT ?entry ?dosageLine
+        WHERE {
+          { ?entry a cascade:PrescribedOrReportedMedication ; cascade:lifecycle cascade:MedicationActive .
+            BIND ("" AS ?dosageLine) }
+          UNION
+          { { SELECT ?dosage (GROUP_CONCAT(DISTINCT ?routePart; separator="") AS ?routes)
+              WHERE {
+                { SELECT ?dosage ?routePart
+                  WHERE {
+                    { ?holder cascade:structuredDosage ?dosage .
+                      BIND ("" AS ?routePart) }
+                    UNION
+                    { ?dosage cascade:dosageRouteCode ?route .
+                      BIND (CONCAT(", route ", STR(?route)) AS ?routePart)
+                      BIND (STR(?route) AS ?routeKey)
+                      BIND ("" AS ?routeTail) }
+                    UNION
+                    { ?dosage cascade:dosageRouteCodeInOtherSystem ?otherRoute .
+                      BIND (CONCAT(", route ", STR(DATATYPE(?otherRoute)), " ", STR(?otherRoute)) AS ?routePart)
+                      BIND (STR(?otherRoute) AS ?routeKey)
+                      BIND (STR(DATATYPE(?otherRoute)) AS ?routeTail) }
+                  }
+                  ORDER BY ?dosage ?routeKey ?routeTail }
+              }
+              GROUP BY ?dosage }
+            ?entry a cascade:PrescribedOrReportedMedication ; cascade:lifecycle cascade:MedicationActive ;
+                   cascade:memberCurrentValues ?values .
+            ?values cascade:valuesOfMember ?member ; cascade:structuredDosage ?dosage .
+            OPTIONAL { ?dosage cascade:dosageRepeatFrequency ?frequency }
+            OPTIONAL { ?dosage cascade:dosageRepeatPeriod ?period }
+            OPTIONAL { ?dosage cascade:dosageRepeatPeriodUnit ?periodUnit }
+            OPTIONAL { ?dosage cascade:dosageBoundsPeriodStart ?boundsStart }
+            OPTIONAL { ?dosage cascade:dosageBoundsPeriodEnd ?boundsEnd }
+            OPTIONAL { ?dosage cascade:paddedDateTime ?startPadded .
+                       ?startPadded cascade:paddedDateTimeProperty ?startPaddedProperty ; cascade:timeAsWritten ?startWritten
+                       FILTER (?startPaddedProperty = cascade:dosageBoundsPeriodStart) }
+            OPTIONAL { ?dosage cascade:paddedDateTime ?endPadded .
+                       ?endPadded cascade:paddedDateTimeProperty ?endPaddedProperty ; cascade:timeAsWritten ?endWritten
+                       FILTER (?endPaddedProperty = cascade:dosageBoundsPeriodEnd) }
+            OPTIONAL { ?dosage cascade:dosageDoseQuantity ?dose .
+                       ?dose cascade:writtenValue ?doseWritten .
+                       OPTIONAL { ?dose cascade:quantityComparator ?doseComparator }
+                       OPTIONAL { ?dose cascade:unitText ?doseUnitText }
+                       OPTIONAL { ?dose cascade:ucumUnit ?doseUcum } }
+            BIND (STRAFTER(STR(?dosage), "-dosage-") AS ?number)
+            BIND (STRLEN(?number) AS ?numberLength)
+            BIND (BOUND(?frequency) && BOUND(?period) && BOUND(?periodUnit) AS ?timed)
+            BIND (IF(?timed, CONCAT(", ", STR(?frequency), " per ", STR(?period), " ", ?periodUnit), "") AS ?timedPart)
+            BIND (IF(BOUND(?frequency) && !?timed, CONCAT(", frequency ", STR(?frequency)), "") AS ?frequencyPart)
+            BIND (IF(BOUND(?period) && !?timed, CONCAT(", period ", STR(?period), COALESCE(CONCAT(" ", ?periodUnit), "")), "") AS ?periodPart)
+            BIND (IF(BOUND(?periodUnit) && !BOUND(?period), CONCAT(", period unit ", ?periodUnit), "") AS ?unitPart)
+            BIND (IF(BOUND(?boundsStart) || BOUND(?startWritten), CONCAT(", from ", COALESCE(?startWritten, STR(?boundsStart))), "") AS ?fromPart)
+            BIND (IF(BOUND(?boundsEnd) || BOUND(?endWritten), CONCAT(", until ", COALESCE(?endWritten, STR(?boundsEnd))), "") AS ?untilPart)
+            BIND (IF(BOUND(?doseWritten),
+                     CONCAT(", dose ", COALESCE(?doseComparator, ""), ?doseWritten, COALESCE(CONCAT(" ", COALESCE(?doseUnitText, ?doseUcum)), "")),
+                     "") AS ?dosePart)
+            BIND (CONCAT(STR(?member), " dosage ", ?number, ?timedPart, ?frequencyPart, ?periodPart, ?unitPart, ?fromPart, ?untilPart,
+                         ?routes, ?dosePart, "\u001F") AS ?dosageLine) }
+        }
+        ORDER BY ?entry ?member ?numberLength ?number }
+    }
+    GROUP BY ?entry }
+  { SELECT ?entry (REPLACE(GROUP_CONCAT(DISTINCT ?detailLine; separator=""), "\u001F$", "") AS ?detailed)
+    WHERE {
+      { SELECT ?entry ?detailLine
+        WHERE {
+          ?entry a cascade:PrescribedOrReportedMedication ; cascade:lifecycle cascade:MedicationActive ;
+                 cascade:memberCurrentValues ?values .
+          ?values cascade:valuesOfMember ?member .
+          OPTIONAL { ?values cascade:medicationRequestIntent ?memberIntent }
+          OPTIONAL { ?values cascade:courseOfTherapyType ?memberCourse }
+          OPTIONAL { ?values cascade:dispenseRequestValidityPeriodStart ?memberValidFrom }
+          OPTIONAL { ?values cascade:dispenseRequestValidityPeriodEnd ?memberValidUntil }
+          OPTIONAL { ?values cascade:paddedDateTime ?validFromPadded .
+                     ?validFromPadded cascade:paddedDateTimeProperty ?validFromPaddedProperty ; cascade:timeAsWritten ?validFromWritten
+                     FILTER (?validFromPaddedProperty = cascade:dispenseRequestValidityPeriodStart) }
+          OPTIONAL { ?values cascade:paddedDateTime ?validUntilPadded .
+                     ?validUntilPadded cascade:paddedDateTimeProperty ?validUntilPaddedProperty ; cascade:timeAsWritten ?validUntilWritten
+                     FILTER (?validUntilPaddedProperty = cascade:dispenseRequestValidityPeriodEnd) }
+          BIND (CONCAT(COALESCE(CONCAT(", intent ", ?memberIntent), ""),
+                       COALESCE(CONCAT(", course ", ?memberCourse), ""),
+                       IF(BOUND(?memberValidFrom) || BOUND(?validFromWritten),
+                          CONCAT(", dispense request valid from ", COALESCE(?validFromWritten, STR(?memberValidFrom))), ""),
+                       IF(BOUND(?memberValidUntil) || BOUND(?validUntilWritten),
+                          CONCAT(", dispense request valid until ", COALESCE(?validUntilWritten, STR(?memberValidUntil))), "")) AS ?detailParts)
+          BIND (IF(?detailParts = "", "", CONCAT(STR(?member), " ", SUBSTR(?detailParts, 3), "\u001F")) AS ?detailLine)
+        }
+        ORDER BY ?entry ?detailLine }
     }
     GROUP BY ?entry }
   { SELECT ?entry (REPLACE(GROUP_CONCAT(DISTINCT ?narrativeLine; separator=""), "\u001F$", "") AS ?said)
@@ -158,10 +261,13 @@ WHERE {
   OPTIONAL { ?entry cascade:prescriptionWrittenDate ?written }
   OPTIONAL { ?entry rdfs:label ?entryLabel }
   BIND (IF(?stated = "", ?nothing, ?stated) AS ?dosages)
+  BIND (IF(?structured = "", ?nothing, ?structured) AS ?structuredDosages)
+  BIND (IF(?detailed = "", ?nothing, ?detailed) AS ?prescriptionDetails)
   BIND (IF(?said = "", ?nothing, ?said) AS ?narrativeTexts)
   BIND (IF(?given = "", ?nothing, ?given) AS ?reasons)
   BIND (COALESCE(IF(STRSTARTS(STR(?chosen), "https://ns.cascadeprotocol.org/codes/rxnorm/"), ?chosen, ?nothing),
                  IF(?candidates = 1, ?only, ?nothing)) AS ?code)
 }
-GROUP BY ?entry ?medication ?code ?started ?written ?entryLabel ?statuses ?dosages ?narrativeTexts ?reasons ?sources
+GROUP BY ?entry ?medication ?code ?started ?written ?entryLabel ?statuses ?dosages ?structuredDosages ?prescriptionDetails ?narrativeTexts
+         ?reasons ?sources
 ORDER BY ?medication ?entry

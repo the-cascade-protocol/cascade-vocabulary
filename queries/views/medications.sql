@@ -47,6 +47,7 @@ CREATE VIEW medication_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#reasonCodeInOtherSystem>') AS reason_code_in_other_system,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#medicationRequestIntent>') AS medication_request_intent,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#courseOfTherapyType>') AS course_of_therapy_type,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#dispenseRequestValidityPeriodStart>') AS dispense_request_validity_period_start,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#dispenseRequestValidityPeriodEnd>') AS dispense_request_validity_period_end,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#structuredDosage>') AS structured_dosage,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#dosageDoseQuantity>') AS dosage_dose_quantity,
@@ -131,6 +132,7 @@ CREATE TABLE medication_member_values (
   intent INTEGER,
   request_intent INTEGER,
   course INTEGER,
+  validity_start INTEGER,
   validity_end INTEGER,
   PRIMARY KEY (entry, member)
 ) STRICT, WITHOUT ROWID;
@@ -262,6 +264,7 @@ WITH
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#prescribedOrReported>', v.intent FROM members mv JOIN medication_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#medicationRequestIntent>', v.request_intent FROM members mv JOIN medication_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#courseOfTherapyType>', v.course FROM members mv JOIN medication_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#dispenseRequestValidityPeriodStart>', v.validity_start FROM members mv JOIN medication_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#dispenseRequestValidityPeriodEnd>', v.validity_end FROM members mv JOIN medication_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#rxNormCode>', x.code FROM members mv JOIN medication_member_values_code x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#ndcCode>', x.code FROM members mv JOIN medication_member_values_ndc x USING (entry, member)
@@ -478,7 +481,7 @@ JOIN quad v ON v.s = m.record AND v.p = k.current_version JOIN quad x ON x.s = v
 WHERE m.entry IN (SELECT entry FROM medication_filled);
 
 INSERT INTO medication_member_values (entry, member, node, name, selected, status, dosage, narrative, started, written, ended, intent,
-                                      request_intent, course, validity_end)
+                                      request_intent, course, validity_start, validity_end)
 WITH members (entry, member, version) AS (
   SELECT DISTINCT r.o, r.s, (SELECT min(v.o) FROM quad v WHERE v.s = r.s AND v.p = k.current_version)
   FROM medication_terms k CROSS JOIN quad r
@@ -497,6 +500,7 @@ SELECT members.entry, members.member, '<' || e.lex || '-' || sparql_sha256(m.lex
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.prescribed_or_reported),
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.medication_request_intent),
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.course_of_therapy_type),
+  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.dispense_request_validity_period_start),
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.dispense_request_validity_period_end)
 FROM medication_terms k CROSS JOIN members JOIN term e ON e.id = members.entry JOIN term m ON m.id = members.member;
 

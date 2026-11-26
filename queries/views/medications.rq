@@ -10,7 +10,7 @@
 # states one. It shows the narrative text of its lead (what the lead's source wrote for it, such as a stop reason), and
 # each member's node its own: an entry whose lead states none shows none, and the member that does shows it there. A time its source wrote short of the second keeps the node saying so (cascade:PaddedDateTime), named after
 # the entry or the member's values and -padded-, so the view never shows a padded time as exact. Each member's node also
-# says the intent, the course of therapy and the end of the dispensing window its version states, and each structured
+# says the intent, the course of therapy and the start and end of the dispensing window its version states, and each structured
 # dosage of its version (cascade:structuredDosage) as a node of the view, named after the member's values and -dosage-
 # and the dosage's number, holding its repeat frequency, period and period unit, its bounds, each route code and each in
 # another system, and its dose quantity as a node of its own, named after the dosage and -dose-quantity, holding the
@@ -55,6 +55,7 @@ CONSTRUCT {
     cascade:reasonCodeInOtherSystem ?memberReasonCodeInOtherSystem ;
     cascade:medicationRequestIntent ?memberMedicationRequestIntent ;
     cascade:courseOfTherapyType ?memberCourseOfTherapyType ;
+    cascade:dispenseRequestValidityPeriodStart ?memberDispenseRequestValidityPeriodStart ;
     cascade:dispenseRequestValidityPeriodEnd ?memberDispenseRequestValidityPeriodEnd ;
     cascade:structuredDosage ?memberStructuredDosage .
   ?memberStructuredDosage cascade:dosageRepeatFrequency ?dosageFrequency ;
@@ -127,6 +128,7 @@ WHERE {
     OPTIONAL { ?memberVersion cascade:reasonCodeInOtherSystem ?memberReasonCodeInOtherSystem }
     OPTIONAL { ?memberVersion cascade:medicationRequestIntent ?memberMedicationRequestIntent }
     OPTIONAL { ?memberVersion cascade:courseOfTherapyType ?memberCourseOfTherapyType }
+    OPTIONAL { ?memberVersion cascade:dispenseRequestValidityPeriodStart ?memberDispenseRequestValidityPeriodStart }
     OPTIONAL { ?memberVersion cascade:dispenseRequestValidityPeriodEnd ?memberDispenseRequestValidityPeriodEnd }
     OPTIONAL { ?memberVersion cascade:structuredDosage ?dosageAt .
                OPTIONAL { ?dosageAt cascade:dosageRepeatFrequency ?dosageFrequency }

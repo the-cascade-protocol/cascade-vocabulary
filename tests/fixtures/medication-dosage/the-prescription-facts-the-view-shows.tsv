@@ -1,5 +1,0 @@
-?member	?field	?value
-<urn:x:prescribed>	<https://ns.cascadeprotocol.org/cascade#medicationRequestIntent>	"order"
-<urn:x:prescribed>	<https://ns.cascadeprotocol.org/cascade#courseOfTherapyType>	"continuous"
-<urn:x:prescribed>	<https://ns.cascadeprotocol.org/cascade#dispenseRequestValidityPeriodEnd>	"2026-08-01"^^<http://www.w3.org/2001/XMLSchema#date>
-<urn:x:amoxicillin>	<https://ns.cascadeprotocol.org/cascade#medicationRequestIntent>	"order"
