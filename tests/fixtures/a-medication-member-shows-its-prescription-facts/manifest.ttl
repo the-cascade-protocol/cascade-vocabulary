@@ -30,7 +30,7 @@
 
 <#what-it-shows> a mf:QueryEvaluationTest ;
   mf:name "what-it-shows" ;
-  rdfs:comment "A member's intent, course of therapy and the start and end of its dispensing window are shown as its values, each with the member that states it; its structured dosage is a node of its own, so no value of the entry, nor of the member." ;
+  rdfs:comment "A member's intent, course of therapy and the start and end of its dispensing window are shown as its values, each with the member that states it; its structured dosage and the padded time of its window's start are nodes of their own, each named by the link on the member's values, with no Part, and shown by its own values, each with the member and its Part, `structuredDosage 1` and `paddedDateTime dispenseRequestValidityPeriodStart`." ;
   mf:action [ qt:query <../../../queries/questions/entry/What%20it%20shows.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <what-it-shows.tsv> .

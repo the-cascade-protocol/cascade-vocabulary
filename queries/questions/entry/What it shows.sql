@@ -24,31 +24,62 @@ WITH
   leaders (entry, leader) AS MATERIALIZED (SELECT s, o FROM view_statements WHERE p = '<https://ns.cascadeprotocol.org/cascade#leadMember>'),
   currents (entry, node) AS MATERIALIZED (SELECT s, o FROM view_statements WHERE p = '<https://ns.cascadeprotocol.org/cascade#memberCurrentValues>'),
   owners (node, member) AS MATERIALIZED (SELECT s, o FROM view_statements WHERE p = '<https://ns.cascadeprotocol.org/cascade#valuesOfMember>'),
-  -- Every value a member's current values state, in the entry whose lead and node they are.
-  of_members (address, entry, field, value, from_member, lead) AS MATERIALIZED (
-    SELECT DISTINCT en.address, en.entry, f.p, f.o, ow.member, CASE WHEN ow.member = ld.leader THEN 1 ELSE 0 END
+  -- The links to the nodes a view builds under a member's values or under one of those nodes, each with the marker its
+  -- nodes' names hold between their holder's name and what tells the nodes of one holder apart, and none for a link of
+  -- which a holder has one node. A later kind of node is one more row here.
+  part_links (link, marker) AS (VALUES
+    ('<https://ns.cascadeprotocol.org/cascade#paddedDateTime>', '-padded-'),
+    ('<https://ns.cascadeprotocol.org/cascade#referenceRangeLow>', NULL),
+    ('<https://ns.cascadeprotocol.org/cascade#referenceRangeHigh>', NULL),
+    ('<https://ns.cascadeprotocol.org/cascade#structuredDosage>', '-dosage-'),
+    ('<https://ns.cascadeprotocol.org/cascade#dosageDoseQuantity>', NULL)),
+  -- Each node a holder links, and the link's local name with, where its link has a marker, a space and what the node's name
+  -- holds after the holder's and the marker.
+  steps (holder, node, step) AS MATERIALIZED (
+    SELECT f.s, f.o, substr(f.p, instr(f.p, '#') + 1, length(f.p) - instr(f.p, '#') - 1)
+      || CASE WHEN l.marker IS NULL THEN ''
+              ELSE ' ' || substr(f.o, length(f.s) + length(l.marker), length(f.o) - length(f.s) - length(l.marker)) END
+    FROM part_links l CROSS JOIN view_statements f ON f.p = l.link),
+  -- The nodes under a member's current values, and one under such a node, each with the way to it from the values.
+  first_parts (root, node, part) AS MATERIALIZED (
+    SELECT cu.node, st.node, st.step FROM currents cu CROSS JOIN steps st ON st.holder = cu.node),
+  parts (root, node, part) AS MATERIALIZED (
+    SELECT root, node, part FROM first_parts
+    UNION ALL
+    SELECT fp.root, st.node, fp.part || '/' || st.step FROM first_parts fp CROSS JOIN steps st ON st.holder = fp.node),
+  -- Every value a member's current values state, and every value a node under them states, in the entry whose lead and
+  -- node they are.
+  of_members (address, entry, field, value, from_member, lead, part) AS MATERIALIZED (
+    SELECT DISTINCT en.address, en.entry, f.p, f.o, ow.member, CASE WHEN ow.member = ld.leader THEN 1 ELSE 0 END, NULL
     FROM view_statements f CROSS JOIN owners ow ON ow.node = f.s
     CROSS JOIN currents cu ON cu.node = f.s
     CROSS JOIN leaders ld ON ld.entry = cu.entry
     CROSS JOIN entries en ON en.entry = cu.entry
-    WHERE f.p NOT IN ('<https://ns.cascadeprotocol.org/cascade#valuesOfMember>', '<https://ns.cascadeprotocol.org/cascade#paddedDateTime>', '<https://ns.cascadeprotocol.org/cascade#referenceRangeLow>', '<https://ns.cascadeprotocol.org/cascade#referenceRangeHigh>', '<https://ns.cascadeprotocol.org/cascade#structuredDosage>')),
-  -- Every value an entry states that none of its members' current values states too.
-  of_entries (address, entry, field, value, from_member, lead) AS (
-    SELECT DISTINCT en.address, en.entry, f.p, f.o, NULL, NULL
+    WHERE f.p != '<https://ns.cascadeprotocol.org/cascade#valuesOfMember>'
+    UNION
+    SELECT en.address, en.entry, f.p, f.o, ow.member, CASE WHEN ow.member = ld.leader THEN 1 ELSE 0 END, '"' || pt.part || '"'
+    FROM parts pt CROSS JOIN view_statements f ON f.s = pt.node
+    CROSS JOIN owners ow ON ow.node = pt.root
+    CROSS JOIN currents cu ON cu.node = pt.root
+    CROSS JOIN leaders ld ON ld.entry = cu.entry
+    CROSS JOIN entries en ON en.entry = cu.entry),
+  -- Every value an entry states that none of its members' current values states too, but for the nodes the view names after it.
+  of_entries (address, entry, field, value, from_member, lead, part) AS (
+    SELECT DISTINCT en.address, en.entry, f.p, f.o, NULL, NULL, NULL
     FROM view_statements f CROSS JOIN entries en ON en.entry = f.s
-    WHERE f.p NOT IN ('<https://ns.cascadeprotocol.org/cascade#memberCurrentValues>', '<https://ns.cascadeprotocol.org/cascade#paddedDateTime>', '<https://ns.cascadeprotocol.org/cascade#referenceRangeLow>', '<https://ns.cascadeprotocol.org/cascade#referenceRangeHigh>', '<https://ns.cascadeprotocol.org/cascade#structuredDosage>')
-      AND NOT EXISTS (SELECT 1 FROM of_members m WHERE m.entry = f.s AND m.field = f.p AND m.value = f.o)),
+    WHERE substr(f.o, 1, length(f.s)) != substr(f.s, 1, length(f.s) - 1) || '-'
+      AND NOT EXISTS (SELECT 1 FROM of_members m WHERE m.entry = f.s AND m.field = f.p AND m.value = f.o AND m.part IS NULL)),
   -- An entry is named under the address of the view that gives it members, wherever another view names it.
-  said (address, entry, field, value, from_member, lead) AS (
+  said (address, entry, field, value, from_member, lead, part) AS (
     SELECT DISTINCT s.address, '<' || s.address || '#' || substr(s.entry, 20), s.field,
       CASE WHEN substr(s.value, 1, 19) = '<urn:cascade:entry:'
            THEN '<' || coalesce((SELECT o.address FROM entries o WHERE o.entry = s.value), s.address) || '#' || substr(s.value, 20)
            ELSE s.value END,
-      s.from_member, s.lead
+      s.from_member, s.lead, s.part
     FROM (SELECT * FROM of_members UNION SELECT * FROM of_entries) s),
   entry_labels (entry, label) AS (SELECT entry, label FROM shown_in_entry),
-  labelled (address, entry, entry_label, field, value, value_label, from_member, from_label, lead) AS (
-    SELECT DISTINCT said.address, said.entry, el.label, said.field, said.value, vl.o, said.from_member, fl.o, said.lead
+  labelled (address, entry, entry_label, field, value, value_label, from_member, from_label, lead, part) AS (
+    SELECT DISTINCT said.address, said.entry, el.label, said.field, said.value, vl.o, said.from_member, fl.o, said.lead, said.part
     FROM said LEFT JOIN entry_labels el ON el.entry = said.entry
     LEFT JOIN term vt ON vt.nt = said.value
     LEFT JOIN quad vl ON vl.s = vt.id AND vl.p = (SELECT id FROM term WHERE nt = '<http://www.w3.org/2000/01/rdf-schema#label>')
@@ -58,7 +89,8 @@ SELECT labelled.entry AS entry, entry_label.nt AS entryLabel, '<' || labelled.ad
   labelled.field AS field, labelled.value AS value, value_label.nt AS valueLabel, labelled.from_member AS "from",
   from_label.nt AS fromLabel,
   CASE labelled.lead WHEN 1 THEN '"true"^^<http://www.w3.org/2001/XMLSchema#boolean>'
-    WHEN 0 THEN '"false"^^<http://www.w3.org/2001/XMLSchema#boolean>' END AS lead
+    WHEN 0 THEN '"false"^^<http://www.w3.org/2001/XMLSchema#boolean>' END AS lead,
+  labelled.part AS part
 FROM labelled LEFT JOIN term entry_label ON entry_label.id = labelled.entry_label
 LEFT JOIN term value_label ON value_label.id = labelled.value_label
 LEFT JOIN term from_label ON from_label.id = labelled.from_label
@@ -66,6 +98,7 @@ ORDER BY entry_label.kind, entry_label.lex, substr(labelled.entry, 2, length(lab
   substr(labelled.field, 2, length(labelled.field) - 2), labelled.lead DESC,
   CASE WHEN substr(labelled.value, 1, 1) = '<' THEN substr(labelled.value, 2, length(labelled.value) - 2)
        ELSE (SELECT lex FROM term WHERE nt = labelled.value) END,
-  substr(labelled.from_member, 2, length(labelled.from_member) - 2)
+  substr(labelled.from_member, 2, length(labelled.from_member) - 2),
+  substr(labelled.part, 2, length(labelled.part) - 2)
 -- part: cleanup
 DROP TABLE IF EXISTS temp.view_statements;

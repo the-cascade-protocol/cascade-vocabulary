@@ -1,0 +1,43 @@
+@prefix : <urn:x:> .
+@prefix cascade: <https://ns.cascadeprotocol.org/cascade#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:subject a cascade:Subject .
+
+:listed a cascade:PrescribedOrReportedMedication .
+:listedVersion prov:specializationOf :listed ; cascade:patient :subject ; cascade:drugName "Lisinopril 10 mg tablet" ;
+    cascade:prescribedOrReported "reportedUse" ; cascade:workflowStatus "active" ;
+    cascade:dosageInstructionText "Take 1 tablet daily" ;
+    cascade:structuredDosage <urn:x:listedVersion#dosage-1> .
+<urn:x:listedVersion#dosage-1> cascade:dosageRepeatFrequency 1 ; cascade:dosageRepeatPeriod "1"^^xsd:decimal ; cascade:dosageRepeatPeriodUnit "d" ;
+    cascade:dosageRouteCode <http://snomed.info/id/26643006> ;
+    cascade:dosageDoseQuantity <urn:x:listedVersion#dosage-1-dose-quantity> .
+<urn:x:listedVersion#dosage-1-dose-quantity> cascade:decimalValue "2"^^xsd:decimal ; cascade:writtenValue "2" ; cascade:quantityComparator "<=" ;
+    cascade:unitText "tablet" .
+:listedRevision a cascade:Revision ; cascade:revisionOf :listed ; cascade:version :listedVersion ;
+    prov:generatedAtTime "2026-01-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:00Z"^^xsd:dateTime .
+
+:prescribed a cascade:PrescribedOrReportedMedication .
+:prescribedVersion prov:specializationOf :prescribed ; cascade:patient :subject ; cascade:drugName "lisinopril 10 MG Oral Tablet" ;
+    cascade:prescribedOrReported "prescribed" ; cascade:workflowStatus "active" ;
+    cascade:dosageInstructionText "1 tablet by mouth every morning" ;
+    cascade:dispenseRequestValidityPeriodStart "2026-02-01T09:30:00Z"^^xsd:dateTime ;
+    cascade:paddedDateTime <urn:x:prescribedVersion#padded-dispenseRequestValidityPeriodStart> ;
+    cascade:structuredDosage <urn:x:prescribedVersion#dosage-1> , <urn:x:prescribedVersion#dosage-2> .
+<urn:x:prescribedVersion#padded-dispenseRequestValidityPeriodStart> cascade:paddedDateTimeProperty cascade:dispenseRequestValidityPeriodStart ;
+    cascade:timeAsWritten "2026-02-01T09:30Z" .
+<urn:x:prescribedVersion#dosage-1> cascade:dosageRepeatFrequency 1 ; cascade:dosageRepeatPeriod "1"^^xsd:decimal ; cascade:dosageRepeatPeriodUnit "d" ;
+    cascade:dosageRouteCode <http://snomed.info/id/26643006> ;
+    cascade:dosageRouteCodeInOtherSystem "C38288"^^<http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl> ;
+    cascade:dosageDoseQuantity <urn:x:prescribedVersion#dosage-1-dose-quantity> .
+<urn:x:prescribedVersion#dosage-1-dose-quantity> cascade:decimalValue "10"^^xsd:decimal ; cascade:writtenValue "10.0" ;
+    cascade:ucumUnit "mg" ; cascade:unitText "milligram" .
+<urn:x:prescribedVersion#dosage-2> cascade:dosageRepeatFrequency 2 ; cascade:dosageRepeatPeriod "1"^^xsd:decimal ; cascade:dosageRepeatPeriodUnit "d" ;
+    cascade:dosageBoundsPeriodStart "2026-02-01"^^xsd:date ;
+    cascade:dosageBoundsPeriodEnd "2026-03-01T10:00:00Z"^^xsd:dateTime ;
+    cascade:paddedDateTime <urn:x:prescribedVersion#dosage-2-padded-dosageBoundsPeriodEnd> .
+<urn:x:prescribedVersion#dosage-2-padded-dosageBoundsPeriodEnd> cascade:paddedDateTimeProperty cascade:dosageBoundsPeriodEnd ;
+    cascade:timeAsWritten "2026-03-01T10:00Z" .
+:prescribedRevision a cascade:Revision ; cascade:revisionOf :prescribed ; cascade:version :prescribedVersion ;
+    prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
