@@ -1,0 +1,18 @@
+@prefix ctm: <https://ns.cascadeprotocol.org/test-manifest#> .
+@prefix mf: <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
+@prefix qt: <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<> a mf:Manifest ;
+  rdfs:label "a-medicine-with-two-dosages-shows-each-dose-on-its-own-dosage" ;
+  rdfs:comment "A lisinopril entry joining a list entry, whose one dosage has a dose of up to two tablets, and a prescription whose first dosage has a dose and a route in two systems, whose second is bounded with its end written short of the second, and whose dispensing window's start is written short of the second too." ;
+  mf:entries (
+    <#what-it-shows>
+  ) .
+
+<#what-it-shows> a mf:QueryEvaluationTest ;
+  mf:name "what-it-shows" ;
+  rdfs:comment "Each member's dosages are shown by the link that names each, and by each one's own values with the member that states them and a Part naming the dosage by its number: the two dosages of the prescription and the one of the list entry are told apart, each dosage's dose is the Part of the dosage and its dose quantity, the padded end of the second dosage is the Part of the dosage and its padded time, and the padded start of the window is a Part of the member's values with no dosage in it." ;
+  mf:action [ qt:query <../../../queries/questions/entry/What%20it%20shows.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <what-it-shows.tsv> .
