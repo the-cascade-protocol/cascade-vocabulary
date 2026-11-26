@@ -930,6 +930,23 @@ class TestSqlBesideEachQuery:
                              if not re.search(rf"DELETE FROM {table}\b", emptied)]
             assert kept == []
 
+        def test_drops_each_temporary_table_a_questions_prepare_part_makes_in_its_cleanup_part(self):
+            """drops, in a question's cleanup part, each temporary table its prepare part makes, so no question reads one another left
+
+            A question asked after another on one connection that reads a table of the same name reads the rows the
+            first left, and only a fixture whose rows the leftover changes shows it: each table a question's prepare part
+            creates has a `DROP TABLE` of it in its cleanup part, whichever fixtures the question is compared on.
+            """
+            kept = []
+            for relative in ported():
+                made = sql.parts(sql_text(relative))
+                if "prepare" in made:
+                    kept += [f"{relative}: {table}" for table in re.findall(
+                        r"CREATE\s+TEMP(?:ORARY)?\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:temp\.)?(\w+)", made["prepare"], re.I)
+                             if not re.search(rf"DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:temp\.)?{table}\b",
+                                              made.get("cleanup", ""), re.I)]
+            assert kept == []
+
         def test_pins_each_ported_rq_by_the_hash_its_sql_was_checked_against(self):
             """pins each ported `.rq` by the hash of the bytes its `.sql` was last checked against
 
