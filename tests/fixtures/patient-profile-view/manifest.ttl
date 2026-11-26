@@ -6,7 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "patient-profile-view" ;
   rdfs:comment "Two patient profiles counting About judgments tie to the subject, each arriving by an import of its own, the north one holding no date of birth, for two reasons." ;
-  ctm:comparesSqlBeside <../../../queries/views/patient-profile.rq> ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/patient-profile.rq> ;
   mf:entries (
     <#one-entry-for-the-person>
     <#whose-it-is-counted-as-with-no-record>

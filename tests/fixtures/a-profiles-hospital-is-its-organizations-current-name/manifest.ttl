@@ -6,7 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "a-profiles-hospital-is-its-organizations-current-name" ;
   rdfs:comment "Two allergies from a document that names Fernhill's organization record as its author, whose current version renames it Fernhill Family Clinic; one names a profile no one has judged, the other a profile a parent's About claims." ;
-  ctm:comparesSqlBeside <../../../queries/> ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/> ;
   mf:entries (
     <#what-needs-review>
     <#whose-it-is-counted-as>

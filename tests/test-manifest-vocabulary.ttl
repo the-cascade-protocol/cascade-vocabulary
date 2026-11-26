@@ -8,9 +8,9 @@ ctm:lensQueryPath a owl:ObjectProperty ;
     rdfs:label "lens query path"@en ;
     rdfs:comment "The query file of the lens a query test builds its pod under."@en .
 
-ctm:comparesSqlBeside a owl:ObjectProperty ;
-    rdfs:label "compares SQL beside"@en ;
-    rdfs:comment "A query file, or a folder of them named with a closing slash, whose `.sql` beside each query is compared with the query over the manifest's fixture under each lens; a query an entry of the manifest runs is compared under that entry's lens without it."@en .
+ctm:comparesSqlWithSparqlUnderEveryLens a owl:ObjectProperty ;
+    rdfs:label "compares SQL with SPARQL under every lens"@en ;
+    rdfs:comment "A query (a `.rq` file), or a folder of queries named with a closing slash, meaning every query in it, those added later included, whose `.sql` beside it is compared with the `.rq` over the manifest's fixture under each lens; a query an entry of the manifest runs is compared under that entry's lens without it. A fixture that names the folder `queries/views/` itself, not a view in it or a folder above it, also has the screen each view's `.sql` makes filled keyed to each kind of change and compared with a whole fill."@en .
 
 ctm:boundRecord a owl:ObjectProperty ;
     rdfs:label "bound record"@en ;

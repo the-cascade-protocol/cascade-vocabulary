@@ -6,7 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "a-vaccination-given-for-a-code" ;
   rdfs:comment "A completed vaccination whose version gives its reason as a SNOMED CT code and as a code in a system the vocabulary lists none of." ;
-  ctm:comparesSqlBeside <../../../queries/views/> ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/> ;
   mf:entries (
     <#the-codes-the-view-shows>
   ) .

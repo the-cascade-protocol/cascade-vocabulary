@@ -61,11 +61,11 @@ def entries(manifest):
 @cache
 def compared_beside(manifest):
     """Each query file, and each folder of queries as a path ending in a slash, that the manifest names by
-    ctm:comparesSqlBeside, relative to the repository's root."""
+    ctm:comparesSqlWithSparqlUnderEveryLens, relative to the repository's root."""
     graph = Graph().parse(Path(manifest), format="turtle")
     [head] = graph.subjects(RDF.type, MF.Manifest)
     return tuple(sorted(path(named).resolve().relative_to(ROOT.resolve()).as_posix() + "/" * str(named).endswith("/")
-                        for named in graph.objects(head, CTM.comparesSqlBeside)))
+                        for named in graph.objects(head, CTM.comparesSqlWithSparqlUnderEveryLens)))
 
 
 def lens_name(file):

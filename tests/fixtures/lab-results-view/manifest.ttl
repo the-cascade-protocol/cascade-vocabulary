@@ -6,7 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "lab-results-view" ;
   rdfs:comment "A potassium entry of two members, the earlier written 4.10, the later stating another name, a unit text beside its UCUM unit, and no status and, for its time, a reason it holds none; a glucose at a time, its value and unit as text; a hemoglobin A1c on that day, as a day, below 5.7; a titre 1:64; a urine count of 0 to 5; and an MCV of 101 fL flagged both H and A, its reference range 80-100 fL as text and as two bounds, the high one with a unit text." ;
-  ctm:comparesSqlBeside <../../../queries/views/lab-results.rq> ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/lab-results.rq> ;
   mf:entries (
     <#the-lab-results-view>
     <#the-reference-range-bounds>

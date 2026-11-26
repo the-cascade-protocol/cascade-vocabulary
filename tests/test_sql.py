@@ -736,7 +736,7 @@ def lenses_of_entries(fixture):
 
 def lenses_compared(fixture, relative):
     """The lenses under which the `.sql` beside the `.rq` is compared with it over the fixture: each lens where the
-    manifest names the `.rq`, or a folder holding it, by ctm:comparesSqlBeside; else the lenses its entries run the `.rq`
+    manifest names the `.rq`, or a folder holding it, by ctm:comparesSqlWithSparqlUnderEveryLens; else the lenses its entries run the `.rq`
     under, and none where no entry runs it."""
     if any(relative == named or named.endswith("/") and relative.startswith(named)
            for named in compared_beside(fixture.manifest)):
@@ -789,7 +789,7 @@ class TestSqlBesideEachQuery:
     A runtime answers a query from SQLite through the `.sql` beside its `.rq`, over the tables queries/statements.sql
     makes, calling the six functions whose vectors are in queries/sql-functions.json. The `.rq` stays the definition: each
     `.sql` is held to its rows on the fixtures whose manifests' entries run its query, under the lenses they run it under,
-    and on those whose manifests name its query or a folder of it by `ctm:comparesSqlBeside`, under each lens, and to the
+    and on those whose manifests name its query or a folder of it by `ctm:comparesSqlWithSparqlUnderEveryLens`, under each lens, and to the
     rows the manifests pin for it; no query is run over every fixture, and each gives rows on one it is compared on. The
     runtime's conformance command makes the same comparisons, read from the same manifests. A view's `.sql` makes and fills its screen, the tables a list
     question reads a page of, and is held to its CONSTRUCT's triples; a list question is held to its whole list a page at a
@@ -851,7 +851,7 @@ class TestSqlBesideEachQuery:
         def test_fills_each_screen_keyed_to_what_changed_as_a_whole_fill_does_on_the_fixtures_chosen_for_the_screens(self, fixture):
             """fills each screen, keyed to what a change touched, as a whole fill of the changed pod does, under each lens
 
-            Over each fixture whose manifest names queries/views/ by `ctm:comparesSqlBeside`, its screens, filled whole, each change a keyed run may be given is made to the pod's
+            Over each fixture whose manifest names queries/views/ by `ctm:comparesSqlWithSparqlUnderEveryLens`, its screens, filled whole, each change a keyed run may be given is made to the pod's
             statements and the screens filled again with scope holding what it touched: one record of each entry, a
             member but the lead where there is one, unchanged; each record but the lead of an entry of two or more,
             moved to an entry of its own; each agent, renamed; each record whose current version gives a reason
@@ -915,8 +915,8 @@ class TestSqlBesideEachQuery:
             none = uncovered(compared, gives_rows)
             assert none == [], f"each gives no row on any fixture it is compared on, or is compared on none: {none}"
 
-        def test_names_by_compares_sql_beside_only_a_query_with_a_sql_or_a_folder_holding_one(self):
-            """names by `ctm:comparesSqlBeside` only a `.rq` with a `.sql` beside it, or a folder, ending in a slash, holding one
+        def test_names_by_compares_sql_with_sparql_under_every_lens_only_a_query_with_a_sql_or_a_folder_holding_one(self):
+            """names by `ctm:comparesSqlWithSparqlUnderEveryLens` only a `.rq` with a `.sql` beside it, or a folder, ending in a slash, holding one
 
             A manifest naming a file or folder that is neither would choose nothing for any fixture, silently.
             """
@@ -1324,7 +1324,7 @@ class TestTheSqlCheck:
     ZERO_SUPPLY = next(fixture for fixture in FIXTURES if fixture.name == "exposure-from-a-supply-of-zero")
 
     def test_compares_a_sql_on_a_fixture_only_where_its_manifest_names_its_query_a_folder_of_it_or_an_entry_running_it(self, tmp_path):
-        """compares a `.sql` over a fixture under each lens where the manifest names its query, or a folder holding it, by `ctm:comparesSqlBeside`; under an entry's lens where an entry runs it; and nowhere else
+        """compares a `.sql` over a fixture under each lens where the manifest names its query, or a folder holding it, by `ctm:comparesSqlWithSparqlUnderEveryLens`; under an entry's lens where an entry runs it; and nowhere else
 
         Three manifests: the first names `How many judgments count.rq`, the second the folder queries/views/, the third
         runs `How many judgments count.rq` in an entry under everyday. The `.sql` beside it is compared under each lens
@@ -1343,8 +1343,8 @@ class TestTheSqlCheck:
 
         judgments = (ROOT / self.JUDGMENTS).as_uri()
         everyday = (QUERIES / "lenses/everyday.rq").as_uri()
-        named = manifest("names-the-query", f"; ctm:comparesSqlBeside <{judgments}> ; mf:entries ()")
-        folder = manifest("names-the-views", f"; ctm:comparesSqlBeside <{(ROOT / 'queries/views').as_uri()}/> ; mf:entries ()")
+        named = manifest("names-the-query", f"; ctm:comparesSqlWithSparqlUnderEveryLens <{judgments}> ; mf:entries ()")
+        folder = manifest("names-the-views", f"; ctm:comparesSqlWithSparqlUnderEveryLens <{(ROOT / 'queries/views').as_uri()}/> ; mf:entries ()")
         entry = manifest("runs-it-in-an-entry", f"; mf:entries ( <#count> ) . <#count> mf:name \"count\" ; mf:action "
                                                 f"[ qt:query <{judgments}> ; ctm:lensQueryPath <{everyday}> ]")
         relatives = [self.JUDGMENTS, "queries/views/conditions.rq", "queries/labels.rq"]

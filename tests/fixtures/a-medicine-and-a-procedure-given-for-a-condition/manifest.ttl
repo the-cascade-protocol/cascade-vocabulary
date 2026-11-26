@@ -6,7 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "a-medicine-and-a-procedure-given-for-a-condition" ;
   rdfs:comment "An active asthma; an active medicine and a completed procedure, each of whose versions names the asthma's record as its reason; and an active eczema no record names." ;
-  ctm:comparesSqlBeside <../../../queries/views/> ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/> ;
   mf:entries (
     <#my-active-conditions>
     <#my-condition-history>

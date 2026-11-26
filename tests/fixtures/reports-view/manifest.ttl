@@ -6,7 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "reports-view" ;
   rdfs:comment "A blood count report naming two lab result records and a third the pod does not hold, with its category, conclusion, text and lab; and a vitamin B12 report sent only as a PDF, coded in LOINC and in a lab's own system, its time written short of the second and, for the time it was issued, the two reasons it holds none." ;
-  ctm:comparesSqlBeside <../../../queries/views/> ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/> ;
   mf:entries (
     <#the-reports-view>
     <#the-padded-time>

@@ -6,7 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "a-reason-whose-text-holds-the-other-forms-separators" ;
   rdfs:comment "An active medicine whose version names a condition called \"Asthma, severe in kids for you\" and gives a code \"A in B, C\" in the system urn:oid:1.2.3." ;
-  ctm:comparesSqlBeside <../../../queries/views/> ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/> ;
   mf:entries (
     <#my-active-medications>
   ) .

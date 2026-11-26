@@ -6,7 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "allergies-view" ;
   rdfs:comment "An active allergy entry of two members, the later one entered by the person, stating urticaria and itching, moderate, and no status, and an onset written to the hour, the other anaphylaxis, severe, and an earlier onset; and an inactive allergy, its onset written to the hour; and a dust mite allergy the person entered, stating no status and, for its onset, a reason it holds none." ;
-  ctm:comparesSqlBeside <../../../queries/views/allergies.rq> ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/allergies.rq> ;
   mf:entries (
     <#what-it-shows>
     <#where-it-came-from>

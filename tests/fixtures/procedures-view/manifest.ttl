@@ -6,7 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "procedures-view" ;
   rdfs:comment "A procedure entry of two members, the later naming it, stating no status, its SNOMED CT code and, for its date, a reason it holds none; and one not done." ;
-  ctm:comparesSqlBeside <../../../queries/views/> ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/> ;
   mf:entries (
     <#the-procedures-view>
     <#my-procedures>

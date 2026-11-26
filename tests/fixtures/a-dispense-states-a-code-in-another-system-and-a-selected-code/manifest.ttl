@@ -6,7 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "a-dispense-states-a-code-in-another-system-and-a-selected-code" ;
   rdfs:comment "A completed dispense that states a code in a system the vocabulary lists none of, an RxNorm code and the NDC its source chose." ;
-  ctm:comparesSqlBeside <../../../queries/views/> ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/> ;
   mf:entries (
     <#the-medication-dispenses-view>
   ) .

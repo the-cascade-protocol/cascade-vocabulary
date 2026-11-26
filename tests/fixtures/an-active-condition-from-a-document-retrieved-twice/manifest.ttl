@@ -6,7 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "an-active-condition-from-a-document-retrieved-twice" ;
   rdfs:comment "An active asthma from a summary that states two retrieval times, 1 January and 1 February 2026." ;
-  ctm:comparesSqlBeside <../../../queries/views/> ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/> ;
   mf:entries (
     <#my-active-conditions>
   ) .
