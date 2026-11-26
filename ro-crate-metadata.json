@@ -1673,10 +1673,9 @@
         { "@id": "conformance/tamsin-vale/scripted-input/people.ttl" },
         { "@id": "conformance/tamsin-vale/scripted-input/tamsin/judgments/J1.ttl" },
         { "@id": "conformance/tamsin-vale/scripted-input/tamsin/downloads/north-2024-02/" },
-        { "@id": "conformance/tamsin-vale/scripted-input/tamsin/downloads/north-2025-02/" },
-        { "@id": "conformance/tamsin-vale/scripted-input/tamsin/bridge/" }
+        { "@id": "conformance/tamsin-vale/scripted-input/tamsin/downloads/north-2025-02/" }
       ],
-      "mentions": [{ "@id": "#tamsin-vale-pulls" }, { "@id": "#tamsin-vale-conversions" }]
+      "mentions": [{ "@id": "#tamsin-vale-pulls" }]
     },
     {
       "@id": "conformance/tamsin-vale/scripted-input/tamsin/downloads/north-2024-02/",
@@ -1694,17 +1693,6 @@
       "hasPart": [
         { "@id": "conformance/tamsin-vale/scripted-input/tamsin/downloads/north-2025-02/bundle.json" },
         { "@id": "conformance/tamsin-vale/scripted-input/tamsin/downloads/north-2025-02/pull.json" }
-      ]
-    },
-    {
-      "@id": "conformance/tamsin-vale/scripted-input/tamsin/bridge/",
-      "@type": "Dataset",
-      "name": "The Bridge's saved output, for each import step",
-      "hasPart": [
-        { "@id": "conformance/tamsin-vale/scripted-input/tamsin/bridge/E2/bundle/findings.ttl" },
-        { "@id": "conformance/tamsin-vale/scripted-input/tamsin/bridge/E2/bundle/graph.ttl" },
-        { "@id": "conformance/tamsin-vale/scripted-input/tamsin/bridge/E3/bundle/findings.ttl" },
-        { "@id": "conformance/tamsin-vale/scripted-input/tamsin/bridge/E3/bundle/graph.ttl" }
       ]
     },
     {
@@ -1970,10 +1958,6 @@
     { "@id": "conformance/tamsin-vale/scripted-input/tamsin/downloads/north-2024-02/pull.json", "@type": "File", "encodingFormat": "application/json" },
     { "@id": "conformance/tamsin-vale/scripted-input/tamsin/downloads/north-2025-02/bundle.json", "@type": "File", "encodingFormat": "application/json" },
     { "@id": "conformance/tamsin-vale/scripted-input/tamsin/downloads/north-2025-02/pull.json", "@type": "File", "encodingFormat": "application/json" },
-    { "@id": "conformance/tamsin-vale/scripted-input/tamsin/bridge/E2/bundle/findings.ttl", "@type": "File", "encodingFormat": "text/turtle" },
-    { "@id": "conformance/tamsin-vale/scripted-input/tamsin/bridge/E2/bundle/graph.ttl", "@type": "File", "encodingFormat": "text/turtle" },
-    { "@id": "conformance/tamsin-vale/scripted-input/tamsin/bridge/E3/bundle/findings.ttl", "@type": "File", "encodingFormat": "text/turtle" },
-    { "@id": "conformance/tamsin-vale/scripted-input/tamsin/bridge/E3/bundle/graph.ttl", "@type": "File", "encodingFormat": "text/turtle" },
     { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-fhir-r4/blob/198410eb992d2380e0111c8c8da3ea0c03cafb92/fixtures/in/martin-okafor-harbourline-panel-2022-with-lab.json", "@type": "CreativeWork", "name": "cascade-bridge-adapter-fhir-r4 fixtures/in/martin-okafor-harbourline-panel-2022-with-lab.json" },
     { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-fhir-r4/blob/198410eb992d2380e0111c8c8da3ea0c03cafb92/fixtures/in/martin-okafor-st-columba-exome-2024-with-lab.json", "@type": "CreativeWork", "name": "cascade-bridge-adapter-fhir-r4 fixtures/in/martin-okafor-st-columba-exome-2024-with-lab.json" },
     { "@id": "https://github.com/the-cascade-protocol/cascade-reference-tables/releases/download/ncbi-clinvar-11ef85d76afa/26be80bd6720d2be1110ec4aad4b22bfe87013670794142f72ccf0b3eaf8dfc8.nq.gz", "@type": "CreativeWork", "name": "cascade-reference-tables release ncbi-clinvar-11ef85d76afa, the 2026-10 rows of the ClinVar series" },
@@ -1993,8 +1977,6 @@
     { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-fhir-r4/tree/b6f9657a6797913befe238fca4bdea8723dd4868", "@type": "SoftwareSourceCode", "name": "cascade-bridge-adapter-fhir-r4", "codeRepository": { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-fhir-r4" }, "version": "b6f9657a6797913befe238fca4bdea8723dd4868", "description": "The adapter of each Bundle, in its #envelope-bundle envelope, at the commit that gave the St Columba input's two conditions a clinicalStatus of active.", "conformsTo": { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-spec/tree/510ba7d73bf8c6b406a82f2d357260eac45bd699" } },
     { "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js/tree/a218adc63d8d376ccb3acb826e203b5ebc520308", "@type": "SoftwareSourceCode", "name": "cascade-runtime-js", "codeRepository": { "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js" }, "version": "a218adc63d8d376ccb3acb826e203b5ebc520308", "description": "Its pull importer, which handed each Bundle on with its facts at its step's time." },
     { "@id": "#tamsin-vale-pulls", "@type": "CreateAction", "name": "The two pulls, as the runtime's generator made them from the demo hospital's versions", "instrument": [{ "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js/tree/a8e89e31e2bd7aaf1d03ef8d5328b2cae0157b01" }], "result": [{ "@id": "conformance/tamsin-vale/scripted-input/tamsin/downloads/north-2024-02/" }, { "@id": "conformance/tamsin-vale/scripted-input/tamsin/downloads/north-2025-02/" }] },
-    { "@id": "#tamsin-vale-conversions", "@type": "CreateAction", "name": "The Bridge's conversions of the two saved pulls, as the runtime's pull importer hands them on", "instrument": [{ "@id": "https://github.com/the-cascade-protocol/cascade-bridge-rs/tree/1751e00fe4ec6d3d0374e002d10de1ac22344ffb" }, { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-fhir-r4/tree/010637edb9bc707574b879bbd0a809e6fccf3d0c" }, { "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js/tree/3311b93a20a085fccc1bd3eab17bd9fea66c5a7b" }], "result": { "@id": "conformance/tamsin-vale/scripted-input/tamsin/bridge/" } },
-    { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-fhir-r4/tree/010637edb9bc707574b879bbd0a809e6fccf3d0c", "@type": "SoftwareSourceCode", "name": "cascade-bridge-adapter-fhir-r4", "codeRepository": { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-fhir-r4" }, "version": "010637edb9bc707574b879bbd0a809e6fccf3d0c", "description": "The adapter of each Bundle, in its #envelope-bundle envelope.", "conformsTo": { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-spec/tree/510ba7d73bf8c6b406a82f2d357260eac45bd699" } },
     { "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js/tree/a8e89e31e2bd7aaf1d03ef8d5328b2cae0157b01", "@type": "SoftwareSourceCode", "name": "cascade-runtime-js", "codeRepository": { "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js" }, "version": "a8e89e31e2bd7aaf1d03ef8d5328b2cae0157b01", "description": "Its story:pulls generator, which signed in to the demo hospital and pulled Tamsin's record as it stood at each pull's date, saving that date as the pull's asOf." },
     { "@id": "runtime/scripted-input/gus/entries/lab-quantities.ttl", "@type": "File", "encodingFormat": "text/turtle" },
     { "@id": "runtime/scripted-input/gus/tables/app-results/references.ttl", "@type": "File", "encodingFormat": "text/turtle" },
@@ -2009,7 +1991,6 @@
     { "@id": "runtime/scripted-input/gus/downloads/hospital-summary.xml", "@type": "File", "encodingFormat": "application/xml" },
     { "@id": "runtime/scripted-input/gus/judgments/about-the-summaries.ttl", "@type": "File", "encodingFormat": "text/turtle" },
     { "@id": "runtime/scripted-input/gus/tables/app-identifiers/references.ttl", "@type": "File", "encodingFormat": "text/turtle" },
-    { "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js/tree/3311b93a20a085fccc1bd3eab17bd9fea66c5a7b", "@type": "SoftwareSourceCode", "name": "cascade-runtime-js", "codeRepository": { "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js" }, "version": "3311b93a20a085fccc1bd3eab17bd9fea66c5a7b", "description": "Its pull importer, which handed each Bundle on with its facts at its step's time, the pull's asOf as the document's cascade:answeredAsOf." },
     { "@id": "queries/matcher/same-code-and-period-read-as-ranges.rq", "@type": "File", "encodingFormat": "application/sparql-query" },
     { "@id": "runtime/scripted-input/hana/entries/partial-dates.ttl", "@type": "File", "encodingFormat": "text/turtle" },
     { "@id": "runtime/scripted-input/hana/tables/app-partial-dates/references.ttl", "@type": "File", "encodingFormat": "text/turtle" },

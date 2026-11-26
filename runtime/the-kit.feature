@@ -15,9 +15,9 @@ Feature: The conformance kit
     under it reads the pod at the smallest set of steps and lenses at which it can fail for its own reason. A runtime
     runs them on its one SPARQL engine; whether two engines agree is the vocabulary's own check, made over the fixtures
     of its queries.
-  - scripted-input/alex/ holds what the steps name. Each import step's Bridge output is in a folder named as the step,
-    because a conversion carries its import's start. The facts the importer gives the Bridge are not input: the
-    importer writes them from export.xml.
+  - scripted-input/alex/ holds what the steps name. A kit either saves the Bridge output of every import step, in a
+    folder named as the step, because a conversion carries its import's start, or saves none and its downloads are
+    converted. The facts the importer gives the Bridge are not input: the importer writes them from export.xml.
   - expected/ holds each view a correct runtime builds at the last step under the everyday lens, each entry a blank
     node, and handles.json, the scenario's name inputs for each record and profile it gives a handle.
 
@@ -48,8 +48,9 @@ Feature: The conformance kit
 
   Rule: Check 4. Every name follows its rule
     N1 to N7, N9, N10, N14 and N15, computed from that run's own inputs, its random import and matcher run IDs among them.
-    Each saved Bridge output is in the pod less its arrivals, with its import replaced by the import its step wrote and
-    the runtime that performed it left out (A9, A11), and each revision follows an earlier revision of the same record.
+    Each conversion of an import step's download, saved or the runtime's own, is in the pod less its arrivals, with its
+    import replaced by the import its step wrote and the runtime that performed it left out (A9, A11), and each revision
+    follows an earlier revision of the same record.
     Each act leaves one snapshot, named by its rule, whose first parent is the snapshot before it and whose added files
     are the files of the set its act wrote; its set hash is the set's after its step, and the last snapshot's is the set
     hash of the files the final pod lists of that set: a pod with one file of the set removed or changed fails it.
