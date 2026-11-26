@@ -1107,14 +1107,15 @@ cascade:MedicationDispenseShape a sh:NodeShape ;
         sh:path cascade:dispenseQuantity ;
         sh:nodeKind sh:IRI ;
         sh:maxCount 1 ;
-        sh:message "A medication dispense states at most one quantity dispensed, a quantity node of its version"@en ;
+        sh:node cascade:SimpleQuantityShape ;
+        sh:message "A medication dispense states at most one quantity dispensed, a quantity node of its version with no comparator"@en ;
         sh:severity sh:Violation
     ] , [
         sh:path cascade:dispenseDaysSupply ;
         sh:nodeKind sh:IRI ;
         sh:maxCount 1 ;
-        sh:node cascade:DurationQuantityShape ;
-        sh:message "A medication dispense states at most one days' supply, a quantity node of its version in a UCUM unit of time"@en ;
+        sh:node cascade:DurationQuantityShape , cascade:SimpleQuantityShape ;
+        sh:message "A medication dispense states at most one days' supply, a quantity node of its version in a UCUM unit of time with no comparator"@en ;
         sh:severity sh:Violation
     ] .
 
@@ -1435,14 +1436,14 @@ cascade:LaboratoryTestResultValueShape a sh:NodeShape ;
         sh:path cascade:resultValueRangeLow ;
         sh:nodeKind sh:IRI ;
         sh:maxCount 1 ;
-        sh:node cascade:BoundQuantityShape ;
+        sh:node cascade:SimpleQuantityShape ;
         sh:message "A range has at most one low bound, a quantity node of its version with no comparator."@en ;
         sh:severity sh:Violation
     ] , [
         sh:path cascade:resultValueRangeHigh ;
         sh:nodeKind sh:IRI ;
         sh:maxCount 1 ;
-        sh:node cascade:BoundQuantityShape ;
+        sh:node cascade:SimpleQuantityShape ;
         sh:message "A range has at most one high bound, a quantity node of its version with no comparator."@en ;
         sh:severity sh:Violation
     ] , [
@@ -1454,14 +1455,14 @@ cascade:LaboratoryTestResultValueShape a sh:NodeShape ;
         sh:path cascade:referenceRangeLow ;
         sh:nodeKind sh:IRI ;
         sh:maxCount 1 ;
-        sh:node cascade:BoundQuantityShape ;
+        sh:node cascade:SimpleQuantityShape ;
         sh:message "A reference range has at most one low bound, a quantity node of its version with no comparator: its bounds are inside it (FHIR SimpleQuantity, sqty-1)."@en ;
         sh:severity sh:Violation
     ] , [
         sh:path cascade:referenceRangeHigh ;
         sh:nodeKind sh:IRI ;
         sh:maxCount 1 ;
-        sh:node cascade:BoundQuantityShape ;
+        sh:node cascade:SimpleQuantityShape ;
         sh:message "A reference range has at most one high bound, a quantity node of its version with no comparator: its bounds are inside it (FHIR SimpleQuantity, sqty-1)."@en ;
         sh:severity sh:Violation
     ] , [
@@ -1563,11 +1564,11 @@ cascade:DurationQuantityShape a sh:NodeShape ;
         sh:severity sh:Violation
     ] .
 
-cascade:BoundQuantityShape a sh:NodeShape ;
+cascade:SimpleQuantityShape a sh:NodeShape ;
     sh:property [
         sh:path cascade:quantityComparator ;
         sh:maxCount 0 ;
-        sh:message "A bound carries no comparator: a range's bounds are inside it (FHIR SimpleQuantity, sqty-1)."@en ;
+        sh:message "A simple quantity carries no comparator: a range's bounds are inside it, and a dispensed amount is exact (FHIR SimpleQuantity, sqty-1)."@en ;
         sh:severity sh:Violation
     ] .
 
@@ -1624,7 +1625,7 @@ cascade:ValueAbsentForReasonShape a sh:NodeShape ;
         sh:maxCount 1 ;
         sh:in ( cascade:dateOfBirth cascade:dateOfDeath cascade:onsetDate cascade:abatementDate cascade:vaccinationOccurrenceTime cascade:resultClinicallyRelevantTime
                 cascade:procedureDate cascade:medicationUseStartDate cascade:medicationUseEndDate cascade:prescriptionWrittenDate
-                cascade:dispenseRequestValidityPeriodStart cascade:dispenseRequestValidityPeriodEnd cascade:dosageBoundsPeriodStart cascade:dosageBoundsPeriodEnd
+                cascade:dispenseRequestValidityPeriodStart cascade:dispenseRequestValidityPeriodEnd
                 cascade:reportEffectiveTime cascade:reportIssuedTime cascade:noteOrDocumentDate cascade:dispensePreparedTime cascade:dispenseHandedOverTime
                 cascade:resultValueKind cascade:administrativeGender cascade:conditionCode cascade:procedureCode ) ;
         sh:message "A value absent for a reason names the one property it stands for, a date, a lab result's value kind, an administrative gender or a condition's or a procedure's code."@en ;
@@ -1647,7 +1648,7 @@ cascade:VersionWithValueAbsentForReasonShape a sh:NodeShape ;
     ] ;
     sh:sparql [
         a sh:SPARQLConstraint ;
-        sh:message "A value absent for a reason is the node <version>#absent- and its property's local name, or, of a node whose IRI has a fragment already, such as a structured dosage, <node>-absent- and the local name; and stands only where its subject holds no value for that property: {?node} is not."@en ;
+        sh:message "A value absent for a reason is the node <version>#absent- and its property's local name, or, of a node whose IRI has a fragment already, <node>-absent- and the local name; and stands only where its subject holds no value for that property: {?node} is not."@en ;
         sh:severity sh:Violation ;
         sh:select """SELECT $this ?node WHERE {
   $this <https://ns.cascadeprotocol.org/cascade#valueAbsentForReason> ?node .

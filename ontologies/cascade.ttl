@@ -1614,7 +1614,7 @@ cascade:valueAbsentForReason a owl:ObjectProperty ;
     rdfs:label "value absent for a reason"@en ;
     rdfs:comment "Of a version, the node saying why it holds no value for one property, one for each such property."@en ;
     rdfs:domain [ a owl:Class ; owl:unionOf ( cascade:PatientProfile cascade:AllergyOrIntolerance cascade:ProblemOrDiagnosis
-        cascade:Vaccination cascade:MedicalProcedure cascade:PrescribedOrReportedMedication cascade:StructuredDosage
+        cascade:Vaccination cascade:MedicalProcedure cascade:PrescribedOrReportedMedication
         cascade:MedicationDispense cascade:LaboratoryTestResult cascade:DiagnosticReport cascade:ClinicalNoteOrDocument ) ] ;
     rdfs:range cascade:ValueAbsentForReason .
 
