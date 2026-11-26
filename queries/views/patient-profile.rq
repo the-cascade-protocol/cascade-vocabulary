@@ -3,6 +3,9 @@
 # so the entry has no lead and states no value of its own: each profile's current values are a node of the view of their
 # own, named after the entry and the profile, which says the profile they came from, so each source's date of birth,
 # gender and death stand beside the others'.
+# A value a member's source says it holds none of, and why, keeps the node saying so (cascade:ValueAbsentForReason),
+# linked from the member's values, named after them and -absent- and the property's local name and holding the
+# property and each reason, so the view never shows a missing value as one nothing said; the entry shows none.
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX pav: <http://purl.org/pav/>
 PREFIX prov: <http://www.w3.org/ns/prov#>
@@ -16,6 +19,8 @@ CONSTRUCT {
     cascade:administrativeGender ?memberAdministrativeGender ;
     cascade:deceased ?memberDeceased ;
     cascade:dateOfDeath ?memberDateOfDeath .
+  ?memberValues cascade:valueAbsentForReason ?memberAbsent .
+  ?memberAbsent cascade:absentValueProperty ?memberAbsentProperty ; cascade:absentReasonCode ?memberAbsentReason .
 }
 WHERE {
   { SELECT ?s (IRI(CONCAT("urn:cascade:entry:", SHA256(MIN(STR(?member))))) AS ?entry)
@@ -31,6 +36,9 @@ WHERE {
              OPTIONAL { ?memberVersion cascade:dateOfBirth ?memberDateOfBirth }
              OPTIONAL { ?memberVersion cascade:administrativeGender ?memberAdministrativeGender }
              OPTIONAL { ?memberVersion cascade:deceased ?memberDeceased }
-             OPTIONAL { ?memberVersion cascade:dateOfDeath ?memberDateOfDeath } }
+             OPTIONAL { ?memberVersion cascade:dateOfDeath ?memberDateOfDeath }
+             OPTIONAL { ?memberVersion cascade:valueAbsentForReason ?memberAbsentAt .
+                        ?memberAbsentAt cascade:absentValueProperty ?memberAbsentProperty ; cascade:absentReasonCode ?memberAbsentReason } }
   BIND (IF(BOUND(?memberVersion), IRI(CONCAT(STR(?entry), "-", SHA256(STR(?profile)))), 1/0) AS ?memberValues)
+  BIND (IF(BOUND(?memberAbsentAt), IRI(CONCAT(STR(?memberValues), "-absent-", STRAFTER(STR(?memberAbsentProperty), "#"))), 1/0) AS ?memberAbsent)
 }

@@ -5,6 +5,9 @@
 # entry and the member, which says the member they came from and names its results by their records. A time its source
 # wrote short of the second keeps the node saying so (cascade:PaddedDateTime), named after the entry or the member's
 # values and -padded-, so the view never shows a padded time as exact. An attachment stays a node of its version.
+# A value a member's source says it holds none of, and why, keeps the node saying so (cascade:ValueAbsentForReason),
+# linked from the member's values, named after them and -absent- and the property's local name and holding the
+# property and each reason, so the view never shows a missing value as one nothing said; the entry shows none.
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX pav: <http://purl.org/pav/>
@@ -45,6 +48,8 @@ CONSTRUCT {
   ?datePadded cascade:paddedDateTimeProperty cascade:reportEffectiveTime ; cascade:timeAsWritten ?dateWritten .
   ?memberValues cascade:paddedDateTime ?memberPadded .
   ?memberPadded cascade:paddedDateTimeProperty ?memberPaddedProperty ; cascade:timeAsWritten ?memberWritten .
+  ?memberValues cascade:valueAbsentForReason ?memberAbsent .
+  ?memberAbsent cascade:absentValueProperty ?memberAbsentProperty ; cascade:absentReasonCode ?memberAbsentReason .
 }
 WHERE {
   { ?record a cascade:DiagnosticReport ; cascade:inEntry ?entry .
@@ -84,5 +89,9 @@ WHERE {
     OPTIONAL { ?memberVersion cascade:paddedDateTime ?memberPaddedAt .
                ?memberPaddedAt cascade:paddedDateTimeProperty ?memberPaddedProperty ; cascade:timeAsWritten ?memberWritten }
     BIND (IF(BOUND(?memberWritten), IRI(CONCAT(STR(?memberValues), "-padded-", STRAFTER(STR(?memberPaddedProperty), "#"))), 1/0)
-          AS ?memberPadded) }
+          AS ?memberPadded)
+    OPTIONAL { ?memberVersion cascade:valueAbsentForReason ?memberAbsentAt .
+               ?memberAbsentAt cascade:absentValueProperty ?memberAbsentProperty ; cascade:absentReasonCode ?memberAbsentReason }
+    BIND (IF(BOUND(?memberAbsentAt), IRI(CONCAT(STR(?memberValues), "-absent-", STRAFTER(STR(?memberAbsentProperty), "#"))), 1/0)
+          AS ?memberAbsent) }
 }

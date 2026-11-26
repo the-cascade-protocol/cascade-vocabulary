@@ -32,7 +32,10 @@ WITH
     ('<https://ns.cascadeprotocol.org/cascade#referenceRangeLow>', NULL),
     ('<https://ns.cascadeprotocol.org/cascade#referenceRangeHigh>', NULL),
     ('<https://ns.cascadeprotocol.org/cascade#structuredDosage>', '-dosage-'),
-    ('<https://ns.cascadeprotocol.org/cascade#dosageDoseQuantity>', NULL)),
+    ('<https://ns.cascadeprotocol.org/cascade#dosageDoseQuantity>', NULL),
+    ('<https://ns.cascadeprotocol.org/cascade#dispenseQuantity>', NULL),
+    ('<https://ns.cascadeprotocol.org/cascade#dispenseDaysSupply>', NULL),
+    ('<https://ns.cascadeprotocol.org/cascade#valueAbsentForReason>', '-absent-')),
   -- Each node a holder links, and the link's local name with, where its link has a marker, a space and what the node's name
   -- holds after the holder's and the marker.
   steps (holder, node, step) AS MATERIALIZED (

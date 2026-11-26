@@ -8,18 +8,20 @@
 # value no member states, such as the highest criticality among them, has no From.
 # A member's values link nodes the view builds, each holding values of its own: a time its source wrote short of the
 # second (cascade:paddedDateTime), a reference bound (cascade:referenceRangeLow, cascade:referenceRangeHigh), a
-# structured dosage (cascade:structuredDosage) and its dose quantity (cascade:dosageDoseQuantity). The link is a row of the member's
-# values, with no Part, and each value the node holds is a row with the member's From and Lead and, as Part, the way to
-# the node from the member's values, which a reader follows without the node's IRI: the link's local name and, for a
-# kind of which one member holds several, a space and what tells them apart (a dosage by its number in its source, as
-# pod/My active medications writes it; a padded time by the property it is written for), and for a node under a node
-# the same of its link after a slash: `referenceRangeHigh`, `paddedDateTime onsetDate`, `structuredDosage 2` and
-# `structuredDosage 2/dosageDoseQuantity`. A value is as the view holds it. A node is two links deep at most; the
-# entry's own nodes of these kinds repeat its members' and are not shown, nor is any other value named after the entry,
-# which repeats its members' too. A later kind of node is one more link in the
-# path of the second UNION branch and, when one member holds several of it, one more IF in each of the two chains of IFs
-# that tell them apart, which read the node's name, the view having made it of its holder's name, a marker and what
-# tells the node apart.
+# structured dosage (cascade:structuredDosage) and its dose quantity (cascade:dosageDoseQuantity), a dispensed
+# quantity and days' supply (cascade:dispenseQuantity, cascade:dispenseDaysSupply) and why a value is absent
+# (cascade:valueAbsentForReason). The link is a row of the member's values, with no Part, and each value the node
+# holds is a row with the member's From and Lead and, as Part, the way to the node from the member's values, which a
+# reader follows without the node's IRI: the link's local name and, for a kind of which one member holds several, a
+# space and what tells them apart (a dosage by its number in its source, as pod/My active medications writes it; a
+# padded time by the property it is written for, and a value absent for a reason by the property it is absent for),
+# and for a node under a node the same of its link after a slash: `referenceRangeHigh`, `paddedDateTime onsetDate`,
+# `structuredDosage 2`, `structuredDosage 2/dosageDoseQuantity`, `valueAbsentForReason onsetDate` and
+# `dispenseDaysSupply`. A value is as the view holds it. A node is two links deep at most; the entry's own nodes of
+# these kinds repeat its members' and are not shown, nor is any other value named after the entry, which repeats its
+# members' too. A later kind of node is one more link in the path of the second UNION branch and, when one member
+# holds several of it, one more IF in each of the two chains of IFs that tell them apart, which read the node's name,
+# the view having made it of its holder's name, a marker and what tells the node apart.
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
@@ -35,9 +37,11 @@ WHERE {
   UNION
   { GRAPH ?view { ?entry cascade:entryMember [] ; cascade:leadMember ?leader ; cascade:memberCurrentValues ?values .
                   ?values cascade:valuesOfMember ?from ;
-                          (cascade:paddedDateTime|cascade:referenceRangeLow|cascade:referenceRangeHigh|cascade:structuredDosage|cascade:dosageDoseQuantity)+ ?node .
+                          (cascade:paddedDateTime|cascade:referenceRangeLow|cascade:referenceRangeHigh|cascade:structuredDosage|cascade:dosageDoseQuantity
+                           |cascade:dispenseQuantity|cascade:dispenseDaysSupply|cascade:valueAbsentForReason)+ ?node .
                   ?holder ?link ?node .
-                  FILTER (?link IN (cascade:paddedDateTime, cascade:referenceRangeLow, cascade:referenceRangeHigh, cascade:structuredDosage, cascade:dosageDoseQuantity))
+                  FILTER (?link IN (cascade:paddedDateTime, cascade:referenceRangeLow, cascade:referenceRangeHigh, cascade:structuredDosage, cascade:dosageDoseQuantity,
+                                    cascade:dispenseQuantity, cascade:dispenseDaysSupply, cascade:valueAbsentForReason))
                   OPTIONAL { ?values ?outer ?holder FILTER (?outer IN (cascade:paddedDateTime, cascade:referenceRangeLow, cascade:referenceRangeHigh, cascade:structuredDosage, cascade:dosageDoseQuantity)) }
                   FILTER (?holder = ?values || BOUND(?outer))
                   ?node ?field ?value }
@@ -50,7 +54,8 @@ WHERE {
                     ""),
                  STRAFTER(STR(?link), "#"),
                  IF(?link = cascade:structuredDosage, CONCAT(" ", STRAFTER(STR(?node), CONCAT(STR(?holder), "-dosage-"))),
-                    IF(?link = cascade:paddedDateTime, CONCAT(" ", STRAFTER(STR(?node), CONCAT(STR(?holder), "-padded-"))), ""))) AS ?part)
+                    IF(?link = cascade:paddedDateTime, CONCAT(" ", STRAFTER(STR(?node), CONCAT(STR(?holder), "-padded-"))),
+                       IF(?link = cascade:valueAbsentForReason, CONCAT(" ", STRAFTER(STR(?node), CONCAT(STR(?holder), "-absent-"))), "")))) AS ?part)
     OPTIONAL { ?from rdfs:label ?fromLabel }
     OPTIONAL { ?entry rdfs:label ?entryLabel }
     OPTIONAL { ?value rdfs:label ?valueLabel } }
