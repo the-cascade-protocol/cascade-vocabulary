@@ -31,6 +31,9 @@ CREATE VIEW patient_profile_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#CustodianRole>') AS custodian_role,
   (SELECT id FROM term WHERE nt = '<http://xmlns.com/foaf/0.1/name>') AS foaf_name,
   (SELECT id FROM term WHERE nt = '<http://www.w3.org/2000/01/rdf-schema#label>') AS label,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#valueAbsentForReason>') AS value_absent,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#absentValueProperty>') AS absent_value_property,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#absentReasonCode>') AS absent_reason_code,
   (SELECT CASE WHEN count(DISTINCT i.lex) = 1 THEN min(i.lex) END
    FROM quad w JOIN quad x ON x.s = w.s JOIN term i ON i.id = x.o
    WHERE w.p = (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#writtenByQueryPath>')
@@ -62,6 +65,14 @@ CREATE TABLE patient_profile_values (
   date_of_death INTEGER,
   PRIMARY KEY (entry, profile)
 ) STRICT, WITHOUT ROWID;
+-- Why a profile's source says its values hold none for a property, one row for each reason.
+CREATE TABLE patient_profile_values_absent (
+  entry TEXT NOT NULL,
+  profile INTEGER NOT NULL,
+  property INTEGER NOT NULL,
+  reason INTEGER NOT NULL,
+  PRIMARY KEY (entry, profile, property, reason)
+) STRICT, WITHOUT ROWID;
 -- Where each profile an entry holds came from, `line` as the list questions show it, `shown` the same in N-Triples.
 CREATE TABLE patient_profile_source (
   profile INTEGER NOT NULL,
@@ -88,7 +99,14 @@ WITH
     UNION ALL SELECT v.node, '<https://ns.cascadeprotocol.org/cascade#dateOfDeath>', t.nt
       FROM patient_profile_values v JOIN term t ON t.id = v.date_of_death
     UNION ALL SELECT v.entry, '<https://ns.cascadeprotocol.org/cascade#memberCurrentValues>', v.node
-      FROM patient_profile_values v),
+      FROM patient_profile_values v
+    UNION ALL SELECT DISTINCT v.node, '<https://ns.cascadeprotocol.org/cascade#valueAbsentForReason>', '<' || substr(v.node, 2, length(v.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>'
+      FROM patient_profile_values_absent x JOIN patient_profile_values v USING (entry, profile) JOIN term p ON p.id = x.property
+    UNION ALL SELECT DISTINCT '<' || substr(v.node, 2, length(v.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>', '<https://ns.cascadeprotocol.org/cascade#absentValueProperty>', p.nt
+      FROM patient_profile_values_absent x JOIN patient_profile_values v USING (entry, profile) JOIN term p ON p.id = x.property
+    UNION ALL SELECT '<' || substr(v.node, 2, length(v.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>', '<https://ns.cascadeprotocol.org/cascade#absentReasonCode>', t.nt
+      FROM patient_profile_values_absent x JOIN patient_profile_values v USING (entry, profile) JOIN term p ON p.id = x.property
+      JOIN term t ON t.id = x.reason),
   entries (entry) AS (SELECT DISTINCT entry FROM patient_profile_member)
 SELECT s, p, o FROM said
 UNION ALL SELECT entry, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>',
@@ -98,12 +116,14 @@ INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('patient_profile_member', 'patient_profile_member', '1 1 1 1'),
   ('patient_profile_member', 'patient_profile_member_profile', '1 1'),
   ('patient_profile_source', 'patient_profile_source', '1 1 1'),
-  ('patient_profile_values', 'patient_profile_values', '1 1 1');
+  ('patient_profile_values', 'patient_profile_values', '1 1 1'),
+  ('patient_profile_values_absent', 'patient_profile_values_absent', '1 1 1 1 1');
 ANALYZE sqlite_schema;
 
 -- part: fill
 DELETE FROM patient_profile_member;
 DELETE FROM patient_profile_values;
+DELETE FROM patient_profile_values_absent;
 INSERT INTO patient_profile_member (entry, iri, subject, profile)
 WITH
   counted (subject, profile) AS (
@@ -139,6 +159,11 @@ SELECT held.entry, held.profile, '<' || substr(held.entry, 2, length(held.entry)
   (SELECT min(x.o) FROM quad x WHERE x.s = held.version AND x.p = k.date_of_death)
 FROM patient_profile_terms k CROSS JOIN held JOIN term p ON p.id = held.profile
 WHERE held.version IS NOT NULL;
+
+INSERT INTO patient_profile_values_absent (entry, profile, property, reason)
+SELECT DISTINCT v.entry, v.profile, ap.o, ar.o FROM patient_profile_terms k CROSS JOIN patient_profile_values v
+JOIN quad cv ON cv.s = v.profile AND cv.p = k.current_version JOIN quad a ON a.s = cv.o AND a.p = k.value_absent
+JOIN quad ap ON ap.s = a.o AND ap.p = k.absent_value_property JOIN quad ar ON ar.s = a.o AND ar.p = k.absent_reason_code;
 
 -- part: finish
 UPDATE patient_profile_member SET label = (

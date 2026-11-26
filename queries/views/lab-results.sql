@@ -49,6 +49,9 @@ CREATE VIEW lab_result_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#AuthorRole>') AS author_role,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#CustodianRole>') AS custodian_role,
   (SELECT id FROM term WHERE nt = '<http://xmlns.com/foaf/0.1/name>') AS foaf_name,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#valueAbsentForReason>') AS value_absent,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#absentValueProperty>') AS absent_value_property,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#absentReasonCode>') AS absent_reason_code,
   (SELECT CASE WHEN count(DISTINCT i.lex) = 1 THEN min(i.lex) END
    FROM quad w JOIN quad x ON x.s = w.s JOIN term i ON i.id = x.o
    WHERE w.p = (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#writtenByQueryPath>')
@@ -158,6 +161,14 @@ CREATE TABLE lab_result_member_values_padded (
   written INTEGER NOT NULL,
   PRIMARY KEY (entry, member, property, written)
 ) STRICT, WITHOUT ROWID;
+-- Why a member's source says its values hold none for a property, one row for each reason.
+CREATE TABLE lab_result_member_values_absent (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  property INTEGER NOT NULL,
+  reason INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, property, reason)
+) STRICT, WITHOUT ROWID;
 -- Where each of the entry's records came from, `line` as the list questions show it, `shown` the same in N-Triples.
 CREATE TABLE lab_result_source (
   entry INTEGER NOT NULL,
@@ -230,7 +241,13 @@ WITH
     UNION ALL SELECT high, '<https://ns.cascadeprotocol.org/cascade#decimalValue>', decimal_high FROM ranges WHERE written_high IS NOT NULL
     UNION ALL SELECT high, '<https://ns.cascadeprotocol.org/cascade#writtenValue>', written_high FROM ranges
     UNION ALL SELECT high, '<https://ns.cascadeprotocol.org/cascade#ucumUnit>', ucum_high FROM ranges WHERE written_high IS NOT NULL
-    UNION ALL SELECT high, '<https://ns.cascadeprotocol.org/cascade#unitText>', unit_text_high FROM ranges WHERE written_high IS NOT NULL),
+    UNION ALL SELECT high, '<https://ns.cascadeprotocol.org/cascade#unitText>', unit_text_high FROM ranges WHERE written_high IS NOT NULL
+    UNION ALL SELECT DISTINCT '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
+                     '<https://ns.cascadeprotocol.org/cascade#absentValueProperty>', x.property
+      FROM members mv JOIN lab_result_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property
+    UNION ALL SELECT '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
+                     '<https://ns.cascadeprotocol.org/cascade#absentReasonCode>', x.reason
+      FROM members mv JOIN lab_result_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property),
   made (s, p, o) AS (
     SELECT s, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<https://ns.cascadeprotocol.org/cascade#LaboratoryTestResult>'
     FROM entries
@@ -260,7 +277,9 @@ WITH
       JOIN lab_result_member_values v USING (entry, member) WHERE v.low_written IS NOT NULL
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#referenceRangeHigh>', b.high
       FROM members mv JOIN bounds b ON b.entry = mv.entry AND b.member = mv.member
-      JOIN lab_result_member_values v USING (entry, member) WHERE v.high_written IS NOT NULL)
+      JOIN lab_result_member_values v USING (entry, member) WHERE v.high_written IS NOT NULL
+    UNION ALL SELECT DISTINCT mv.node, '<https://ns.cascadeprotocol.org/cascade#valueAbsentForReason>', '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>'
+      FROM members mv JOIN lab_result_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property)
 SELECT said.s AS s, said.p AS p, o.nt AS o FROM said CROSS JOIN term o ON o.id = said.o
 UNION ALL SELECT s, p, o FROM made;
 
@@ -273,6 +292,7 @@ INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('lab_result_member', 'lab_result_member', '9000 2 1'),
   ('lab_result_member', 'lab_result_member_record', '9000 1'),
   ('lab_result_member_values', 'lab_result_member_values', '9000 2 1'),
+  ('lab_result_member_values_absent', 'lab_result_member_values_absent', '112 1 1 1 1'),
   ('lab_result_member_values_code', 'lab_result_member_values_code', '9000 2 1 1'),
   ('lab_result_member_values_code_other_system', 'lab_result_member_values_code_other_system', '112 1 1 1'),
   ('lab_result_member_values_note', 'lab_result_member_values_note', '112 1 1 1'),
@@ -311,6 +331,7 @@ DELETE FROM lab_result_member_values_code_other_system WHERE entry IN (SELECT en
 DELETE FROM lab_result_member_values_note WHERE entry IN (SELECT entry FROM lab_result_filled);
 DELETE FROM lab_result_member_values_interpretation WHERE entry IN (SELECT entry FROM lab_result_filled);
 DELETE FROM lab_result_member_values_padded WHERE entry IN (SELECT entry FROM lab_result_filled);
+DELETE FROM lab_result_member_values_absent WHERE entry IN (SELECT entry FROM lab_result_filled);
 
 CREATE TEMP TABLE IF NOT EXISTS lab_result_stated (
   entry INTEGER PRIMARY KEY, lead INTEGER, status_from INTEGER, test INTEGER, text INTEGER, text_unit INTEGER,
@@ -515,6 +536,12 @@ INSERT INTO lab_result_member_values_padded (entry, member, property, written)
 SELECT DISTINCT mv.entry, mv.member, dp.o, w.o FROM lab_result_terms k CROSS JOIN lab_result_member_values mv
 JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad d ON d.s = v.o AND d.p = k.padded
 JOIN quad dp ON dp.s = d.o AND dp.p = k.padded_property JOIN quad w ON w.s = d.o AND w.p = k.time_as_written
+WHERE mv.entry IN (SELECT entry FROM lab_result_filled);
+
+INSERT INTO lab_result_member_values_absent (entry, member, property, reason)
+SELECT DISTINCT mv.entry, mv.member, ap.o, ar.o FROM lab_result_terms k CROSS JOIN lab_result_member_values mv
+JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad a ON a.s = v.o AND a.p = k.value_absent
+JOIN quad ap ON ap.s = a.o AND ap.p = k.absent_value_property JOIN quad ar ON ar.s = a.o AND ar.p = k.absent_reason_code
 WHERE mv.entry IN (SELECT entry FROM lab_result_filled);
 
 -- part: finish

@@ -39,6 +39,9 @@ CREATE VIEW condition_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#AuthorRole>') AS author_role,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#CustodianRole>') AS custodian_role,
   (SELECT id FROM term WHERE nt = '<http://xmlns.com/foaf/0.1/name>') AS foaf_name,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#valueAbsentForReason>') AS value_absent,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#absentValueProperty>') AS absent_value_property,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#absentReasonCode>') AS absent_reason_code,
   (SELECT CASE WHEN count(DISTINCT i.lex) = 1 THEN min(i.lex) END
    FROM quad w JOIN quad x ON x.s = w.s JOIN term i ON i.id = x.o
    WHERE w.p = (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#writtenByQueryPath>')
@@ -136,6 +139,14 @@ CREATE TABLE condition_for_record (
   PRIMARY KEY (entry, record)
 ) STRICT, WITHOUT ROWID;
 CREATE INDEX condition_for_record_record ON condition_for_record (record);
+-- Why a member's source says its values hold none for a property, one row for each reason.
+CREATE TABLE condition_member_values_absent (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  property INTEGER NOT NULL,
+  reason INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, property, reason)
+) STRICT, WITHOUT ROWID;
 -- Where each of the entry's records came from, `line` as the list questions show it, `shown` the same in N-Triples.
 CREATE TABLE condition_source (
   entry INTEGER NOT NULL,
@@ -184,7 +195,13 @@ WITH
       FROM entries e JOIN condition c ON c.entry = e.entry
     UNION ALL SELECT '<' || substr(e.s, 2, length(e.s) - 2) || '-padded-abatementDate>',
                      '<https://ns.cascadeprotocol.org/cascade#timeAsWritten>', c.abatement_written
-      FROM entries e JOIN condition c ON c.entry = e.entry),
+      FROM entries e JOIN condition c ON c.entry = e.entry
+    UNION ALL SELECT DISTINCT '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
+                     '<https://ns.cascadeprotocol.org/cascade#absentValueProperty>', x.property
+      FROM members mv JOIN condition_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property
+    UNION ALL SELECT '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>',
+                     '<https://ns.cascadeprotocol.org/cascade#absentReasonCode>', x.reason
+      FROM members mv JOIN condition_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property),
   made (s, p, o) AS (
     SELECT s, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<https://ns.cascadeprotocol.org/cascade#ProblemOrDiagnosis>'
     FROM entries
@@ -205,7 +222,9 @@ WITH
       FROM entries e JOIN condition c ON c.entry = e.entry WHERE c.abatement_written IS NOT NULL
     UNION ALL SELECT '<' || substr(e.s, 2, length(e.s) - 2) || '-padded-abatementDate>',
                      '<https://ns.cascadeprotocol.org/cascade#paddedDateTimeProperty>', '<https://ns.cascadeprotocol.org/cascade#abatementDate>'
-      FROM entries e JOIN condition c ON c.entry = e.entry WHERE c.abatement_written IS NOT NULL)
+      FROM entries e JOIN condition c ON c.entry = e.entry WHERE c.abatement_written IS NOT NULL
+    UNION ALL SELECT DISTINCT mv.node, '<https://ns.cascadeprotocol.org/cascade#valueAbsentForReason>', '<' || substr(mv.node, 2, length(mv.node) - 2) || '-absent-' || CASE WHEN instr(p.lex, '#') > 0 THEN substr(p.lex, instr(p.lex, '#') + 1) ELSE '' END || '>'
+      FROM members mv JOIN condition_member_values_absent x USING (entry, member) JOIN term p ON p.id = x.property)
 SELECT said.s AS s, said.p AS p, o.nt AS o FROM said JOIN term o ON o.id = said.o
 UNION ALL SELECT s, p, o FROM made;
 
@@ -220,6 +239,7 @@ INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('condition_member', 'condition_member', '1500 2 1'),
   ('condition_member', 'condition_member_record', '1500 1'),
   ('condition_member_values', 'condition_member_values', '1500 2 1'),
+  ('condition_member_values_absent', 'condition_member_values_absent', '112 1 1 1 1'),
   ('condition_member_values_code', 'condition_member_values_code', '1500 2 1 1'),
   ('condition_member_values_code_other_system', 'condition_member_values_code_other_system', '112 1 1 1'),
   ('condition_member_values_note', 'condition_member_values_note', '112 1 1 1'),
@@ -272,6 +292,7 @@ DELETE FROM condition_member_values_code WHERE entry IN (SELECT entry FROM condi
 DELETE FROM condition_member_values_code_other_system WHERE entry IN (SELECT entry FROM condition_filled);
 DELETE FROM condition_member_values_note WHERE entry IN (SELECT entry FROM condition_filled);
 DELETE FROM condition_member_values_padded WHERE entry IN (SELECT entry FROM condition_filled);
+DELETE FROM condition_member_values_absent WHERE entry IN (SELECT entry FROM condition_filled);
 
 INSERT INTO condition (entry, iri, sort_key, lead, status_from, name, status, verification, abatement,
                        abatement_written, onset, onset_written)
@@ -369,6 +390,12 @@ INSERT INTO condition_member_values_padded (entry, member, property, written)
 SELECT DISTINCT mv.entry, mv.member, dp.o, w.o FROM condition_terms k CROSS JOIN condition_member_values mv
 JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad d ON d.s = v.o AND d.p = k.padded
 JOIN quad dp ON dp.s = d.o AND dp.p = k.padded_property JOIN quad w ON w.s = d.o AND w.p = k.time_as_written
+WHERE mv.entry IN (SELECT entry FROM condition_filled);
+
+INSERT INTO condition_member_values_absent (entry, member, property, reason)
+SELECT DISTINCT mv.entry, mv.member, ap.o, ar.o FROM condition_terms k CROSS JOIN condition_member_values mv
+JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad a ON a.s = v.o AND a.p = k.value_absent
+JOIN quad ap ON ap.s = a.o AND ap.p = k.absent_value_property JOIN quad ar ON ar.s = a.o AND ar.p = k.absent_reason_code
 WHERE mv.entry IN (SELECT entry FROM condition_filled);
 
 -- part: finish
