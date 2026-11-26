@@ -5,7 +5,7 @@
 
 <> a mf:Manifest ;
   rdfs:label "immunizations-view" ;
-  rdfs:comment "An immunization entry of two members, the later naming it and stating no status and no date; and one not done; and one given in a year it names alone; and one given at a time its source wrote to the hour." ;
+  rdfs:comment "An immunization entry of two members, the later naming it and stating no status and, for its date, a reason it holds none; and one not done; and one given in a year it names alone; and one given at a time its source wrote to the hour." ;
   mf:entries (
     <#the-immunizations-view>
     <#my-immunizations>
@@ -36,7 +36,7 @@
 
 <#what-it-shows> a mf:QueryEvaluationTest ;
   mf:name "what-it-shows" ;
-  rdfs:comment "A time its source wrote to the hour is shown as the time, with the member that states it, and the node saying it was written short of the second is shown by the time as written, with the member and its Part `paddedDateTime vaccinationOccurrenceTime`." ;
+  rdfs:comment "A time its source wrote to the hour is shown as the time, with the member that states it, and the node saying it was written short of the second is shown by the time as written, with the member and its Part `paddedDateTime vaccinationOccurrenceTime`; a member that holds no date for a reason shows the node saying why, named after its values and -absent- and the property, its property and its reason each a row with the member and its Part `valueAbsentForReason vaccinationOccurrenceTime`, so a date missing for a reason is not read as one nothing said." ;
   mf:action [ qt:query <../../../queries/questions/entry/What%20it%20shows.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <what-it-shows.tsv> .

@@ -1,0 +1,2 @@
+?member	?property	?reason	?named
+<urn:x:uncoded>	<https://ns.cascadeprotocol.org/cascade#medicationUseStartDate>	<https://ns.cascadeprotocol.org/codes/data-absent-reason/unknown>	"medicationUseStartDate"

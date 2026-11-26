@@ -5,7 +5,7 @@
 
 <> a mf:Manifest ;
   rdfs:label "lab-results-view" ;
-  rdfs:comment "A potassium entry of two members, the earlier written 4.10, the later stating another name, a unit text beside its UCUM unit, and no status or time; a glucose at a time, its value and unit as text; a hemoglobin A1c on that day, as a day, below 5.7; a titre 1:64; a urine count of 0 to 5; and an MCV of 101 fL flagged both H and A, its reference range 80-100 fL as text and as two bounds, the high one with a unit text." ;
+  rdfs:comment "A potassium entry of two members, the earlier written 4.10, the later stating another name, a unit text beside its UCUM unit, and no status and, for its time, a reason it holds none; a glucose at a time, its value and unit as text; a hemoglobin A1c on that day, as a day, below 5.7; a titre 1:64; a urine count of 0 to 5; and an MCV of 101 fL flagged both H and A, its reference range 80-100 fL as text and as two bounds, the high one with a unit text." ;
   mf:entries (
     <#the-lab-results-view>
     <#the-reference-range-bounds>
@@ -29,7 +29,7 @@
 
 <#what-it-shows> a mf:QueryEvaluationTest ;
   mf:name "what-it-shows" ;
-  rdfs:comment "The MCV's reference range is shown by its text and by each bound, a node of its own that the member's values name by the link, each of its values a row with the member and its Part, `referenceRangeLow` or `referenceRangeHigh`; the entry's own bound nodes repeat the member's and are not shown. Each member's own code in another system and the note added to it are rows of that member." ;
+  rdfs:comment "The MCV's reference range is shown by its text and by each bound, a node of its own that the member's values name by the link, each of its values a row with the member and its Part, `referenceRangeLow` or `referenceRangeHigh`; the entry's own bound nodes repeat the member's and are not shown. Each member's own code in another system and the note added to it are rows of that member, and the later potassium member's reason for holding no time is the rows of a node of its own, with the Part `valueAbsentForReason resultClinicallyRelevantTime`." ;
   mf:action [ qt:query <../../../queries/questions/entry/What%20it%20shows.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <what-it-shows.tsv> .

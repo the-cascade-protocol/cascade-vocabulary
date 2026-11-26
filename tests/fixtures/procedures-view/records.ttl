@@ -15,7 +15,9 @@
 :coloNew a cascade:MedicalProcedure .
 :coloNewVersion prov:specializationOf :coloNew ; cascade:patient :subject ; cascade:procedureName "Colonoscopy, screening" ;
     cascade:procedureCode <http://snomed.info/id/73761001> ;
-    cascade:procedureCodeInOtherSystem "COL-1"^^<urn:oid:2.16.840.1.113883.19.5.99999.1> , "SCREEN-COL"^^<urn:oid:2.16.840.1.113883.19.5.99999.2> .
+    cascade:procedureCodeInOtherSystem "COL-1"^^<urn:oid:2.16.840.1.113883.19.5.99999.1> , "SCREEN-COL"^^<urn:oid:2.16.840.1.113883.19.5.99999.2> ;
+    cascade:valueAbsentForReason <urn:x:coloNewVersion#absent-procedureDate> .
+<urn:x:coloNewVersion#absent-procedureDate> cascade:absentValueProperty cascade:procedureDate ; cascade:absentReasonCode <https://ns.cascadeprotocol.org/codes/data-absent-reason/unknown> .
 :coloNewRevision a cascade:Revision ; cascade:revisionOf :coloNew ; cascade:version :coloNewVersion ;
     prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
 

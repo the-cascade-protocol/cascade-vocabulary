@@ -39,3 +39,10 @@
 :latexRevision a cascade:Revision ; cascade:revisionOf :latex ; cascade:version :latexVersion ;
     prov:wasDerivedFrom :latexDocument ; prov:wasGeneratedBy :northImport ;
     prov:generatedAtTime "2026-01-01T00:00:05Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:05Z"^^xsd:dateTime .
+
+:dust a cascade:AllergyOrIntolerance .
+:dustVersion prov:specializationOf :dust ; cascade:patient :subject ; cascade:allergenName "Dust mite" ;
+    cascade:valueAbsentForReason <urn:x:dustVersion#absent-onsetDate> .
+<urn:x:dustVersion#absent-onsetDate> cascade:absentValueProperty cascade:onsetDate ; cascade:absentReasonCode <https://ns.cascadeprotocol.org/codes/data-absent-reason/unknown> .
+:dustRevision a cascade:Revision ; cascade:revisionOf :dust ; cascade:version :dustVersion ;
+    prov:wasGeneratedBy :session ; prov:generatedAtTime "2026-02-01T00:00:05Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:05Z"^^xsd:dateTime .

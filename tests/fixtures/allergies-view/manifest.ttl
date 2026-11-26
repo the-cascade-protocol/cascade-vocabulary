@@ -5,7 +5,7 @@
 
 <> a mf:Manifest ;
   rdfs:label "allergies-view" ;
-  rdfs:comment "An active allergy entry of two members, the later one entered by the person, stating urticaria and itching, moderate, and no status, and an onset written to the hour, the other anaphylaxis, severe, and an earlier onset; and an inactive allergy, its onset written to the hour." ;
+  rdfs:comment "An active allergy entry of two members, the later one entered by the person, stating urticaria and itching, moderate, and no status, and an onset written to the hour, the other anaphylaxis, severe, and an earlier onset; and an inactive allergy, its onset written to the hour; and a dust mite allergy the person entered, stating no status and, for its onset, a reason it holds none." ;
   mf:entries (
     <#what-it-shows>
     <#where-it-came-from>
@@ -44,7 +44,7 @@
 
 <#my-active-allergies> a mf:QueryEvaluationTest ;
   mf:name "my-active-allergies" ;
-  rdfs:comment "Only the active entry, with its code, its highest criticality, the category and the onset of its lead, else of the members chosen for them, its onset written to the hour, what each record it joins states of the reaction (texts, codes, severity), how many records it joins, and each of them with its document, when that was retrieved and the hospital that wrote it; the one the person entered has none." ;
+  rdfs:comment "The active entry and the dust mite entry, whose status is not stated, with the code, its highest criticality, the category and the onset of its lead, else of the members chosen for them, its onset written to the hour, what each record it joins states of the reaction (texts, codes, severity), how many records it joins, and each of them with its document, when that was retrieved and the hospital that wrote it; the ones the person entered have none." ;
   mf:action [ qt:query <../../../queries/questions/pod/My%20active%20allergies.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <my-active-allergies.tsv> .

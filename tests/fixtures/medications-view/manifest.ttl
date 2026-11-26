@@ -5,11 +5,12 @@
 
 <> a mf:Manifest ;
   rdfs:label "medications-view" ;
-  rdfs:comment "A medication entry joining a prescription and, later, a list entry stating no status and no date; a stopped medication with its end, joined to an older list entry still saying it is active; a completed one without an end; and a stopped member followed by a newer active one, which takes no end." ;
+  rdfs:comment "A medication entry joining a prescription and, later, a list entry stating no status and no date; a stopped medication with its end, joined to an older list entry still saying it is active; a completed one without an end; a fish oil on the list, stating no start and the reason it holds none; and a stopped member followed by a newer active one, which takes no end." ;
   mf:entries (
     <#the-medications-view>
     <#my-active-medications>
     <#my-medication-history>
+    <#its-members-absent-values>
   ) .
 
 <#the-medications-view> a mf:QueryEvaluationTest ;
@@ -32,3 +33,10 @@
   mf:action [ qt:query <../../../queries/questions/pod/My%20medication%20history.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <my-medication-history.tsv> .
+
+<#its-members-absent-values> a mf:QueryEvaluationTest ;
+  mf:name "its-members-absent-values" ;
+  rdfs:comment "A member whose source says why it holds no value for a property shows a node of its values naming the property and the reason, named after its values and -absent- and the property's local name: the fish oil, for its start; no entry shows it." ;
+  mf:action [ qt:query <its-members-absent-values.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <its-members-absent-values.tsv> .

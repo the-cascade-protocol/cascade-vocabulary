@@ -39,7 +39,10 @@
     cascade:reportCode <http://loinc.org/rdf/2132-9> ; cascade:reportCodeInOtherSystem "B12-SER"^^<urn:oid:2.16.840.1.113883.19.5> ;
     cascade:reportEffectiveTime "2025-03-01T08:00:00"^^xsd:dateTime ; cascade:workflowStatus "final" ;
     cascade:paddedDateTime <urn:x:cobalaminVersion#padded-reportEffectiveTime> ;
-    cascade:attachment <urn:x:cobalaminVersion#attachment-1> .
+    cascade:attachment <urn:x:cobalaminVersion#attachment-1> ;
+    cascade:valueAbsentForReason <urn:x:cobalaminVersion#absent-reportIssuedTime> .
+<urn:x:cobalaminVersion#absent-reportIssuedTime> cascade:absentValueProperty cascade:reportIssuedTime ;
+    cascade:absentReasonCode <https://ns.cascadeprotocol.org/codes/nullflavor/NAV> , <https://ns.cascadeprotocol.org/codes/nullflavor/NI> .
 <urn:x:cobalaminVersion#padded-reportEffectiveTime> cascade:paddedDateTimeProperty cascade:reportEffectiveTime ; cascade:timeAsWritten "2025030108" .
 <urn:x:cobalaminVersion#attachment-1> cascade:attachmentContentType "application/pdf" ; cascade:attachmentTitle "Vitamin B12 report" .
 :cobalaminRevision a cascade:Revision ; cascade:revisionOf :cobalamin ; cascade:version :cobalaminVersion ;

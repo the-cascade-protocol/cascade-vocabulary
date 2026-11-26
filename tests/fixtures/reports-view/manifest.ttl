@@ -5,7 +5,7 @@
 
 <> a mf:Manifest ;
   rdfs:label "reports-view" ;
-  rdfs:comment "A blood count report naming two lab result records and a third the pod does not hold, with its category, conclusion, text and lab; and a vitamin B12 report sent only as a PDF, coded in LOINC and in a lab's own system, its time written short of the second." ;
+  rdfs:comment "A blood count report naming two lab result records and a third the pod does not hold, with its category, conclusion, text and lab; and a vitamin B12 report sent only as a PDF, coded in LOINC and in a lab's own system, its time written short of the second and, for the time it was issued, the two reasons it holds none." ;
   mf:entries (
     <#the-reports-view>
     <#the-padded-time>
@@ -28,7 +28,7 @@
 
 <#what-it-shows> a mf:QueryEvaluationTest ;
   mf:name "what-it-shows" ;
-  rdfs:comment "Each report's member values are shown with the member they came from; a result is shown as its entry on the report's entry and as its record on the member's values." ;
+  rdfs:comment "Each report's member values are shown with the member they came from; a result is shown as its entry on the report's entry and as its record on the member's values; the B12 report's two reasons for holding no issued time are rows of a node of its own, with the Part `valueAbsentForReason reportIssuedTime`." ;
   mf:action [ qt:query <../../../queries/questions/entry/What%20it%20shows.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <what-it-shows.tsv> .

@@ -1,0 +1,11 @@
+PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
+
+SELECT ?member ?property ?reason ?named
+WHERE {
+  GRAPH <https://pod.example/clinical/medications.ttl> {
+    ?values cascade:valuesOfMember ?member ; cascade:valueAbsentForReason ?absent .
+    ?absent cascade:absentValueProperty ?property ; cascade:absentReasonCode ?reason
+    FILTER (STRSTARTS(STR(?absent), CONCAT(STR(?values), "-absent-")))
+    BIND (STRAFTER(STR(?absent), "-absent-") AS ?named)
+  }
+}

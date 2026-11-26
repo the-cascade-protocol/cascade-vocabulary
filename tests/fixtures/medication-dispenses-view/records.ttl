@@ -19,13 +19,37 @@
     cascade:workflowStatus "completed" ; cascade:dispensePreparedTime "2026-01-11"^^xsd:date ;
     cascade:dispenseHandedOverTime "2026-01-12T09:00:00Z"^^xsd:dateTime ;
     cascade:paddedDateTime <urn:x:filledVersion#padded-dispenseHandedOverTime> ;
-    cascade:authorizingPrescription :prescription .
+    cascade:authorizingPrescription :prescription ;
+    cascade:dispenseQuantity <urn:x:filledVersion#dispense-quantity> .
+<urn:x:filledVersion#dispense-quantity> cascade:decimalValue "60"^^xsd:decimal ; cascade:writtenValue "60" ; cascade:unitText "tablet" .
 <urn:x:filledVersion#padded-dispenseHandedOverTime> cascade:paddedDateTimeProperty cascade:dispenseHandedOverTime ; cascade:timeAsWritten "2026011209" .
 :filledRevision a cascade:Revision ; cascade:revisionOf :filled ; cascade:version :filledVersion ;
     prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
 
 :waiting a cascade:MedicationDispense .
 :waitingVersion prov:specializationOf :waiting ; cascade:patient :subject ; cascade:drugName "amoxicillin 500 MG Oral Capsule" ;
-    cascade:workflowStatus "preparation" ; cascade:dispensePreparedTime "2026-02-01"^^xsd:date .
+    cascade:workflowStatus "preparation" ; cascade:dispensePreparedTime "2026-02-01"^^xsd:date ;
+    cascade:dispenseDaysSupply <urn:x:waitingVersion#dispense-days-supply> .
+<urn:x:waitingVersion#dispense-days-supply> cascade:decimalValue "30"^^xsd:decimal ; cascade:writtenValue "30" ; cascade:quantityComparator ">=" ;
+    cascade:ucumUnit "d" ; cascade:unitText "days" .
 :waitingRevision a cascade:Revision ; cascade:revisionOf :waiting ; cascade:version :waitingVersion ;
     prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
+
+:refillOld a cascade:MedicationDispense .
+:refillOldVersion prov:specializationOf :refillOld ; cascade:patient :subject ; cascade:drugName "lisinopril 10 MG Oral Tablet" ;
+    cascade:workflowStatus "completed" ;
+    cascade:dispenseQuantity <urn:x:refillOldVersion#dispense-quantity> ; cascade:dispenseDaysSupply <urn:x:refillOldVersion#dispense-days-supply> ;
+    cascade:valueAbsentForReason <urn:x:refillOldVersion#absent-dispensePreparedTime> , <urn:x:refillOldVersion#absent-dispenseHandedOverTime> .
+<urn:x:refillOldVersion#dispense-quantity> cascade:decimalValue "90"^^xsd:decimal ; cascade:writtenValue "90" ; cascade:unitText "tablet" .
+<urn:x:refillOldVersion#dispense-days-supply> cascade:decimalValue "90"^^xsd:decimal ; cascade:writtenValue "90" ; cascade:ucumUnit "d" .
+<urn:x:refillOldVersion#absent-dispensePreparedTime> cascade:absentValueProperty cascade:dispensePreparedTime ; cascade:absentReasonCode <https://ns.cascadeprotocol.org/codes/data-absent-reason/unknown> .
+<urn:x:refillOldVersion#absent-dispenseHandedOverTime> cascade:absentValueProperty cascade:dispenseHandedOverTime ;
+    cascade:absentReasonCode <https://ns.cascadeprotocol.org/codes/data-absent-reason/asked-unknown> , <https://ns.cascadeprotocol.org/codes/nullflavor/NI> .
+:refillOldRevision a cascade:Revision ; cascade:revisionOf :refillOld ; cascade:version :refillOldVersion ;
+    prov:generatedAtTime "2026-03-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-03-01T00:00:00Z"^^xsd:dateTime .
+
+:refillNew a cascade:MedicationDispense .
+:refillNewVersion prov:specializationOf :refillNew ; cascade:patient :subject ; cascade:drugName "lisinopril 10 MG Oral Tablet" ;
+    cascade:workflowStatus "completed" ; cascade:dispenseHandedOverTime "2026-04-02"^^xsd:date .
+:refillNewRevision a cascade:Revision ; cascade:revisionOf :refillNew ; cascade:version :refillNewVersion ;
+    prov:generatedAtTime "2026-04-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-04-01T00:00:00Z"^^xsd:dateTime .

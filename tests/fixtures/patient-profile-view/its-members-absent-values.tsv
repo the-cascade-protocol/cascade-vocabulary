@@ -1,0 +1,3 @@
+?member	?property	?reason	?named
+<urn:x:northProfile>	<https://ns.cascadeprotocol.org/cascade#dateOfBirth>	<https://ns.cascadeprotocol.org/codes/data-absent-reason/asked-unknown>	"dateOfBirth"
+<urn:x:northProfile>	<https://ns.cascadeprotocol.org/cascade#dateOfBirth>	<https://ns.cascadeprotocol.org/codes/nullflavor/UNK>	"dateOfBirth"

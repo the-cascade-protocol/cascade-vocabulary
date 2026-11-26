@@ -13,7 +13,10 @@
 
 :fluNew a cascade:Vaccination .
 :fluNewVersion prov:specializationOf :fluNew ; cascade:patient :subject ; cascade:vaccineName "Influenza, quadrivalent" ;
-    cascade:vaccineCode <https://ns.cascadeprotocol.org/codes/cvx/150> .
+    cascade:vaccineCode <https://ns.cascadeprotocol.org/codes/cvx/150> ;
+    cascade:valueAbsentForReason <urn:x:fluNewVersion#absent-vaccinationOccurrenceTime> .
+<urn:x:fluNewVersion#absent-vaccinationOccurrenceTime> cascade:absentValueProperty cascade:vaccinationOccurrenceTime ;
+    cascade:absentReasonCode <https://ns.cascadeprotocol.org/codes/data-absent-reason/unknown> .
 :fluNewRevision a cascade:Revision ; cascade:revisionOf :fluNew ; cascade:version :fluNewVersion ;
     prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
 
