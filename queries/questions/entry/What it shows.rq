@@ -15,7 +15,8 @@
 # pod/My active medications writes it; a padded time by the property it is written for), and for a node under a node
 # the same of its link after a slash: `referenceRangeHigh`, `paddedDateTime onsetDate`, `structuredDosage 2` and
 # `structuredDosage 2/dosageDoseQuantity`. A value is as the view holds it. A node is two links deep at most; the
-# entry's own nodes of these kinds repeat its members' and are not shown. A later kind of node is one more link in the
+# entry's own nodes of these kinds repeat its members' and are not shown, nor is any other value named after the entry,
+# which repeats its members' too. A later kind of node is one more link in the
 # path of the second UNION branch and, when one member holds several of it, one more IF in each of the two chains of IFs
 # that tell them apart, which read the node's name, the view having made it of its holder's name, a marker and what
 # tells the node apart.
@@ -36,7 +37,8 @@ WHERE {
                   ?values cascade:valuesOfMember ?from ;
                           (cascade:paddedDateTime|cascade:referenceRangeLow|cascade:referenceRangeHigh|cascade:structuredDosage|cascade:dosageDoseQuantity)+ ?node .
                   ?holder ?link ?node .
-                  OPTIONAL { ?values ?outer ?holder }
+                  FILTER (?link IN (cascade:paddedDateTime, cascade:referenceRangeLow, cascade:referenceRangeHigh, cascade:structuredDosage, cascade:dosageDoseQuantity))
+                  OPTIONAL { ?values ?outer ?holder FILTER (?outer IN (cascade:paddedDateTime, cascade:referenceRangeLow, cascade:referenceRangeHigh, cascade:structuredDosage, cascade:dosageDoseQuantity)) }
                   FILTER (?holder = ?values || BOUND(?outer))
                   ?node ?field ?value }
     BIND (?from = ?leader AS ?lead)

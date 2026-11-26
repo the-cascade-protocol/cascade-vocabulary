@@ -68,7 +68,7 @@ WITH
     SELECT DISTINCT en.address, en.entry, f.p, f.o, NULL, NULL, NULL
     FROM view_statements f CROSS JOIN entries en ON en.entry = f.s
     WHERE substr(f.o, 1, length(f.s)) != substr(f.s, 1, length(f.s) - 1) || '-'
-      AND NOT EXISTS (SELECT 1 FROM of_members m WHERE m.entry = f.s AND m.field = f.p AND m.value = f.o)),
+      AND NOT EXISTS (SELECT 1 FROM of_members m WHERE m.entry = f.s AND m.field = f.p AND m.value = f.o AND m.part IS NULL)),
   -- An entry is named under the address of the view that gives it members, wherever another view names it.
   said (address, entry, field, value, from_member, lead, part) AS (
     SELECT DISTINCT s.address, '<' || s.address || '#' || substr(s.entry, 20), s.field,
