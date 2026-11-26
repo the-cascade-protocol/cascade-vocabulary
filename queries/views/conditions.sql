@@ -16,6 +16,9 @@ CREATE VIEW condition_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<http://purl.org/pav/hasCurrentVersion>') AS current_version,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#conditionName>') AS condition_name,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#conditionCode>') AS condition_code,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#conditionCodeInOtherSystem>') AS condition_code_in_other_system,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#conditionCategory>') AS condition_category,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#addedNoteText>') AS added_note_text,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#clinicalStatus>') AS clinical_status,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#verificationStatus>') AS verification_status,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#abatementDate>') AS abatement_date,
@@ -72,6 +75,11 @@ CREATE TABLE condition_code (
   code INTEGER NOT NULL,
   PRIMARY KEY (entry, code)
 ) STRICT, WITHOUT ROWID;
+CREATE TABLE condition_code_other_system (
+  entry INTEGER NOT NULL,
+  code INTEGER NOT NULL,
+  PRIMARY KEY (entry, code)
+) STRICT, WITHOUT ROWID;
 -- A member's current values, `node` naming them as the derived state names the entry.
 CREATE TABLE condition_member_values (
   entry INTEGER NOT NULL,
@@ -82,6 +90,7 @@ CREATE TABLE condition_member_values (
   verification INTEGER,
   abatement INTEGER,
   onset INTEGER,
+  category INTEGER,
   PRIMARY KEY (entry, member)
 ) STRICT, WITHOUT ROWID;
 CREATE TABLE condition_member_values_code (
@@ -89,6 +98,18 @@ CREATE TABLE condition_member_values_code (
   member INTEGER NOT NULL,
   code INTEGER NOT NULL,
   PRIMARY KEY (entry, member, code)
+) STRICT, WITHOUT ROWID;
+CREATE TABLE condition_member_values_code_other_system (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  code INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, code)
+) STRICT, WITHOUT ROWID;
+CREATE TABLE condition_member_values_note (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  note INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, note)
 ) STRICT, WITHOUT ROWID;
 CREATE TABLE condition_member_values_padded (
   entry INTEGER NOT NULL,
@@ -132,6 +153,7 @@ WITH
   said (s, p, o) AS (
     SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#conditionName>', c.name FROM entries e JOIN condition c ON c.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#conditionCode>', x.code FROM entries e JOIN condition_code x ON x.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#conditionCodeInOtherSystem>', x.code FROM entries e JOIN condition_code_other_system x ON x.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#clinicalStatus>', c.status FROM entries e JOIN condition c ON c.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#verificationStatus>', c.verification FROM entries e JOIN condition c ON c.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#abatementDate>', c.abatement FROM entries e JOIN condition c ON c.entry = e.entry
@@ -142,6 +164,9 @@ WITH
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#valuesOfMember>', mv.member FROM members mv
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#conditionName>', v.name FROM members mv JOIN condition_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#conditionCode>', x.code FROM members mv JOIN condition_member_values_code x USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#conditionCodeInOtherSystem>', x.code FROM members mv JOIN condition_member_values_code_other_system x USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#conditionCategory>', v.category FROM members mv JOIN condition_member_values v USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#addedNoteText>', x.note FROM members mv JOIN condition_member_values_note x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#clinicalStatus>', v.status FROM members mv JOIN condition_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#verificationStatus>', v.verification FROM members mv JOIN condition_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#abatementDate>', v.abatement FROM members mv JOIN condition_member_values v USING (entry, member)
@@ -188,6 +213,7 @@ INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('condition', 'sqlite_autoindex_condition_1', '1350 1'),
   ('condition', 'sqlite_autoindex_condition_2', '1350 1'),
   ('condition_code', 'condition_code', '1350 1 1'),
+  ('condition_code_other_system', 'condition_code_other_system', '112 1 1'),
   ('condition_for', 'condition_for', '112 1 1'),
   ('condition_for_record', 'condition_for_record', '112 1 1'),
   ('condition_for_record', 'condition_for_record_record', '112 1'),
@@ -195,6 +221,8 @@ INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('condition_member', 'condition_member_record', '1500 1'),
   ('condition_member_values', 'condition_member_values', '1500 2 1'),
   ('condition_member_values_code', 'condition_member_values_code', '1500 2 1 1'),
+  ('condition_member_values_code_other_system', 'condition_member_values_code_other_system', '112 1 1 1'),
+  ('condition_member_values_note', 'condition_member_values_note', '112 1 1 1'),
   ('condition_member_values_padded', 'condition_member_values_padded', '112 1 1 1 1'),
   ('condition_source', 'condition_source', '1500 2 1');
 ANALYZE sqlite_schema;
@@ -238,8 +266,11 @@ INSERT INTO condition_filled (entry)
 DELETE FROM condition WHERE entry IN (SELECT entry FROM condition_filled);
 DELETE FROM condition_member WHERE entry IN (SELECT entry FROM condition_filled);
 DELETE FROM condition_code WHERE entry IN (SELECT entry FROM condition_filled);
+DELETE FROM condition_code_other_system WHERE entry IN (SELECT entry FROM condition_filled);
 DELETE FROM condition_member_values WHERE entry IN (SELECT entry FROM condition_filled);
 DELETE FROM condition_member_values_code WHERE entry IN (SELECT entry FROM condition_filled);
+DELETE FROM condition_member_values_code_other_system WHERE entry IN (SELECT entry FROM condition_filled);
+DELETE FROM condition_member_values_note WHERE entry IN (SELECT entry FROM condition_filled);
 DELETE FROM condition_member_values_padded WHERE entry IN (SELECT entry FROM condition_filled);
 
 INSERT INTO condition (entry, iri, sort_key, lead, status_from, name, status, verification, abatement,
@@ -298,7 +329,12 @@ SELECT DISTINCT c.entry, x.o FROM condition_terms k CROSS JOIN condition c
 JOIN quad v ON v.s = c.lead AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.condition_code
 WHERE c.entry IN (SELECT entry FROM condition_filled);
 
-INSERT INTO condition_member_values (entry, member, node, name, status, verification, abatement, onset)
+INSERT INTO condition_code_other_system (entry, code)
+SELECT DISTINCT c.entry, x.o FROM condition_terms k CROSS JOIN condition c
+JOIN quad v ON v.s = c.lead AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.condition_code_in_other_system
+WHERE c.entry IN (SELECT entry FROM condition_filled);
+
+INSERT INTO condition_member_values (entry, member, node, name, status, verification, abatement, onset, category)
 WITH members (entry, member, version) AS (
   SELECT DISTINCT r.o, r.s, (SELECT min(v.o) FROM quad v WHERE v.s = r.s AND v.p = k.current_version)
   FROM condition_terms k CROSS JOIN quad r
@@ -310,12 +346,23 @@ SELECT members.entry, members.member, '<' || e.lex || '-' || sparql_sha256(m.lex
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.clinical_status),
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.verification_status),
   (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.abatement_date),
-  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.onset_date)
+  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.onset_date),
+  (SELECT min(x.o) FROM quad x WHERE x.s = members.version AND x.p = k.condition_category)
 FROM condition_terms k CROSS JOIN members JOIN term e ON e.id = members.entry JOIN term m ON m.id = members.member;
 
 INSERT INTO condition_member_values_code (entry, member, code)
 SELECT DISTINCT mv.entry, mv.member, x.o FROM condition_terms k CROSS JOIN condition_member_values mv
 JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.condition_code
+WHERE mv.entry IN (SELECT entry FROM condition_filled);
+
+INSERT INTO condition_member_values_code_other_system (entry, member, code)
+SELECT DISTINCT mv.entry, mv.member, x.o FROM condition_terms k CROSS JOIN condition_member_values mv
+JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.condition_code_in_other_system
+WHERE mv.entry IN (SELECT entry FROM condition_filled);
+
+INSERT INTO condition_member_values_note (entry, member, note)
+SELECT DISTINCT mv.entry, mv.member, x.o FROM condition_terms k CROSS JOIN condition_member_values mv
+JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.added_note_text
 WHERE mv.entry IN (SELECT entry FROM condition_filled);
 
 INSERT INTO condition_member_values_padded (entry, member, property, written)

@@ -27,6 +27,7 @@ CREATE VIEW procedure_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#MedicalProcedure>') AS kind,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#procedureName>') AS procedure_name,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#procedureCode>') AS procedure_code,
+  (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#procedureCodeInOtherSystem>') AS procedure_code_in_other_system,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#narrativeText>') AS narrative_text,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#workflowStatus>') AS workflow_status,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#procedureDate>') AS procedure_date,
@@ -68,6 +69,11 @@ CREATE TABLE procedure_code (
   code INTEGER NOT NULL,
   PRIMARY KEY (entry, code)
 ) STRICT, WITHOUT ROWID;
+CREATE TABLE procedure_code_other_system (
+  entry INTEGER NOT NULL,
+  code INTEGER NOT NULL,
+  PRIMARY KEY (entry, code)
+) STRICT, WITHOUT ROWID;
 -- A member's current values, `node` naming them as the derived state names the entry.
 CREATE TABLE procedure_member_values (
   entry INTEGER NOT NULL,
@@ -80,6 +86,12 @@ CREATE TABLE procedure_member_values (
   PRIMARY KEY (entry, member)
 ) STRICT, WITHOUT ROWID;
 CREATE TABLE procedure_member_values_code (
+  entry INTEGER NOT NULL,
+  member INTEGER NOT NULL,
+  code INTEGER NOT NULL,
+  PRIMARY KEY (entry, member, code)
+) STRICT, WITHOUT ROWID;
+CREATE TABLE procedure_member_values_code_other_system (
   entry INTEGER NOT NULL,
   member INTEGER NOT NULL,
   code INTEGER NOT NULL,
@@ -123,6 +135,7 @@ WITH
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#workflowStatus>', c.status FROM entries e JOIN procedure c ON c.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#procedureDate>', c.date FROM entries e JOIN procedure c ON c.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#procedureCode>', x.code FROM entries e JOIN procedure_code x ON x.entry = e.entry
+    UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#procedureCodeInOtherSystem>', x.code FROM entries e JOIN procedure_code_other_system x ON x.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#leadMember>', c.lead FROM entries e JOIN procedure c ON c.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#statusFrom>', c.status_from FROM entries e JOIN procedure c ON c.entry = e.entry
     UNION ALL SELECT e.s, '<https://ns.cascadeprotocol.org/cascade#entryMember>', m.record FROM entries e JOIN procedure_member m ON m.entry = e.entry
@@ -132,6 +145,7 @@ WITH
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#workflowStatus>', v.status FROM members mv JOIN procedure_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#procedureDate>', v.date FROM members mv JOIN procedure_member_values v USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#procedureCode>', x.code FROM members mv JOIN procedure_member_values_code x USING (entry, member)
+    UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#procedureCodeInOtherSystem>', x.code FROM members mv JOIN procedure_member_values_code_other_system x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCondition>', x.record FROM members mv JOIN procedure_member_values_reason_condition x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCode>', x.code FROM members mv JOIN procedure_member_values_reason_code x USING (entry, member)
     UNION ALL SELECT mv.node, '<https://ns.cascadeprotocol.org/cascade#reasonCodeInOtherSystem>', x.code FROM members mv JOIN procedure_member_values_reason_other_system x USING (entry, member)),
@@ -147,10 +161,12 @@ INSERT INTO sqlite_stat1 (tbl, idx, stat) VALUES
   ('procedure', 'sqlite_autoindex_procedure_1', '675 1'),
   ('procedure', 'sqlite_autoindex_procedure_2', '675 1'),
   ('procedure_code', 'procedure_code', '675 1 1'),
+  ('procedure_code_other_system', 'procedure_code_other_system', '112 1 1'),
   ('procedure_member', 'procedure_member', '750 2 1'),
   ('procedure_member', 'procedure_member_record', '750 1'),
   ('procedure_member_values', 'procedure_member_values', '750 2 1'),
   ('procedure_member_values_code', 'procedure_member_values_code', '750 2 1 1'),
+  ('procedure_member_values_code_other_system', 'procedure_member_values_code_other_system', '112 1 1 1'),
   ('procedure_member_values_reason_code', 'procedure_member_values_reason_code', '112 1 1 1'),
   ('procedure_member_values_reason_condition', 'procedure_member_values_reason_condition', '112 1 1 1'),
   ('procedure_member_values_reason_other_system', 'procedure_member_values_reason_other_system', '112 1 1 1'),
@@ -179,8 +195,10 @@ INSERT INTO procedure_filled (entry)
 DELETE FROM procedure WHERE entry IN (SELECT entry FROM procedure_filled);
 DELETE FROM procedure_member WHERE entry IN (SELECT entry FROM procedure_filled);
 DELETE FROM procedure_code WHERE entry IN (SELECT entry FROM procedure_filled);
+DELETE FROM procedure_code_other_system WHERE entry IN (SELECT entry FROM procedure_filled);
 DELETE FROM procedure_member_values WHERE entry IN (SELECT entry FROM procedure_filled);
 DELETE FROM procedure_member_values_code WHERE entry IN (SELECT entry FROM procedure_filled);
+DELETE FROM procedure_member_values_code_other_system WHERE entry IN (SELECT entry FROM procedure_filled);
 DELETE FROM procedure_member_values_reason_condition WHERE entry IN (SELECT entry FROM procedure_filled);
 DELETE FROM procedure_member_values_reason_code WHERE entry IN (SELECT entry FROM procedure_filled);
 DELETE FROM procedure_member_values_reason_other_system WHERE entry IN (SELECT entry FROM procedure_filled);
@@ -234,6 +252,11 @@ SELECT DISTINCT c.entry, x.o FROM procedure_terms k CROSS JOIN procedure c
 JOIN quad v ON v.s = c.lead AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.procedure_code
 WHERE c.entry IN (SELECT entry FROM procedure_filled);
 
+INSERT INTO procedure_code_other_system (entry, code)
+SELECT DISTINCT c.entry, x.o FROM procedure_terms k CROSS JOIN procedure c
+JOIN quad v ON v.s = c.lead AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.procedure_code_in_other_system
+WHERE c.entry IN (SELECT entry FROM procedure_filled);
+
 INSERT INTO procedure_member_values (entry, member, node, name, narrative, status, date)
 WITH members (entry, member, version) AS (
   SELECT DISTINCT r.o, r.s, (SELECT min(v.o) FROM quad v WHERE v.s = r.s AND v.p = k.current_version)
@@ -251,6 +274,11 @@ FROM procedure_terms k CROSS JOIN members JOIN term e ON e.id = members.entry JO
 INSERT INTO procedure_member_values_code (entry, member, code)
 SELECT DISTINCT mv.entry, mv.member, x.o FROM procedure_terms k CROSS JOIN procedure_member_values mv
 JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.procedure_code
+WHERE mv.entry IN (SELECT entry FROM procedure_filled);
+
+INSERT INTO procedure_member_values_code_other_system (entry, member, code)
+SELECT DISTINCT mv.entry, mv.member, x.o FROM procedure_terms k CROSS JOIN procedure_member_values mv
+JOIN quad v ON v.s = mv.member AND v.p = k.current_version JOIN quad x ON x.s = v.o AND x.p = k.procedure_code_in_other_system
 WHERE mv.entry IN (SELECT entry FROM procedure_filled);
 
 INSERT INTO procedure_member_values_reason_condition (entry, member, record)
