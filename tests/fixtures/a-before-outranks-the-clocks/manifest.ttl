@@ -8,6 +8,8 @@
   rdfs:comment "currency.md's example: A stamped by the server on 1 January, B on 1 February, and C Apple's copy of a third state with no stamp, observed before B arrived; the clocks pick B, and the person files B before A." ;
   mf:entries (
     <#the-current-revision>
+    <#the-current-revision-candidates>
+    <#the-revisions-placed-before>
   ) .
 
 <#the-current-revision> a mf:QueryEvaluationTest ;
@@ -16,3 +18,17 @@
   mf:action [ qt:query <the-current-revision.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <the-current-revision.tsv> .
+
+<#the-current-revision-candidates> a mf:QueryEvaluationTest ;
+  mf:name "the-current-revision-candidates" ;
+  rdfs:comment "The Before removes B, which it places before A; A stamped and C carrying no stamp both stay as candidates, since the one change time left is A's and C has none." ;
+  mf:action [ qt:query <the-current-revision-candidates.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <the-current-revision-candidates.tsv> .
+
+<#the-revisions-placed-before> a mf:QueryEvaluationTest ;
+  mf:name "the-revisions-placed-before" ;
+  rdfs:comment "The person's Before names B earlier than A, two revisions of one record, so it is said of B before A and also said apart as a Before within the record." ;
+  mf:action [ qt:query <the-revisions-placed-before.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <the-revisions-placed-before.tsv> .

@@ -1,0 +1,2 @@
+?earlier	?later	?ofOneRecord
+<urn:x:b>	<urn:x:a>	"true"^^<http://www.w3.org/2001/XMLSchema#boolean>

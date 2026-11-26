@@ -106,6 +106,31 @@ def steps_that_add(build):
         if any(subject != URIRef(ADDRESS + path) for subject, _, _ in triples)}
 
 
+PREFIX = re.compile(r"PREFIX\s+(\w*):\s*<([^>]*)>")
+PREFIXED = re.compile(r"(?<![\w<:/#])(\w*):(\w+)\b")
+
+
+def iris_named(text):
+    """The IRIs a query's text names, written in full or with one of its own prefixes."""
+    prefixes = dict(PREFIX.findall(text))
+    body = PREFIX.sub("", text)
+    return {prefixes[prefix] + name for prefix, name in PREFIXED.findall(body) if prefix in prefixes} | set(
+        re.findall(r"<([^<>\s]+)>", body))
+
+
+def read_by_the_fixtures_own_queries(fixture):
+    """The IRIs named by the queries the fixture's manifest lists from the fixture's own folder: its probes."""
+    return set().union(*(iris_named(Path(entry.query).read_text(encoding="utf-8")) for entry in entries(fixture.manifest)
+                         if entry.query is not None and fixture.folder in Path(entry.query).parents))
+
+
+def steps_a_probe_reads(build, read):
+    """Each derivation and lens that added a triple whose predicate, or class where it states one, is in `read`."""
+    return {step for step, added in build.added_by_step.items()
+            if any(str(predicate) in read or (predicate == RDF.type and str(found) in read)
+                   for _, predicate, found in added)}
+
+
 SYMMETRIC = sorted(Graph().parse(ROOT / "ontologies" / "cascade.ttl").subjects(RDF.type, OWL.SymmetricProperty))
 
 
@@ -232,6 +257,24 @@ class TestWhatEachQueryGives:
                     quiet -= steps_that_add(build)
                     if lens in differing:
                         quiet -= {relative for relative in set(ASKED.values()) & quiet if build.store.gives_a_row(query(relative))}
+            assert quiet == set()
+
+        def test_leaves_no_derivation_or_lens_without_a_fixture_whose_own_query_reads_what_it_adds(self):
+            """leaves no derivation or lens without a fixture whose own query reads what it adds
+
+            Takes every derivation and lens, and strikes off each that, over some fixture, adds a triple whose predicate
+            (or, for a type, whose class) is named by a query the fixture's manifest lists from its own folder, which
+            pins that derivation's rows over that fixture; any left over is pinned only through the questions that read
+            what it adds, so one that added a wrong statement no question reads would pass. A fixture that holds no
+            judgment is read under the first lens only.
+            """
+            quiet = {*derivations(LENSES[0]), *named("lenses").values()}
+            for fixture in FIXTURES:
+                read = read_by_the_fixtures_own_queries(fixture)
+                if not quiet or not read:
+                    continue
+                for lens in LENSES if holds_a_judgment(fixture) else LENSES[:1]:
+                    quiet -= steps_a_probe_reads(built_once(fixture, "oxigraph", lens), read)
             assert quiet == set()
 
 

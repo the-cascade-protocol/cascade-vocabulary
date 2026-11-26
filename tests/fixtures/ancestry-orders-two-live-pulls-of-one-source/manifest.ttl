@@ -9,6 +9,7 @@
   mf:entries (
     <#the-current-revisions>
     <#what-needs-review>
+    <#the-revisions-later-in-ancestry>
   ) .
 
 <#the-current-revisions> a mf:QueryEvaluationTest ;
@@ -24,3 +25,10 @@
   mf:action [ qt:query <../../../queries/questions/record/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <what-needs-review.tsv> .
+
+<#the-revisions-later-in-ancestry> a mf:QueryEvaluationTest ;
+  mf:name "the-revisions-later-in-ancestry" ;
+  rdfs:comment "The second pull's snapshot descends from the first's, and the pulls are of one source in each record (no transmitter, and the same one), so each record's second revision is later in ancestry than its first." ;
+  mf:action [ qt:query <the-revisions-later-in-ancestry.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <the-revisions-later-in-ancestry.tsv> .

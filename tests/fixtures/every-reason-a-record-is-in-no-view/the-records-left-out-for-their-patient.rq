@@ -1,0 +1,10 @@
+PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
+
+SELECT ?record ?reason ?profile
+WHERE {
+  ?record cascade:leftOutFor ?leftOut .
+  ?leftOut cascade:leftOutReason ?reason .
+  OPTIONAL { ?leftOut cascade:leftOutBecauseOf ?profile }
+  VALUES ?reason { cascade:NoPatient cascade:PatientProfileNotClaimed cascade:PatientProfileJudgedNotAbout
+                   cascade:PatientProfileJudgedBothAboutAndNotAbout }
+}
