@@ -15,9 +15,9 @@ Feature: The conformance kit
     under it reads the pod at the smallest set of steps and lenses at which it can fail for its own reason. A runtime
     runs them on its one SPARQL engine; whether two engines agree is the vocabulary's own check, made over the fixtures
     of its queries.
-  - scripted-input/alex/ holds what the steps name. Each import step's saved Bridge output, if the kit saves any, is
-    in a folder named as the step, because a conversion carries its import's start. The facts the importer gives the
-    Bridge are not input: the importer writes them from export.xml.
+  - scripted-input/alex/ holds what the steps name. A kit either saves the Bridge output of every import step, in a
+    folder named as the step, because a conversion carries its import's start, or saves none and its downloads are
+    converted. The facts the importer gives the Bridge are not input: the importer writes them from export.xml.
   - expected/ holds each view a correct runtime builds at the last step under the everyday lens, each entry a blank
     node, and handles.json, the scenario's name inputs for each record and profile it gives a handle.
 
