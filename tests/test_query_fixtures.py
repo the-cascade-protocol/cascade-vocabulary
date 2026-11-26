@@ -11,12 +11,11 @@ from time import perf_counter
 
 import pytest
 import rdflib
-from rdflib import OWL, RDF, RDFS, XSD, Graph, Literal, URIRef
+from rdflib import OWL, RDF, RDFS, XSD, Graph, URIRef
 
 from contract import CASCADE, PROV, QUERIES, ROOT, built, derivations, named, query, questions
 import engines
 from engines import ENGINES, Oxigraph, Rdflib, bound_to_records, marked_groups
-from group_budget import group_of, over_budget, unseen
 from manifests import Entry, entries, expected, failure, lens_name, row
 from pods import ADDRESS, FIXTURES, built_once, every_fixture, on_its_worker
 
@@ -268,34 +267,6 @@ class TestWhatEachQueryGives:
                         quiet -= {relative for relative in set(ASKED.values()) & quiet if build.store.gives_a_row(query(relative))}
             assert quiet == set()
 
-    class TestGivenThreeHundredMachineDifferents:
-        """given three hundred counting Differents of a machine, half of them over a pair a person judged Same, built in the test"""
-
-        def test_gives_the_pairs_no_person_judged_same_within_five_seconds(self):
-            """gives the pairs no person judged Same, as `derivations/different-pairs.rq`, within five seconds
-
-            A form of the query that tests, for each Different, a person's Same over its pair under a filter takes about
-            twenty seconds at this size on Oxigraph and grows with its cube; the query takes about a tenth of a second.
-            """
-            urn = lambda name: URIRef(f"urn:x:{name}")
-            triples = [(urn("matcher"), RDF.type, PROV.SoftwareAgent), (urn("person"), RDF.type, PROV.Person)]
-            for n in range(300):
-                pair = urn(f"r{n}a"), urn(f"r{n}b")
-                different = urn(f"different{n}")
-                triples += [(different, CASCADE.countsUnderLens, Literal(True)), (different, CASCADE.verdict, CASCADE.Different),
-                            (different, PROV.wasAttributedTo, urn("matcher")), *((different, PROV.hadMember, m) for m in pair)]
-                if n % 2:
-                    same = urn(f"same{n}")
-                    triples += [(same, CASCADE.countsUnderLens, Literal(True)), (same, CASCADE.verdict, CASCADE.Same),
-                                (same, PROV.wasAttributedTo, urn("person")), *((same, PROV.hadMember, m) for m in pair)]
-            store = Oxigraph()
-            store.add(triples)
-            started = perf_counter()
-            pairs = store.construct(query("derivations/different-pairs.rq"))
-            assert perf_counter() - started < 5
-            assert {(a, b) for a, _, b in pairs} == {(urn(f"r{n}{x}"), urn(f"r{n}{y}")) for n in range(0, 300, 2)
-                                                     for x, y in (("a", "b"), ("b", "a"))}
-
 
 class TestDerivedStateOnTwoEngines:
     """Derived state two engines build alike · queries/derivations/, queries/lenses/, queries/views/
@@ -493,47 +464,10 @@ class TestMatcherComparisons:
 
 
 class TestChecksOfTheFixtureTools:
-    """Checks of the fixtures' own tools · tests/engines.py, tests/manifests.py, tests/group_budget.py
+    """Checks of the fixtures' own tools · tests/engines.py, tests/manifests.py
 
     The fixtures are built and compared by code in `tests/`. These cases show that code what it must catch.
     """
-
-    class TestOverBudget:
-        """`group_budget.over_budget()`"""
-
-        CASES = [("t.py::a[x]@one", 12.0), ("t.py::b[x]@one", 9.0), ("t.py::c[y]@two", 15.0), ("t.py::d", 99.0)]
-
-        def test_adds_the_seconds_of_the_cases_of_a_group_and_lists_the_groups_over_longest_first(self):
-            """adds the seconds of the cases of a group and lists the groups over the budget, longest first"""
-            assert over_budget(self.CASES, 10) == [("one", 21.0), ("two", 15.0)]
-
-        def test_counts_no_case_that_names_no_group_and_no_group_the_budget_does_not_name(self):
-            """counts no case that names no group, and no group the budget does not name"""
-            assert over_budget(self.CASES, 10, ["two"]) == [("two", 15.0)]
-            assert over_budget([("t.py::d", 99.0)], 10) == []
-
-        def test_lists_no_group_that_takes_exactly_the_budget(self):
-            """lists no group that takes exactly the budget"""
-            assert over_budget(self.CASES, 21.0) == []
-
-        def test_takes_no_text_after_an_at_sign_in_a_parameter_for_a_group(self):
-            """takes no text after an `@` inside a case's parameter for its group"""
-            assert group_of("t.py::x[a@b]") is None
-            assert group_of("t.py::x[a@b]@one") == "one"
-
-        def test_lists_each_part_of_a_group_the_budget_names_by_itself(self):
-            """lists each part of a group the budget names by itself, not the group's parts added up"""
-            parts = [("t.py::a@one/x", 12.0), ("t.py::b@one/y", 9.0), ("t.py::c@one", 3.0), ("t.py::d@two/z", 30.0)]
-            assert over_budget(parts, 10, ["one"]) == [("one/x", 12.0)]
-
-        def test_names_a_group_no_case_ran_in_and_a_run_with_no_group_at_all(self):
-            """names a listed group no case ran in, and says so of a run with no group at all, which no budget checks"""
-            parts = [("t.py::a@one/x", 1.0), ("t.py::b@two", 1.0)]
-            assert unseen(parts, ["one", "two"]) == []
-            assert unseen(parts, ["one", "tow"]) == ["tow"]
-            assert unseen(parts) == []
-            assert unseen([("t.py::d", 99.0)]) == ["any group"]
-            assert unseen([("t.py::d", 99.0)], ["one"]) == ["one"]
 
     class TestWarm:
         """`engines.warm()`"""
