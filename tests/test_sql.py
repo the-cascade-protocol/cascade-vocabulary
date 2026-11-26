@@ -689,7 +689,8 @@ SCREEN_FIXTURES = (
     "a-finding-of-two-results-joined-by-a-shared-business-identifier-is-not-listed-when-one-is-amended", "kinds-never-join",
     "medication-classes-of-a-stopped-medication", "a-vaccination-given-for-a-code",
     "a-dispense-states-a-code-in-another-system-and-a-selected-code", "a-reason-whose-text-holds-the-other-forms-separators",
-    "a-note-time-written-short-of-the-second", "reports-view", "an-active-condition-from-a-document-retrieved-twice",
+    "a-note-time-written-short-of-the-second", "reports-view", "conditions-view", "procedures-view",
+    "an-active-condition-from-a-document-retrieved-twice",
     "variant-interpretations-view", "a-medicine-and-a-procedure-given-for-a-condition")
 KEYED_KINDS = {"unchanged": r" unchanged$", "moved": r" moved out of entry ", "agent renamed": r"^agent .* renamed$",
                "reasons dropped": r"'s reasons dropped$", "entry renamed": r" its records give reasons for renamed, ",
