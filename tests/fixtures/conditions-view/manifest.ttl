@@ -21,7 +21,7 @@
 
 <#the-conditions-view> a mf:QueryEvaluationTest ;
   mf:name "the-conditions-view" ;
-  rdfs:comment "Each entry takes the name and code of its lead, the status and abatement of the member chosen for status, and the onset of the member chosen for the date." ;
+  rdfs:comment "Each entry takes the name and the codes of its lead, in the vocabulary's systems and in others, the status and abatement of the member chosen for status, and the onset of the member chosen for the date." ;
   mf:action [ qt:query <the-conditions-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <the-conditions-view.tsv> .

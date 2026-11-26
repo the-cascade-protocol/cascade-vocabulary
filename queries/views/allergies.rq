@@ -1,5 +1,5 @@
-# Each entry takes the allergen, code, type, reactions and severity of its lead, its category and onset from its lead, and
-# from the members the derivations chose for them (cascade:allergyCategoryFrom, cascade:onsetDateFrom) when its lead
+# Each entry takes the allergen, code, type, reactions and severity of its lead, its category and onset from its lead and,
+# when its lead states none, from the members the derivations chose for them (cascade:allergyCategoryFrom, cascade:onsetDateFrom) when its lead
 # states none, the status of the member chosen for status, and the highest criticality any member states. Each member's
 # current values are a node of the view of their own, named after the entry and the member, which says the member they
 # came from. An onset its source wrote short of the second keeps the node saying so (cascade:PaddedDateTime), named

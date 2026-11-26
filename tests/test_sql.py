@@ -723,9 +723,11 @@ def lenses_of_entries(fixture):
 
 def lenses_compared(fixture, relative):
     """The lenses under which the `.sql` beside the `.rq` is compared with it over the fixture: each lens on a rich
-    fixture, and for a view, which no manifest names, on each fixture its screen is filled on; on any other the lenses its
-    manifest's entries run the `.rq` under, and none where the manifest does not name it."""
-    if fixture.name in RICH or relative.startswith("queries/views/") and fixture.name in SCREEN_FIXTURES:
+    fixture, and for a view, which no manifest names, on each fixture its screen is filled on and on the fixture named for
+    it (`<view>-view`); on any other the lenses its manifest's entries run the `.rq` under, and none where the manifest
+    does not name it."""
+    if fixture.name in RICH or relative.startswith("queries/views/") and (
+            fixture.name in SCREEN_FIXTURES or fixture.name == f"{Path(relative).stem}-view"):
         return LENSES
     return sorted(lenses_of_entries(fixture).get(relative, ()))
 
@@ -772,7 +774,8 @@ class TestSqlBesideEachQuery:
     makes, calling the six functions whose vectors are in queries/sql-functions.json. The `.rq` stays the definition: each
     `.sql` is held to its rows on the fixtures whose manifests name its query, under the lenses the entries run it under,
     and on a few rich fixtures under each lens, and to the rows the manifests pin for it; no query is run over every
-    fixture, and each gives rows on one it is compared on. A view's `.sql` makes and fills its screen, the tables a list
+    fixture, and each gives rows on one it is compared on. A view's `.sql` is also held to its rows on the fixture named
+    for it, `<view>-view`, under each lens. A view's `.sql` makes and fills its screen, the tables a list
     question reads a page of, and is held to its CONSTRUCT's triples; a list question is held to its whole list a page at a
     time. A query outside queries/matcher/ with no `.sql` yet is named in tests/sql-unported.txt.
     """

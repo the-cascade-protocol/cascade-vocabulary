@@ -1,6 +1,6 @@
-# Each entry takes the name, codes, in the vocabulary's systems and in others, and text of its lead, the status of the member chosen for status, and the date of the
-# member chosen for the date. Each member's current values are a node of the view of their own, named after the entry
-# and the member, which says the member they came from, with the text that member's source wrote for it: an entry whose
+# Each entry takes the name, the codes in any system, and the text of its lead, the status of the member chosen for
+# status, and the date of the member chosen for the date. Each member's current values are a node of the view of their
+# own, named after the entry and the member, which says the member they came from, with the text that member's source wrote for it: an entry whose
 # lead states none shows none, and the member that does shows it there; and what it was done for: each condition's
 # record it names (cascade:reasonCondition) and each code of its reason, whether in a system the vocabulary lists
 # (cascade:reasonCode) or in another (cascade:reasonCodeInOtherSystem).

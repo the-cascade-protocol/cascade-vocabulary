@@ -1,6 +1,6 @@
-# Each entry takes the name and codes, in the vocabulary's systems and in others, of its lead, the clinical status, verification status and abatement date of the
-# member chosen for status, and the onset of the member chosen for the date. Each member's current values are a node of
-# the view of their own, named after the entry and the member, which says the member they came from. A time its source
+# Each entry takes the name and the codes, in any system, of its lead, the clinical status, verification status and
+# abatement date of the member chosen for status, and the onset of the member chosen for the date. Each member's current
+# values are a node of the view of their own, named after the entry and the member, which says the member they came from. A time its source
 # wrote short of the second keeps the node saying so (cascade:PaddedDateTime), named after the entry or the member's
 # values and -padded-, so the view never shows a padded time as exact.
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>

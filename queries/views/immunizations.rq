@@ -2,8 +2,7 @@
 # member chosen for the date. Each member's current values are a node of the view of their own, named after the entry
 # and the member, which says the member they came from and what it was given for: each condition's record it names
 # (cascade:reasonCondition) and each code of its reason, whether in a system the vocabulary lists (cascade:reasonCode)
-# or in another (cascade:reasonCodeInOtherSystem), and what that source states of the dose: its lot number, body site,
-# route, amount as text and the notes added to it. A time its source wrote short of the second keeps the node
+# or in another (cascade:reasonCodeInOtherSystem). A time its source wrote short of the second keeps the node
 # saying so (cascade:PaddedDateTime), named after the entry or the member's values and -padded-, so the view never shows
 # a padded time as exact.
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>

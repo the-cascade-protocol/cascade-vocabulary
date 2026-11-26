@@ -21,7 +21,7 @@
 
 <#the-procedures-view> a mf:QueryEvaluationTest ;
   mf:name "the-procedures-view" ;
-  rdfs:comment "Each entry takes the name and code of its lead, the status of the member chosen for status, and the date of the member chosen for the date." ;
+  rdfs:comment "Each entry takes the name and the codes of its lead, in the vocabulary's systems and in others, the status of the member chosen for status, and the date of the member chosen for the date." ;
   mf:action [ qt:query <the-procedures-view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <the-procedures-view.tsv> .
