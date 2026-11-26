@@ -452,6 +452,14 @@ def records_in_entries(connection):
         "AND t.kind = 2 ORDER BY t.lex")]
 
 
+def records_of_the_pod(connection):
+    """Each record the pod holds, as its IRI: those in an entry, and those left out of every view too."""
+    return [lex for (lex,) in connection.execute(
+        "SELECT DISTINCT t.lex FROM quad q JOIN term t ON t.id = q.s "
+        "WHERE q.p = (SELECT id FROM term WHERE nt = ?) AND q.o = (SELECT id FROM term WHERE nt = ?) "
+        "AND t.kind = 2 ORDER BY t.lex", (f"<{sql.RDF_TYPE}>", f"<{sql.RECORD}>"))]
+
+
 NO_SUCH_RECORD = "urn:cascade:no-such-record"
 ASKED_MEMBERS = re.compile(r"\bFROM (\w+_member) \w+ JOIN asked\b")
 
@@ -500,9 +508,9 @@ def rq_over(fixture, lens, relative):
 def failures(fixture, lens, relative, text):
     """Why the `.sql` text, over the fixture's pod under the lens, does not give the rows of the `.rq` at the path: in a
     whole run, in its order when it has one; for a question bound to a record, the `.rq` bound to it and the `.sql`
-    with `asked` holding it alone, for each record a manifest entry of the fixture binds, for a list question each
-    record of its own screen's members and one record of another kind, and a record the
-    pod lacks; for a SELECT the `.rq` does not bind and that gives no `?record` column, the `.rq` bound to a record the pod
+    with `asked` holding it alone, for each record a manifest entry of the fixture binds and each record the pod
+    holds, for a list question each record of its own screen's members and one record of another kind, and a
+    record the pod lacks; for a SELECT the `.rq` does not bind and that gives no `?record` column, the `.rq` bound to a record the pod
     lacks and the `.sql` whole; and, through the `.sql`,
     the rows of each manifest entry under that lens that runs it. A CONSTRUCT's rows are compared as a set of
     triples. labels.rq is run on the pod before the labels are made, as it is written."""
@@ -527,6 +535,7 @@ def failures(fixture, lens, relative, text):
     bound = set() if construct else {record for entry in manifest_entries(fixture) for record in entry.records}
     question = relative.startswith("queries/questions/")
     if binds_a_record(rq) if question else re.search(r"\basked\b", text):
+        bound |= set(records_of_the_pod(connection))
         if ":page_size" in text:
             bound |= set(records_a_list_question_is_bound_to(connection, text))
         bound.add(NO_SUCH_RECORD)
@@ -738,8 +747,12 @@ def chosen_for(relatives):
 
 
 def gives_rows(fixture, lens, relative):
-    """Whether the `.rq` gives a row over the fixture under the lens."""
+    """Whether the `.rq` gives a row over the fixture under the lens; a question that binds a record, whether it gives
+    one bound to a record the pod holds or a manifest entry binds, as a record no pod holds gives it none."""
     rq, store = rq_over(fixture, lens, relative)
+    if relative.startswith("queries/questions/") and binds_a_record(rq):
+        records = set(records_of_the_pod(pod(fixture, lens))) | {r for entry in manifest_entries(fixture) for r in entry.records}
+        return any(oxigraph_answer(store, rq, record)[1] for record in sorted(records))
     return bool(oxigraph_answer(store, rq)[1])
 
 
@@ -1388,6 +1401,23 @@ class TestTheSqlCheck:
         assert records and not [line for line in found if f"{self.JUDGMENTS}, against the .rq: " in line]
         assert {record for record in records
                 if any(f"keyed to {record}, against the .rq: missing: " in line for line in found)} == records
+
+    SHOWN_IN = "queries/questions/record/Which entry shows it.rq"
+
+    def test_reports_a_question_bound_to_a_record_whose_sql_ignores_the_record_it_is_asked_of(self):
+        """reports a question's `.sql` that ignores the record `asked` holds, over the fixtures whose manifests choose it, none binding a record
+
+        `Which entry shows it.sql`, with the part that chooses the records `asked` holds cut out so it gives every
+        entry's rows whatever it is asked of, is checked over each fixture whose manifest chooses it; the check asks it
+        of each record the pod puts in an entry, and names a record whose `.rq` rows it misses.
+        """
+        text = sql_beside(self.SHOWN_IN).read_text(encoding="utf-8")
+        ignoring = re.sub(r" WHERE record IN \(SELECT term FROM asked\)\s+UNION ALL SELECT .*? NOT EXISTS \(SELECT 1 FROM asked\)",
+                          "", text, flags=re.S)
+        assert ignoring != text
+        found = [line for fixture in FIXTURES if (lenses := lenses_compared(fixture, self.SHOWN_IN))
+                 for line in failures(fixture, lenses[0], self.SHOWN_IN, ignoring)]
+        assert [line for line in found if ", keyed to urn:x:" in line and ", against the .rq: unexpected: " in line]
 
     @pytest.mark.xdist_group(ZERO_SUPPLY.name)
     def test_reports_each_triple_a_construct_sql_misses_and_each_it_adds_once_however_often_it_gives_it(self):
