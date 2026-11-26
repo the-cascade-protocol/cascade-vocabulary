@@ -4,6 +4,7 @@
 -- values, with their codes, the reasons they were given for, padded times and structured dosages
 -- (`medication_member_values_dosage`, with its route codes and padded bounds, and its dose quantity in its own
 -- columns). The columns that read the labels output, filled by finish, are `medication.label` and `medication_source`.
+-- `medication_member_values_absent` why a member's values hold no value for a property, a row for each reason.
 
 -- part: tables
 CREATE VIEW medication_terms AS SELECT

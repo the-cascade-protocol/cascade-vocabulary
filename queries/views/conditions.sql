@@ -4,6 +4,7 @@
 -- read the labels output or another screen, filled by finish, are `condition.label`, `condition_for` and
 -- `condition_source`. The medicines, procedures and vaccinations given for a condition are read from the screens of
 -- those views, which every view's fill has made by then.
+-- `condition_member_values_absent` why a member's values hold no value for a property, a row for each reason.
 
 -- part: tables
 CREATE VIEW condition_terms AS SELECT

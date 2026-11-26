@@ -3,6 +3,7 @@
 -- `immunization_code` its vaccine codes; `immunization_member_values` each member's current values, with their codes,
 -- the reasons they were given for and padded times. The columns that read the labels output, filled by finish, are
 -- `immunization.label` and `immunization_source`.
+-- `immunization_member_values_absent` why a member's values hold no value for a property, a row for each reason.
 
 -- part: tables
 CREATE VIEW immunization_terms AS SELECT

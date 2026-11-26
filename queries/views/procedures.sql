@@ -2,6 +2,7 @@
 -- each entry with a lead, holding what the view states of it; `procedure_member` its records; `procedure_code` its
 -- codes; `procedure_member_values` each member's current values, with their codes and the reasons they were done for.
 -- The columns that read the labels output, filled by finish, are `procedure.label` and `procedure_source`.
+-- `procedure_member_values_absent` why a member's values hold no value for a property, a row for each reason.
 
 -- part: tables
 CREATE VIEW procedure_terms AS SELECT

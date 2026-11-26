@@ -4,6 +4,7 @@
 -- the entries of its results; `report_member_values` each member's current values, with their codes, categories,
 -- results and padded times. The columns that read the labels output, filled by finish, are `report.label` and
 -- `report_source`.
+-- `report_member_values_absent` why a member's values hold no value for a property, a row for each reason.
 
 -- part: tables
 CREATE VIEW report_terms AS SELECT

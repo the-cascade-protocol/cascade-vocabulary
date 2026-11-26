@@ -5,6 +5,7 @@
 -- each profile came from. The view's entries are not those the derived state holds, and a profile is no record, so no run
 -- is keyed to one: each run fills the screen whole, as it reads the judgments of the lens, which every run reads.
 -- The column that reads the labels output, filled by finish, is `patient_profile_member.label`.
+-- `patient_profile_values_absent` why a member's values hold no value for a property, a row for each reason.
 
 -- part: tables
 CREATE VIEW patient_profile_terms AS SELECT

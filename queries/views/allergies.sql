@@ -3,6 +3,7 @@
 -- `allergy_reaction_text` and `allergy_reaction_code` the lead's allergen codes and reactions; `allergy_member_values`
 -- each member's current values, with their codes, reactions and padded onset. The columns that read the labels
 -- output, filled by finish, are `allergy.label` and `allergy_source`.
+-- `allergy_member_values_absent` why a member's values hold no value for a property, a row for each reason.
 
 -- part: tables
 CREATE VIEW allergy_terms AS SELECT

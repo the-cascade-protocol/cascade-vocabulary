@@ -3,6 +3,7 @@
 -- its records; `lab_result_code` and `lab_result_interpretation` its codes and interpretation codes;
 -- `lab_result_member_values` each member's current values, with their codes, interpretation codes and padded times.
 -- The columns that read the labels output, filled by finish, are `lab_result.label` and `lab_result_source`.
+-- `lab_result_member_values_absent` why a member's values hold no value for a property, a row for each reason.
 
 -- part: tables
 CREATE VIEW lab_result_terms AS SELECT

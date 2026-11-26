@@ -1,6 +1,3 @@
-ValueAbsentForReason
-absentReasonCode
-absentValueProperty
 answersForRecordClass
 attachmentUrl
 authenticatedAsProxy
@@ -10,8 +7,6 @@ buildInputsHash
 clinvarReviewStatus
 contributingSubmitterCount
 coversGene
-dispenseDaysSupply
-dispenseQuantity
 lastEvaluated
 matcherRuleDeclaredWrong
 noLongerReachedUnderRuleListVersion
@@ -20,4 +15,3 @@ physiologicEffectClass
 refusedForRecordClass
 sourceFormatVersion
 submitterCount
-valueAbsentForReason

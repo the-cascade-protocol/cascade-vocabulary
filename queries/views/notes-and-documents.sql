@@ -2,6 +2,7 @@
 -- for each entry with a lead, holding what the view states of it; `note_member` its records; `note_type_code` and
 -- `note_type_other_code` its type codes; `note_member_values` each member's current values, with their codes and
 -- padded times. The columns that read the labels output, filled by finish, are `note.label` and `note_source`.
+-- `note_member_values_absent` why a member's values hold no value for a property, a row for each reason.
 
 -- part: tables
 CREATE VIEW note_terms AS SELECT
