@@ -10,6 +10,8 @@
     <#the-current-revisions>
     <#the-entry>
     <#what-needs-review>
+    <#the-revisions-whose-observation-time-is-discounted>
+    <#the-lead-candidates>
   ) .
 
 <#the-current-revisions> a mf:QueryEvaluationTest ;
@@ -32,3 +34,17 @@
   mf:action [ qt:query <../../../queries/questions/record/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <what-needs-review.tsv> .
+
+<#the-revisions-whose-observation-time-is-discounted> a mf:QueryEvaluationTest ;
+  mf:name "the-revisions-whose-observation-time-is-discounted" ;
+  rdfs:comment "The person's ClockDiscounted names the second writer's pull, so each revision that pull generated is said to have its observation time discounted by it: gout's, eczema's, the migraine's and asthma's." ;
+  mf:action [ qt:query <the-revisions-whose-observation-time-is-discounted.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <the-revisions-whose-observation-time-is-discounted.tsv> .
+
+<#the-lead-candidates> a mf:QueryEvaluationTest ;
+  mf:name "the-lead-candidates" ;
+  rdfs:comment "Each record leads its own entry but the two migraines, which share one: no change time separates their current revisions, so both are candidates and the least IRI is chosen afterwards." ;
+  mf:action [ qt:query <the-lead-candidates.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <the-lead-candidates.tsv> .

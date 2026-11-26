@@ -8,6 +8,7 @@
   rdfs:comment "A person's Same over a server at its old and its new address, and an allergy a3 pulled from each: from a hospital at the old, and at the new under the organization record a merger gave it, which the person judged the same as the first." ;
   mf:entries (
     <#same-records>
+    <#the-organizations-currently-the-same>
   ) .
 
 <#same-records> a mf:QueryEvaluationTest ;
@@ -16,3 +17,10 @@
   mf:action [ qt:query <same-records.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <same-records.tsv> .
+
+<#the-organizations-currently-the-same> a mf:QueryEvaluationTest ;
+  mf:name "the-organizations-currently-the-same" ;
+  rdfs:comment "The person's Same joins the two organization records, so each is currently the same organization as the other; the Same of the two servers joins no organization." ;
+  mf:action [ qt:query <the-organizations-currently-the-same.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <the-organizations-currently-the-same.tsv> .

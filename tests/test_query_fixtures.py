@@ -5,7 +5,6 @@ import re
 import shutil
 import time
 from collections import Counter
-from functools import cache
 from pathlib import Path
 from time import perf_counter
 
@@ -16,13 +15,13 @@ from rdflib import OWL, RDF, RDFS, XSD, Graph, URIRef
 from contract import CASCADE, PROV, QUERIES, ROOT, built, derivations, named, query, questions
 import engines
 from engines import ENGINES, Oxigraph, Rdflib, bound_to_records, marked_groups
-from manifests import Entry, entries, expected, failure, lens_name, row
+from manifests import Entry, as_term, entries, expected, failure, lens_name, listed, row
 from pods import ADDRESS, FIXTURES, built_once, every_fixture, on_its_worker
+from sql import final_order, runs
 
 LENSES = sorted(named("lenses"))
 JUDGMENT = "https://ns.cascadeprotocol.org/cascade#Judgment"
 ASKED = {**questions(), **{f"matcher/{name}": relative for name, relative in named("matcher").items()}}
-ORDERED = {(QUERIES / relative).resolve() for relative in ASKED.values() if "ORDER BY" in query(relative)}
 
 
 def entry_id(fixture, entry):
@@ -56,13 +55,6 @@ def slow_on_rdflib(fixture):
 ENTRIES = [on_its_worker(fixture, entry, id=entry_id(fixture, entry), says=f"{fixture.comment} {entry.comment}",
                          part=entry.name if slow_on_rdflib(fixture) else None)
            for fixture in FIXTURES for entry in entries(fixture.manifest)]
-
-
-@cache
-def answers(fixture, lens):
-    """The rows of every question and every matcher comparison."""
-    held = built_once(fixture, "oxigraph", lens).store
-    return {name: held.select(query(relative)) for name, relative in ASKED.items()}
 
 
 def listing_most_unlisted_queries_first():
@@ -115,6 +107,31 @@ def steps_that_add(build):
         if any(subject != URIRef(ADDRESS + path) for subject, _, _ in triples)}
 
 
+PREFIX = re.compile(r"PREFIX\s+(\w*):\s*<([^>]*)>")
+PREFIXED = re.compile(r"(?<![\w<:/#])(\w*):(\w+)\b")
+
+
+def iris_named(text):
+    """The IRIs a query's text names, written in full or with one of its own prefixes."""
+    prefixes = dict(PREFIX.findall(text))
+    body = PREFIX.sub("", text)
+    return {prefixes[prefix] + name for prefix, name in PREFIXED.findall(body) if prefix in prefixes} | set(
+        re.findall(r"<([^<>\s]+)>", body))
+
+
+def read_by_the_fixtures_own_queries(fixture):
+    """The IRIs named by the queries the fixture's manifest lists from the fixture's own folder: its probes."""
+    return set().union(*(iris_named(Path(entry.query).read_text(encoding="utf-8")) for entry in entries(fixture.manifest)
+                         if entry.query is not None and fixture.folder in Path(entry.query).parents))
+
+
+def steps_a_probe_reads(build, read):
+    """Each derivation and lens that added a triple whose predicate, or class where it states one, is in `read`."""
+    return {step for step, added in build.added_by_step.items()
+            if any(str(predicate) in read or (predicate == RDF.type and str(found) in read)
+                   for _, predicate, found in added)}
+
+
 SYMMETRIC = sorted(Graph().parse(ROOT / "ontologies" / "cascade.ttl").subjects(RDF.type, OWL.SymmetricProperty))
 
 
@@ -149,7 +166,6 @@ PERSONS_JUDGMENTS = """
 
 
 MATCHER_FIXTURES = [on_its_worker(fixture, id=fixture.name) for fixture in FIXTURES if fixture.name.startswith("matcher-")]
-ORDERED_ENTRIES = [case for case in ENTRIES if Path(case.values[1].query).resolve() in ORDERED]
 
 
 def rows_of(store, text):
@@ -176,35 +192,12 @@ class TestWhatEachQueryGives:
 
             For each query a fixture's manifest lists, the fixture is built on Oxigraph and on rdflib under the entry's
             lens, the query is run on each, and its rows are compared with the entry's expected result; an engine that
-            gives other rows fails.
+            gives other rows fails. Where the query ends in an ORDER BY the rows are compared in the order the result
+            lists them, the rows its keys tie as a set.
             """
             stores = {engine: built_once(fixture, engine, lens_name(entry.lens)).store for engine in sorted(ENGINES)}
             failed = {engine: why for engine, store in stores.items() if (why := failure(entry, store))}
             assert not failed, "\n\n".join(f"on {engine}:\n{why}" for engine, why in failed.items())
-
-        @pytest.mark.parametrize("fixture, entry", ORDERED_ENTRIES)
-        def test_gives_an_ordered_querys_rows_in_one_order_on_both_engines(self, fixture, entry):
-            """gives an ordered query's rows in one order on both engines
-
-            For each manifest entry whose query has an ORDER BY, the rows from Oxigraph and from rdflib are compared as
-            lists: they must be equal row for row, not only as sets.
-            """
-            stores = {engine: built_once(fixture, engine, lens_name(entry.lens)).store for engine in sorted(ENGINES)}
-            text = Path(entry.query).read_text(encoding="utf-8")
-            one, other = (store.select(text) for store in stores.values())
-            assert one == other
-
-    class TestGivenConditionsWhoseDatesCannotTell:
-        """given `conditions-whose-dates-cannot-tell`"""
-
-        @pytest.mark.parametrize("fixture", [on_its_worker(fixture, id=fixture.name) for fixture in FIXTURES
-                                             if fixture.folder.name == "conditions-whose-dates-cannot-tell"])
-        def test_lists_the_rows_of_my_active_conditions_by_condition_then_entry(self, fixture):
-            """lists the rows of `pod/My active conditions` by condition, then by entry"""
-            lens = lenses_that_differ(fixture)[0]
-            rows = answers(fixture, lens)["pod/My active conditions"]
-            keys = [(str(row["condition"]), str(row["entry"])) for row in rows]
-            assert len(keys) > 1 and keys == sorted(keys)
 
     class TestGivenAnImmunizationASecondSourceJoins:
         """given `a-second-source-joins-an-immunization`, its pod built with and without each original"""
@@ -266,6 +259,50 @@ class TestWhatEachQueryGives:
                     if lens in differing:
                         quiet -= {relative for relative in set(ASKED.values()) & quiet if build.store.gives_a_row(query(relative))}
             assert quiet == set()
+
+        def test_leaves_no_derivation_or_lens_without_a_fixture_whose_own_query_reads_what_it_adds(self):
+            """leaves no derivation or lens without a fixture whose own query reads what it adds
+
+            Takes every derivation and lens, and strikes off each that, over some fixture, adds a triple whose predicate
+            (or, for a type, whose class) is named by a query the fixture's manifest lists from its own folder, which
+            pins that derivation's rows over that fixture; any left over is pinned only through the questions that read
+            what it adds, so one that added a wrong statement no question reads would pass. A fixture that holds no
+            judgment is read under the first lens only.
+            """
+            quiet = {*derivations(LENSES[0]), *named("lenses").values()}
+            for fixture in FIXTURES:
+                read = read_by_the_fixtures_own_queries(fixture)
+                if not quiet or not read:
+                    continue
+                for lens in LENSES if holds_a_judgment(fixture) else LENSES[:1]:
+                    quiet -= steps_a_probe_reads(built_once(fixture, "oxigraph", lens), read)
+            assert quiet == set()
+
+        def test_leaves_no_query_with_an_order_by_without_a_fixture_whose_rows_differ_on_its_first_condition(self):
+            """leaves no query with an ORDER BY without a fixture whose expected rows differ on its first condition
+
+            Takes every query whose last ORDER BY stands after its last brace and strikes off each that some manifest
+            entry lists with expected rows of two or more values of its first condition, so a query whose order was
+            reversed is failed by a fixture; a condition `final_order` cannot read fails here, naming the query and the
+            condition; every other condition is read as a key, so none is left out of the comparison.
+            """
+            unproven = {path.relative_to(QUERIES).as_posix() for path in QUERIES.rglob("*.rq")
+                        if (text := path.read_text(encoding="utf-8"))
+                        and re.search(r"ORDER\s+BY\s", text[text.rfind("}"):])}
+            for fixture in FIXTURES:
+                for entry in entries(fixture.manifest):
+                    relative = entry.query and Path(os.path.relpath(entry.query, QUERIES)).as_posix()
+                    if relative not in unproven:
+                        continue
+                    names, rows = listed(entry.result)
+                    try:
+                        keys = final_order(Path(entry.query).read_text(encoding="utf-8"), names)
+                    except ValueError as error:
+                        raise AssertionError(f"{relative}: {error}") from error
+                    found = [tuple(as_term(each[name]) if name in each else None for name in names) for each in rows]
+                    if len(runs(found, keys[:1])) >= 2:
+                        unproven.discard(relative)
+            assert unproven == set()
 
 
 class TestDerivedStateOnTwoEngines:
@@ -713,6 +750,21 @@ class TestChecksOfTheFixtureTools:
             result.write_text("?z\n", encoding="utf-8")
             entry = Entry(iri="urn:x:e", name="e", types=frozenset(), lens=None, query=query, result=result)
             assert "variables" in (failure(entry, ENGINES["oxigraph"]()) or "")
+
+        def test_returns_a_sentence_naming_the_rows_given_in_another_order_unless_the_keys_tie_them(self, tmp_path):
+            """returns a sentence naming the rows given in another order where the query's ORDER BY keys put them in one, and none where they tie"""
+            query, result = tmp_path / "q.rq", tmp_path / "r.tsv"
+            query.write_text('SELECT ?a ?b WHERE { VALUES (?a ?b) { (1 "x") (2 "y") (2 "z") } } ORDER BY ?a', encoding="utf-8")
+            entry = Entry(iri="urn:x:e", name="e", types=frozenset(), lens=None, query=query, result=result)
+            one, two = f'"1"^^<{XSD.integer}>', f'"2"^^<{XSD.integer}>'
+
+            def failed(*rows):
+                result.write_text("".join(["?a\t?b\n", *(f"{a}\t\"{b}\"\n" for a, b in rows)]), encoding="utf-8", newline="\n")
+                return failure(entry, ENGINES["oxigraph"]())
+            assert failed((one, "x"), (two, "y"), (two, "z")) is None
+            assert failed((one, "x"), (two, "z"), (two, "y")) is None
+            assert "another order, from row 1" in failed((two, "y"), (one, "x"), (two, "z"))
+            assert "missing" in failed((one, "x"), (two, "y"), (two, "w"))
 
     class TestQueryFixtureIds:
         """`entry_id()`"""

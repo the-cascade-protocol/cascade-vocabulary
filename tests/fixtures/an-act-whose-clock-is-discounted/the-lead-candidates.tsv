@@ -1,0 +1,8 @@
+?member	?candidate
+<urn:x:gout>	<urn:x:gout>
+<urn:x:eczema>	<urn:x:eczema>
+<urn:x:asthma>	<urn:x:asthma>
+<urn:x:migraineNotedOnTheSkewedClock>	<urn:x:migraineNotedOnTheSkewedClock>
+<urn:x:migraineNotedOnTheSkewedClock>	<urn:x:migrainePulledByThemLater>
+<urn:x:migrainePulledByThemLater>	<urn:x:migraineNotedOnTheSkewedClock>
+<urn:x:migrainePulledByThemLater>	<urn:x:migrainePulledByThemLater>

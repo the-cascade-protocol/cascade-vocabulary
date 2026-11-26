@@ -1,0 +1,7 @@
+PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
+
+SELECT ?earlier ?later ?ofOneRecord
+WHERE {
+  ?earlier cascade:judgedBefore ?later .
+  OPTIONAL { ?earlier cascade:judgedBeforeRevisionOfSameRecord ?later . BIND (true AS ?ofOneRecord) }
+}

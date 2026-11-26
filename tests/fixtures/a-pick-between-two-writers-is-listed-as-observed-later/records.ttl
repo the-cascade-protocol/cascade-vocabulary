@@ -24,3 +24,13 @@ _:northgate2 rdfs:label "Northgate" .
 :twoWritersTheirs a cascade:Revision ; cascade:revisionOf :twoWriters ; cascade:version :twoWritersSecond ;
     prov:wasDerivedFrom :pulledByThem ; prov:wasGeneratedBy :otherWritersPull ;
     prov:generatedAtTime "2026-01-03T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-03T00:00:00Z"^^xsd:dateTime .
+
+:tie a cascade:ProblemOrDiagnosis .
+:tieFirst prov:specializationOf :tie ; cascade:patient :subject ; cascade:conditionName "Cough" ; cascade:clinicalStatus "active" .
+:tieSecond prov:specializationOf :tie ; cascade:patient :subject ; cascade:conditionName "Cough" ; cascade:clinicalStatus "resolved" .
+:tieB a cascade:Revision ; cascade:revisionOf :tie ; cascade:version :tieFirst ;
+    prov:wasDerivedFrom :pulledByMe ; prov:wasGeneratedBy :myPull ;
+    prov:generatedAtTime "2026-01-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:00Z"^^xsd:dateTime .
+:tieA a cascade:Revision ; cascade:revisionOf :tie ; cascade:version :tieSecond ;
+    prov:wasDerivedFrom :pulledByThem ; prov:wasGeneratedBy :otherWritersPull ;
+    prov:generatedAtTime "2026-01-03T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-01T00:00:00Z"^^xsd:dateTime .

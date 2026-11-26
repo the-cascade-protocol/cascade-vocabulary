@@ -48,3 +48,8 @@
 :movedSecondRevision a cascade:Revision ; cascade:revisionOf :moved ; cascade:version :movedSecondVersion ;
     prov:wasRevisionOf :movedFirstRevision ;
     prov:generatedAtTime "2026-01-20T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-20T00:00:00Z"^^xsd:dateTime .
+
+:heldBackRecord a cascade:AllergyOrIntolerance .
+:heldBackVersion prov:specializationOf :heldBackRecord ; cascade:allergenName "Corn" ; cascade:patient :heldBack .
+:heldBackRevision a cascade:Revision ; cascade:revisionOf :heldBackRecord ; cascade:version :heldBackVersion ;
+    prov:generatedAtTime "2026-01-10T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-01-10T00:00:00Z"^^xsd:dateTime .

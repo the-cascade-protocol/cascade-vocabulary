@@ -1,0 +1,3 @@
+?subject	?subjectLabel	?dateOfBirth	?administrativeGender	?deceased	?dateOfDeath	?sources
+<urn:x:otherSubject>	"The person this pod is about"					"urn:x:claimed"
+<urn:x:subject>	"The person this pod is about"					

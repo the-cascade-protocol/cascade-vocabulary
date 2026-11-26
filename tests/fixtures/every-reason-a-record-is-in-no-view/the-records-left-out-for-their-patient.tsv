@@ -1,0 +1,5 @@
+?record	?reason	?profile
+<urn:x:noPatient>	<https://ns.cascadeprotocol.org/cascade#NoPatient>	
+<urn:x:heldBack>	<https://ns.cascadeprotocol.org/cascade#PatientProfileJudgedBothAboutAndNotAbout>	<urn:x:heldBackProfile>
+<urn:x:denied>	<https://ns.cascadeprotocol.org/cascade#PatientProfileJudgedNotAbout>	<urn:x:deniedProfile>
+<urn:x:unclaimed>	<https://ns.cascadeprotocol.org/cascade#PatientProfileNotClaimed>	<urn:x:profile>

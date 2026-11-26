@@ -9,6 +9,7 @@
   mf:entries (
     <#the-current-revision>
     <#why-it-is-in-no-view>
+    <#the-revisions-judged-erroneous>
   ) .
 
 <#the-current-revision> a mf:QueryEvaluationTest ;
@@ -24,3 +25,10 @@
   mf:action [ qt:query <../../../queries/questions/record/Why%20it%20is%20in%20no%20view.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <why-it-is-in-no-view.tsv> .
+
+<#the-revisions-judged-erroneous> a mf:QueryEvaluationTest ;
+  mf:name "the-revisions-judged-erroneous" ;
+  rdfs:comment "Each Erroneous of a person names one revision, the resolved one of the first allergy and the only one of the second, and each revision it names is said to be judged erroneous by it." ;
+  mf:action [ qt:query <the-revisions-judged-erroneous.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <the-revisions-judged-erroneous.tsv> .

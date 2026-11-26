@@ -5,7 +5,7 @@
 
 <> a mf:Manifest ;
   rdfs:label "medication-classes-of-a-stopped-medication" ;
-  rdfs:comment "A version of a product ingredients table that states precise ingredients: it maps metformin 500 MG Oral Tablet (861007) to metformin (6809) and to its precise ingredient metformin hydrochloride (235743), a form of metformin, and metformin to itself. A version of a drug classes table holds FDA's established pharmacologic class Biguanide (N0000175565) on metformin only. A stopped medication for the tablet." ;
+  rdfs:comment "A version of a product ingredients table that states precise ingredients: it maps metformin 500 MG Oral Tablet (861007) to metformin (6809) and to its precise ingredient metformin hydrochloride (235743), a form of metformin, and metformin to itself. A version of a drug classes table holds FDA's established pharmacologic class Biguanide (N0000175565) on metformin only. Two stopped medications for the tablet, each in an entry of its own." ;
   ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/> ;
   mf:entries (
     <#medication-classes-of-every-medication-record>
@@ -13,7 +13,7 @@
 
 <#medication-classes-of-every-medication-record> a mf:QueryEvaluationTest ;
   mf:name "medication-classes-of-every-medication-record" ;
-  rdfs:comment "The stopped metformin tablet is given Biguanide through metformin, the ingredient step reached though its precise ingredient bears no class, and the row names the record beside its entry." ;
+  rdfs:comment "Each stopped metformin tablet is given Biguanide through metformin, the ingredient step reached though its precise ingredient bears no class, and its row names the record beside its entry, the rows in the order of their entries' names." ;
   mf:action [ qt:query <../../../queries/tables/medication-classes-of-every-medication-record.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <medication-classes-of-every-medication-record.tsv> .
