@@ -9,10 +9,11 @@ from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import url2pathname
 
-from rdflib import Graph, Namespace, URIRef
+from rdflib import BNode, Graph, Namespace, URIRef
 from rdflib.collection import Collection
 from rdflib.namespace import RDF, RDFS, XSD
 
+import sql
 from contract import QUERIES, ROOT, named
 from engines import literal
 
@@ -82,11 +83,11 @@ ESCAPE = re.compile(r"\\(?:u([0-9A-Fa-f]{4})|U([0-9A-Fa-f]{8})|(.))", re.DOTALL)
 ECHAR = {"t": "\t", "b": "\b", "n": "\n", "r": "\r", "f": "\f", '"': '"', "'": "'", "\\": "\\"}
 
 
-def expected(result):
-    """The variables and the multiset of rows that a SPARQL 1.1 Query Results TSV file holds: a header of `?variable`s,
-    then a line for each row, a field for each variable, an empty field for one the row leaves unbound. A field is an
-    IRI in angle brackets or a double-quoted string with `^^<datatype>` or `@language`; a blank node or an abbreviated
-    number is refused, since no comparison can match it exactly."""
+def listed(result):
+    """The variables, in the header's order, and the rows, in the file's order, that a SPARQL 1.1 Query Results TSV file
+    holds: a header of `?variable`s, then a line for each row, a field for each variable, an empty field for one the row
+    leaves unbound. A field is an IRI in angle brackets or a double-quoted string with `^^<datatype>` or `@language`; a
+    blank node or an abbreviated number is refused, since no comparison can match it exactly."""
     lines = Path(result).read_text(encoding="utf-8").split("\n")
     if lines.pop() != "":
         raise ValueError(f"{result} does not end in a newline")
@@ -99,8 +100,14 @@ def expected(result):
         fields = line.split("\t")
         if len(fields) != len(names):
             raise ValueError(f"{result}: a row has {len(fields)} fields, the header {len(names)}")
-        rows.append(row({name: term(field) for name, field in zip(names, fields) if field}))
-    return set(names), Counter(rows)
+        rows.append({name: term(field) for name, field in zip(names, fields) if field})
+    return names, rows
+
+
+def expected(result):
+    """The variables and the multiset of rows that `listed` reads from the file."""
+    names, rows = listed(result)
+    return set(names), Counter(row(each) for each in rows)
 
 
 def unescaped(found, field):
@@ -127,19 +134,28 @@ def row(binding):
     return frozenset((name, node.n3()) for name, node in binding.items())
 
 
+def as_term(node):
+    """The sql.Term of an rdflib node, which `sql.compared` orders and ties."""
+    if isinstance(node, URIRef):
+        return sql.Term(sql.IRI, str(node))
+    if isinstance(node, BNode):
+        return sql.Term(sql.BLANK, str(node))
+    if node.language:
+        return sql.Term(sql.LITERAL, str(node), sql.LANG_STRING, node.language)
+    return sql.Term(sql.LITERAL, str(node), str(node.datatype or XSD.string))
+
+
 def failure(entry, store):
-    """Why the entry's query over the store does not give its result, or None when it does."""
+    """Why the entry's query over the store does not give its result, or None when it does: the same rows, and, where
+    the query ends in an ORDER BY, in the order the result lists them; rows its keys tie may come either way round."""
     query = Path(entry.query).read_text(encoding="utf-8")
-    variables, rows = expected(entry.result)
+    variables, wanted = listed(entry.result)
     names, solutions = store.answer(query, entry.records)
-    if variables != set(names):
+    if set(variables) != set(names):
         return f"expected the variables {sorted(variables)}, found {sorted(names)}"
-    found = Counter(row(binding) for binding in solutions)
-    if rows == found:
-        return None
-    return "\n".join([*(f"missing: {shown(r)}" for r in sorted((rows - found).elements(), key=shown)),
-                      *(f"unexpected: {shown(r)}" for r in sorted((found - rows).elements(), key=shown))])
 
-
-def shown(found_row):
-    return " ".join(f"?{name}={node}" for name, node in sorted(found_row))
+    def terms(binding):
+        return tuple(as_term(binding[name]) if name in binding else None for name in names)
+    lines = sql.compared(names, [terms(each) for each in wanted], [terms(each) for each in solutions],
+                         sql.final_order(query, names))
+    return "\n".join(lines) or None

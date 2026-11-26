@@ -6,6 +6,7 @@ import hashlib
 import re
 import sqlite3
 import unicodedata
+from collections import Counter
 from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import cache
@@ -502,6 +503,128 @@ def sparql_compare(left, right):
 FUNCTIONS = {"sparql_replace": sparql_replace, "sparql_sha256": sparql_sha256,
              "sparql_encode_for_uri": sparql_encode_for_uri, "sparql_lcase": sparql_lcase,
              "sparql_decimal": sparql_decimal, "sparql_compare": sparql_compare}
+
+
+# The order of rows
+
+def read_as_text(condition):
+    """How an ORDER BY condition reads its variable where it orders by its STR: the position its text is taken from,
+    the length taken, None for the rest, and whether an unbound value reads as "", as in
+    DESC(COALESCE(SUBSTR(STR(?a), 1, 10), "")); None where it orders the term itself."""
+    if not re.search(r"\bSTR\s*\(\s*\?\w+\s*\)", condition):
+        return None
+    cut = re.search(r"SUBSTR\s*\(\s*STR\s*\(\s*\?\w+\s*\)\s*,\s*(\d+)(?:\s*,\s*(\d+))?\s*\)", condition)
+    return (int(cut[1]) if cut else 1, int(cut[2]) if cut and cut[2] else None,
+            re.search(r',\s*""\s*\)', condition) is not None)
+
+
+def as_text(term, read):
+    """The value a condition reading its variable as text, as read_as_text gives it, orders the term by."""
+    start, length, unbound_empty = read
+    text = None if term is None or term.kind == BLANK else term.value
+    if text is not None:
+        text = text[start - 1:None if length is None else start - 1 + length]
+    return "" if text is None and unbound_empty else text
+
+
+def final_order(text, names):
+    """The keys the query's rows are ordered by, after its last brace, each a column's index and how its condition
+    reads it, as read_as_text gives: its ORDER BY's leading conditions that are a projected variable, alone or in an
+    expression of it and of no other variable, such as DESC(COALESCE(STR(?a), "")); the conditions after them order
+    only rows these tie. None when the query has no ORDER BY there."""
+    tail = text[text.rfind("}"):]
+    clause = re.search(r"ORDER\s+BY\s", tail)
+    if not clause:
+        return None
+    rest, keys = tail[clause.end():].strip(), []
+    while rest:
+        variable = re.match(r"\?(\w+)", rest)
+        if variable:
+            condition = variable.group(0)
+        else:
+            call = re.match(r"\w+\s*\(", rest)
+            if not call:
+                break
+            depth, at = 0, call.end() - 1
+            for at in range(call.end() - 1, len(rest)):
+                depth += {"(": 1, ")": -1}.get(rest[at], 0)
+                if depth == 0:
+                    break
+            condition = rest[:at + 1]
+        mentioned = set(re.findall(r"\?(\w+)", re.sub(r'"[^"]*"', "", condition)))
+        if len(mentioned) != 1 or (found := mentioned.pop()) not in names:
+            break
+        keys.append((names.index(found), read_as_text(condition)))
+        rest = rest[len(condition):].strip()
+    return keys
+
+
+def tied(left, right):
+    """Whether an ORDER BY may put two terms either way round: one term, two blank nodes, or two literals SPARQL's `<`
+    does not order, such as a value with no zone and one with a zone within fourteen hours of it, whose order is the
+    engine's own."""
+    if left == right:
+        return True
+    if left is None or right is None or left.kind != right.kind or left.kind == IRI:
+        return False
+    if left.kind == BLANK:
+        return True
+    try:
+        return sparql_compare(str(left), str(right)) in (None, 0)
+    except ValueError:
+        return True
+
+
+def ordered(one, other, keys):
+    """Whether an ORDER BY of the keys puts the two rows one way round: the first key whose value differs, a text a
+    condition reads or else the term, holds two texts, or two terms SPARQL's `<` orders."""
+    for column, read in keys:
+        if read is not None:
+            if as_text(one[column], read) != as_text(other[column], read):
+                return True
+        elif one[column] != other[column]:
+            return not tied(one[column], other[column])
+    return False
+
+
+def runs(found, keys):
+    """The lengths of the rows' runs, in their order: a run ends where the ORDER BY's keys put a row and the next one
+    way round."""
+    lengths = [1] if found else []
+    for one, other in zip(found, found[1:]):
+        if ordered(one, other, keys):
+            lengths.append(1)
+        else:
+            lengths[-1] += 1
+    return lengths
+
+
+def shown(names, found):
+    return " ".join(f"?{name}={value}" for name, value in zip(names, found) if value is not None)
+
+
+def written(found):
+    return [str(value) if value is not None else "" for value in found]
+
+
+def compared(names, wanted, found, keys):
+    """Why rows found are not the rows wanted, as lines, or none when they are: as multisets, and, given the key columns
+    of an ORDER BY, as the same runs of rows those keys order, in the same order, the rows of a run being a multiset;
+    so where SPARQL leaves two rows' order to the engine, as it does for rows the keys tie, either order passes."""
+    lacking, extra = Counter(wanted) - Counter(found), Counter(found) - Counter(wanted)
+    lines = [*(f"missing: {shown(names, r)}" for r in sorted(lacking.elements(), key=written)),
+             *(f"unexpected: {shown(names, r)}" for r in sorted(extra.elements(), key=written))]
+    if lines or keys is None:
+        return lines
+    at = 0
+    for length in runs(wanted, keys):
+        run = wanted[at:at + length]
+        if Counter(run) != Counter(found[at:at + length]):
+            wrong = next((i for i in range(at, at + length) if found[i] not in run), at)
+            return [f"the same rows in another order, from row {wrong + 1}: expected "
+                    f"{' or '.join(shown(names, r) for r in run)}, found {shown(names, found[wrong])}"]
+        at += length
+    return lines
 
 
 # The loader
