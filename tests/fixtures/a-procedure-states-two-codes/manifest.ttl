@@ -6,6 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "a-procedure-states-two-codes" ;
   rdfs:comment "A procedure whose source coded it twice, in SNOMED CT." ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/> ;
   mf:entries (
     <#my-procedures>
   ) .

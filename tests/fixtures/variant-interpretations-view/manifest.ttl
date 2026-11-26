@@ -6,6 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "variant-interpretations-view" ;
   rdfs:comment "One variant of two members, a panel's and an exome's; a second variant. A 2022 report of uncertain significance, attributed to its lab's organization record, and a 2024 report of likely pathogenic on the first, a 2024 report whose answer is not one of the five ACMG values, a benign report on the second, and a report that names no variant." ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/> ;
   mf:entries (
     <#the-variant-interpretations-view>
     <#what-each-report-says-of-a-variant>

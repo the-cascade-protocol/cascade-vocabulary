@@ -14,8 +14,8 @@ import pytest
 import sql
 from contract import QUERIES, ROOT, named, query
 from engines import TOKEN, Oxigraph, bound_to_records, marked_groups
-from manifests import entries, expected, lens_name, row
-from pods import FIXTURES, built_once, on_its_worker
+from manifests import compared_beside, entries, expected, lens_name, row
+from pods import FIXTURES, Fixture, built_once, on_its_worker
 
 LENSES = sorted(named("lenses"))
 UNPORTED = ROOT / "tests" / "sql-unported.txt"
@@ -452,6 +452,14 @@ def records_in_entries(connection):
         "AND t.kind = 2 ORDER BY t.lex")]
 
 
+def records_of_the_pod(connection):
+    """Each record the pod holds, as its IRI: those in an entry, and those left out of every view too."""
+    return [lex for (lex,) in connection.execute(
+        "SELECT DISTINCT t.lex FROM quad q JOIN term t ON t.id = q.s "
+        "WHERE q.p = (SELECT id FROM term WHERE nt = ?) AND q.o = (SELECT id FROM term WHERE nt = ?) "
+        "AND t.kind = 2 ORDER BY t.lex", (f"<{sql.RDF_TYPE}>", f"<{sql.RECORD}>"))]
+
+
 NO_SUCH_RECORD = "urn:cascade:no-such-record"
 ASKED_MEMBERS = re.compile(r"\bFROM (\w+_member) \w+ JOIN asked\b")
 
@@ -497,17 +505,24 @@ def rq_over(fixture, lens, relative):
             else built_once(fixture, "oxigraph", lens).store.store)
 
 
+def schema_of(connection):
+    """Each object, of every kind, that the connection's database and its temporary one hold, as its type and name."""
+    return set(connection.execute("SELECT type, name FROM sqlite_temp_master UNION ALL SELECT type, name FROM sqlite_master"))
+
+
 def failures(fixture, lens, relative, text):
     """Why the `.sql` text, over the fixture's pod under the lens, does not give the rows of the `.rq` at the path: in a
     whole run, in its order when it has one; for a question bound to a record, the `.rq` bound to it and the `.sql`
-    with `asked` holding it alone, for each record a manifest entry of the fixture binds, for a list question each
-    record of its own screen's members and one record of another kind, and a record the
-    pod lacks; for a SELECT the `.rq` does not bind and that gives no `?record` column, the `.rq` bound to a record the pod
+    with `asked` holding it alone, for each record a manifest entry of the fixture binds and each record the pod
+    holds, for a list question each record of its own screen's members and one record of another kind, and a
+    record the pod lacks; for a SELECT the `.rq` does not bind and that gives no `?record` column, the `.rq` bound to a record the pod
     lacks and the `.sql` whole; and, through the `.sql`,
-    the rows of each manifest entry under that lens that runs it. A CONSTRUCT's rows are compared as a set of
+    the rows of each manifest entry under that lens that runs it; and the objects the database holds are the same
+    after all of these as before, whatever kind and spelling a `.sql`'s prepare part makes one. A CONSTRUCT's rows are compared as a set of
     triples. labels.rq is run on the pod before the labels are made, as it is written."""
     rq, store = rq_over(fixture, lens, relative)
     connection = pod(fixture, lens)
+    before = schema_of(connection)
     names, wanted, construct = oxigraph_answer(store, rq)
     try:
         columns, found = sql.answer(connection, text)
@@ -527,6 +542,7 @@ def failures(fixture, lens, relative, text):
     bound = set() if construct else {record for entry in manifest_entries(fixture) for record in entry.records}
     question = relative.startswith("queries/questions/")
     if binds_a_record(rq) if question else re.search(r"\basked\b", text):
+        bound |= set(records_of_the_pod(connection))
         if ":page_size" in text:
             bound |= set(records_a_list_question_is_bound_to(connection, text))
         bound.add(NO_SUCH_RECORD)
@@ -547,6 +563,8 @@ def failures(fixture, lens, relative, text):
                   + " ".join(f"?{name}={term}" for name, term in sorted(r))
                   for kind, side in (("missing", pinned - rows), ("unexpected", rows - pinned))
                   for r in sorted(side.elements(), key=sorted)]
+    if left := schema_of(connection) ^ before:
+        lines.append(f"{fixture.name}, under {lens}, {relative}: the .sql leaves in the database, or removes from it: {sorted(left)}")
     return lines
 
 
@@ -682,22 +700,17 @@ def keyed_changes(connection):
     return changes
 
 
-RICH = ("every-row-names-its-sources", "files-and-folders", "two-kinds-of-machine-sameness",
-        "a-profiles-hospital-is-its-organizations-current-name")
-SCREEN_FIXTURES = (
-    "a-procedure-states-two-codes", "a-statement-over-a-typed-and-an-untyped-profile",
-    "a-finding-of-two-results-joined-by-a-shared-business-identifier-is-not-listed-when-one-is-amended", "kinds-never-join",
-    "medication-classes-of-a-stopped-medication", "a-vaccination-given-for-a-code",
-    "a-dispense-states-a-code-in-another-system-and-a-selected-code", "a-reason-whose-text-holds-the-other-forms-separators",
-    "a-note-time-written-short-of-the-second", "reports-view", "conditions-view", "procedures-view",
-    "an-active-condition-from-a-document-retrieved-twice",
-    "variant-interpretations-view", "a-medicine-and-a-procedure-given-for-a-condition")
+VIEWS = "queries/views/"
 KEYED_KINDS = {"unchanged": r" unchanged$", "moved": r" moved out of entry ", "agent renamed": r"^agent .* renamed$",
                "reasons dropped": r"'s reasons dropped$", "entry renamed": r" its records give reasons for renamed, ",
                "reason given": r" given condition .* as a reason$", "record put in an entry": r"^a record with no reason put in entry ",
                "record taken out of an entry": r"^a record with no reason taken out of entry ",
                "document retrieved again": r" retrieved again$"}
-assert {*RICH, *SCREEN_FIXTURES} <= {fixture.name for fixture in FIXTURES}
+
+
+def fills_the_screens(fixture):
+    """Whether the fixture's manifest names the folder of the views, so the screens are filled, whole and keyed, over it."""
+    return VIEWS in compared_beside(fixture.manifest)
 
 
 def keyed_kind(name):
@@ -722,12 +735,11 @@ def lenses_of_entries(fixture):
 
 
 def lenses_compared(fixture, relative):
-    """The lenses under which the `.sql` beside the `.rq` is compared with it over the fixture: each lens on a rich
-    fixture, and for a view, which no manifest names, on each fixture its screen is filled on and on the fixture named for
-    it (`<view>-view`); on any other the lenses its manifest's entries run the `.rq` under, and none where the manifest
-    does not name it."""
-    if fixture.name in RICH or relative.startswith("queries/views/") and (
-            fixture.name in SCREEN_FIXTURES or fixture.name == f"{Path(relative).stem}-view"):
+    """The lenses under which the `.sql` beside the `.rq` is compared with it over the fixture: each lens where the
+    manifest names the `.rq`, or a folder holding it, by ctm:comparesSqlWithSparqlUnderEveryLens; else the lenses its entries run the `.rq`
+    under, and none where no entry runs it."""
+    if any(relative == named or named.endswith("/") and relative.startswith(named)
+           for named in compared_beside(fixture.manifest)):
         return LENSES
     return sorted(lenses_of_entries(fixture).get(relative, ()))
 
@@ -744,8 +756,12 @@ def chosen_for(relatives):
 
 
 def gives_rows(fixture, lens, relative):
-    """Whether the `.rq` gives a row over the fixture under the lens."""
+    """Whether the `.rq` gives a row over the fixture under the lens; a question that binds a record, whether it gives
+    one bound to a record the pod holds or a manifest entry binds, as a record no pod holds gives it none."""
     rq, store = rq_over(fixture, lens, relative)
+    if relative.startswith("queries/questions/") and binds_a_record(rq):
+        records = set(records_of_the_pod(pod(fixture, lens))) | {r for entry in manifest_entries(fixture) for r in entry.records}
+        return any(oxigraph_answer(store, rq, record)[1] for record in sorted(records))
     return bool(oxigraph_answer(store, rq)[1])
 
 
@@ -756,14 +772,14 @@ def uncovered(compared, gives_rows):
 
 
 def comparisons(relatives):
-    """The fixtures and lenses each of the `.rq` paths is compared on, the rich fixtures first."""
-    ordered = sorted(FIXTURES, key=lambda fixture: fixture.name not in RICH)
+    """The fixtures and lenses each of the `.rq` paths is compared on, first those that compare every query."""
+    ordered = sorted(FIXTURES, key=lambda fixture: "queries/" not in compared_beside(fixture.manifest))
     return {relative: [(fixture, lens) for fixture in ordered for lens in lenses_compared(fixture, relative)]
             for relative in relatives}
 
 
 def screens_filled_on(relatives):
-    return {relative: [(fixture, lens) for fixture in FIXTURES if fixture.name in SCREEN_FIXTURES for lens in LENSES]
+    return {relative: [(fixture, lens) for fixture in FIXTURES if fills_the_screens(fixture) for lens in LENSES]
             for relative in relatives}
 
 
@@ -772,10 +788,10 @@ class TestSqlBesideEachQuery:
 
     A runtime answers a query from SQLite through the `.sql` beside its `.rq`, over the tables queries/statements.sql
     makes, calling the six functions whose vectors are in queries/sql-functions.json. The `.rq` stays the definition: each
-    `.sql` is held to its rows on the fixtures whose manifests name its query, under the lenses the entries run it under,
-    and on a few rich fixtures under each lens, and to the rows the manifests pin for it; no query is run over every
-    fixture, and each gives rows on one it is compared on. A view's `.sql` is also held to its rows on the fixture named
-    for it, `<view>-view`, under each lens. A view's `.sql` makes and fills its screen, the tables a list
+    `.sql` is held to its rows on the fixtures whose manifests' entries run its query, under the lenses they run it under,
+    and on those whose manifests name its query or a folder of it by `ctm:comparesSqlWithSparqlUnderEveryLens`, under each lens, and to the
+    rows the manifests pin for it; no query is run over every fixture, and each gives rows on one it is compared on. The
+    runtime's conformance command makes the same comparisons, read from the same manifests. A view's `.sql` makes and fills its screen, the tables a list
     question reads a page of, and is held to its CONSTRUCT's triples; a list question is held to its whole list a page at a
     time. A query outside queries/matcher/ with no `.sql` yet is named in tests/sql-unported.txt.
     """
@@ -786,10 +802,9 @@ class TestSqlBesideEachQuery:
             """gives through each `.sql` chosen for the fixture the rows its `.rq` gives, and those each manifest entry running it pins
 
             The fixture is built on Oxigraph and loaded into SQLite as tests/sql.py loads it. Each `.sql` beside a `.rq`
-            outside queries/matcher/ that the fixture's manifest names, or any if the fixture is one of the few rich ones,
-            gives the `.rq`'s columns and the same multiset of rows, each term compared in N-Triples form, in the same
-            order where the `.rq` ends with an ORDER BY, and a CONSTRUCT's `.sql` the same set of triples, under the lenses
-            the manifest's entries run the `.rq` under, or each lens for a rich fixture; a manifest entry of the fixture
+            outside queries/matcher/ that the fixture's manifest chooses gives the `.rq`'s columns and the same multiset of
+            rows, each term compared in N-Triples form, in the same order where the `.rq` ends with an ORDER BY, and a
+            CONSTRUCT's `.sql` the same set of triples, under the lenses chosen for it; a manifest entry of the fixture
             that runs the `.rq` under that lens gives its pinned rows through the `.sql` too.
             """
             found = [line for relative, lenses in compared_on(fixture, ported()).items() for lens in lenses
@@ -800,7 +815,7 @@ class TestSqlBesideEachQuery:
         def test_gives_each_list_question_chosen_for_the_fixture_a_page_at_a_time_as_the_whole_list(self, fixture):
             """gives each list question's rows a page at a time, pages of one and of two entries joined in order, as its whole list
 
-            Each `.sql` that takes `:page_size`, and that the fixture's manifest names or the fixture is rich, gives a
+            Each `.sql` that takes `:page_size`, and that the fixture's manifest chooses, gives a
             `page_key` last, the key of the row's entry, and is asked a page of one entry, then of two, at a time, each
             after the last row's key of the page before; the pages joined give the rows and keys the whole list gives, in
             its order, under the lenses chosen as for its rows. No page holds more entries than its size, or splits an
@@ -832,11 +847,11 @@ class TestSqlBesideEachQuery:
             assert not found, "\n".join(found)
 
         @pytest.mark.parametrize("fixture", [on_its_worker(fixture, id=fixture.name) for fixture in FIXTURES
-                                             if fixture.name in SCREEN_FIXTURES])
+                                             if fills_the_screens(fixture)])
         def test_fills_each_screen_keyed_to_what_changed_as_a_whole_fill_does_on_the_fixtures_chosen_for_the_screens(self, fixture):
             """fills each screen, keyed to what a change touched, as a whole fill of the changed pod does, under each lens
 
-            Over each of the few fixtures chosen for the screens, its screens, filled whole, each change a keyed run may be given is made to the pod's
+            Over each fixture whose manifest names queries/views/ by `ctm:comparesSqlWithSparqlUnderEveryLens`, its screens, filled whole, each change a keyed run may be given is made to the pod's
             statements and the screens filled again with scope holding what it touched: one record of each entry, a
             member but the lead where there is one, unchanged; each record but the lead of an entry of two or more,
             moved to an entry of its own; each agent, renamed; each record whose current version gives a reason
@@ -887,18 +902,27 @@ class TestSqlBesideEachQuery:
         @pytest.mark.parametrize("compared", [
             pytest.param(comparisons(ported()), id="each-sql-against-its-rq"),
             pytest.param(comparisons(list_questions()), id="each-list-question-a-page-at-a-time"),
-            pytest.param(screens_filled_on([relative for relative in ported() if relative.startswith("queries/views/")]),
+            pytest.param(screens_filled_on([relative for relative in ported() if relative.startswith(VIEWS)]),
                          id="each-screen-filled-keyed")])
         def test_gives_rows_through_each_query_on_a_fixture_it_is_compared_on(self, compared):
             """gives a row for each query on some fixture and lens it is compared on, and names each that gives none
 
-            Each ported `.rq` is compared with its `.sql` on the fixtures its manifest names and on the rich ones, each list
-            question is paged on those, and each view is compared on, and its screen filled on, the fixtures chosen for the
-            screens; a query that gives no row on any of those, or on none, would be compared with nothing, and the
+            Each ported `.rq` is compared with its `.sql` on the fixtures the manifests choose for it, each list question
+            is paged on those, and each view's screen is filled on the fixtures whose manifests name queries/views/; a
+            query that gives no row on any of those, or that no manifest chooses, would be compared with nothing, and the
             check names it.
             """
             none = uncovered(compared, gives_rows)
             assert none == [], f"each gives no row on any fixture it is compared on, or is compared on none: {none}"
+
+        def test_names_by_compares_sql_with_sparql_under_every_lens_only_a_query_with_a_sql_or_a_folder_holding_one(self):
+            """names by `ctm:comparesSqlWithSparqlUnderEveryLens` only a `.rq` with a `.sql` beside it, or a folder, ending in a slash, holding one
+
+            A manifest naming a file or folder that is neither would choose nothing for any fixture, silently.
+            """
+            done = set(ported())
+            assert sorted(f"{fixture.name}: {named}" for fixture in FIXTURES for named in compared_beside(fixture.manifest)
+                          if not (named in done or named.endswith("/") and any(r.startswith(named) for r in done))) == []
 
         def test_makes_each_kind_of_keyed_change_on_a_fixture_the_screens_are_filled_on(self):
             """makes each kind of change a keyed run may be given to some fixture the screens are filled on, and names a change of no kind
@@ -908,7 +932,7 @@ class TestSqlBesideEachQuery:
             or taken out of it again, and a document retrieved again. Over the fixtures chosen for the screens, under each
             lens, each is made at least once, and each change made is of one kind.
             """
-            fixtures = [fixture for fixture in FIXTURES if fixture.name in SCREEN_FIXTURES]
+            fixtures = [fixture for fixture in FIXTURES if fills_the_screens(fixture)]
             made = {keyed_kind(name) for fixture in fixtures for lens in LENSES for name, _ in keyed_changes(pod(fixture, lens))}
             assert made == set(KEYED_KINDS), sorted(set(KEYED_KINDS) - made)
 
@@ -1299,6 +1323,40 @@ class TestTheSqlCheck:
     EXPOSURE = "queries/derivations/medication-exposure-periods.rq"
     ZERO_SUPPLY = next(fixture for fixture in FIXTURES if fixture.name == "exposure-from-a-supply-of-zero")
 
+    def test_compares_a_sql_on_a_fixture_only_where_its_manifest_names_its_query_a_folder_of_it_or_an_entry_running_it(self, tmp_path):
+        """compares a `.sql` over a fixture under each lens where the manifest names its query, or a folder holding it, by `ctm:comparesSqlWithSparqlUnderEveryLens`; under an entry's lens where an entry runs it; and nowhere else
+
+        Three manifests: the first names `How many judgments count.rq`, the second the folder queries/views/, the third
+        runs `How many judgments count.rq` in an entry under everyday. The `.sql` beside it is compared under each lens
+        over the first, under everyday over the third, and not over the second; the conditions view's over the second
+        alone; and `labels.rq`'s over none of them, which the check of each query compared on some fixture names.
+        """
+        def manifest(name, said):
+            folder = tmp_path / name
+            folder.mkdir()
+            (folder / "manifest.ttl").write_text(
+                "@prefix ctm: <https://ns.cascadeprotocol.org/test-manifest#> .\n"
+                "@prefix mf: <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .\n"
+                "@prefix qt: <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .\n"
+                f"<> a mf:Manifest {said} .\n", encoding="utf-8")
+            return Fixture(folder / "manifest.ttl")
+
+        judgments = (ROOT / self.JUDGMENTS).as_uri()
+        everyday = (QUERIES / "lenses/everyday.rq").as_uri()
+        named = manifest("names-the-query", f"; ctm:comparesSqlWithSparqlUnderEveryLens <{judgments}> ; mf:entries ()")
+        folder = manifest("names-the-views", f"; ctm:comparesSqlWithSparqlUnderEveryLens <{(ROOT / 'queries/views').as_uri()}/> ; mf:entries ()")
+        entry = manifest("runs-it-in-an-entry", f"; mf:entries ( <#count> ) . <#count> mf:name \"count\" ; mf:action "
+                                                f"[ qt:query <{judgments}> ; ctm:lensQueryPath <{everyday}> ]")
+        relatives = [self.JUDGMENTS, "queries/views/conditions.rq", "queries/labels.rq"]
+        assert {relative: [(fixture.name, lenses_compared(fixture, relative)) for fixture in (named, folder, entry)]
+                for relative in relatives} == {
+            self.JUDGMENTS: [("names-the-query", LENSES), ("names-the-views", []), ("runs-it-in-an-entry", ["everyday"])],
+            "queries/views/conditions.rq": [("names-the-query", []), ("names-the-views", LENSES), ("runs-it-in-an-entry", [])],
+            "queries/labels.rq": [("names-the-query", []), ("names-the-views", []), ("runs-it-in-an-entry", [])]}
+        compared = {relative: [(fixture, lens) for fixture in (named, folder, entry)
+                               for lens in lenses_compared(fixture, relative)] for relative in relatives}
+        assert uncovered(compared, lambda fixture, lens, relative: True) == ["queries/labels.rq"]
+
     @pytest.mark.xdist_group(PINNED.name)
     def test_reports_the_fixture_query_and_row_of_a_sql_that_drops_a_value_from_a_row(self):
         """reports the fixture, the query and the row, for a `.sql` that drops one column's value from one row
@@ -1335,6 +1393,46 @@ class TestTheSqlCheck:
         assert records and not [line for line in found if f"{self.JUDGMENTS}, against the .rq: " in line]
         assert {record for record in records
                 if any(f"keyed to {record}, against the .rq: missing: " in line for line in found)} == records
+
+    PREPARED = "queries/questions/entry/What it shows.rq"
+    WHOLE_POD = next(fixture for fixture in FIXTURES if fixture.name == "files-and-folders")
+
+    @pytest.mark.xdist_group(WHOLE_POD.name)
+    @pytest.mark.parametrize("spelling", ["CREATE TEMP TABLE view_statements", "CREATE TABLE temp.view_statements"])
+    def test_reports_a_sql_that_leaves_an_object_in_the_database_whatever_the_spelling_that_makes_it(self, spelling):
+        """reports a `.sql` that leaves in the database an object its prepare part made, however its statement is spelled
+
+        `What it shows.sql` with its cleanup part cut, and its temporary table made as `CREATE TEMP TABLE` and as
+        `CREATE TABLE temp.`, is checked over a fixture: the check names the table left, and finds nothing left by the
+        `.sql` as it is.
+        """
+        text = sql_beside(self.PREPARED).read_text(encoding="utf-8")
+        leaking = re.sub(r"-- part: cleanup.*", "", text.replace("CREATE TEMP TABLE view_statements", spelling), flags=re.S)
+        assert leaking != text
+        connection = pod(self.WHOLE_POD, "everyday")
+        try:
+            found = [line for line in failures(self.WHOLE_POD, "everyday", self.PREPARED, leaking) if "leaves" in line]
+            assert [line for line in found if "view_statements" in line]
+        finally:
+            connection.execute("DROP TABLE IF EXISTS temp.view_statements")
+        assert [line for line in failures(self.WHOLE_POD, "everyday", self.PREPARED, text) if "leaves" in line] == []
+
+    SHOWN_IN = "queries/questions/record/Which entry shows it.rq"
+
+    def test_reports_a_question_bound_to_a_record_whose_sql_ignores_the_record_it_is_asked_of(self):
+        """reports a question's `.sql` that ignores the record `asked` holds, over the fixtures whose manifests choose it, none binding a record
+
+        `Which entry shows it.sql`, with the part that chooses the records `asked` holds cut out so it gives every
+        entry's rows whatever it is asked of, is checked over each fixture whose manifest chooses it; the check asks it
+        of each record the pod puts in an entry, and names a record whose `.rq` rows it misses.
+        """
+        text = sql_beside(self.SHOWN_IN).read_text(encoding="utf-8")
+        ignoring = re.sub(r" WHERE record IN \(SELECT term FROM asked\)\s+UNION ALL SELECT .*? NOT EXISTS \(SELECT 1 FROM asked\)",
+                          "", text, flags=re.S)
+        assert ignoring != text
+        found = [line for fixture in FIXTURES if (lenses := lenses_compared(fixture, self.SHOWN_IN))
+                 for line in failures(fixture, lenses[0], self.SHOWN_IN, ignoring)]
+        assert [line for line in found if ", keyed to urn:x:" in line and ", against the .rq: unexpected: " in line]
 
     @pytest.mark.xdist_group(ZERO_SUPPLY.name)
     def test_reports_each_triple_a_construct_sql_misses_and_each_it_adds_once_however_often_it_gives_it(self):

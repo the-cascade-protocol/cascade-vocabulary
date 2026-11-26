@@ -37,6 +37,7 @@ WITH
   counted (entry, label, place, records, places) AS (
     SELECT placed.entry, placed.label, placed.place, count(DISTINCT placed.record), seen.places
     FROM placed CROSS JOIN seen ON seen.entry = placed.entry
+    WHERE placed.record IN (SELECT term FROM asked) OR NOT EXISTS (SELECT 1 FROM asked)
     GROUP BY placed.entry, placed.label, placed.place, seen.places)
 SELECT counted.entry AS entry, entry_label.nt AS entryLabel, place.nt AS place,
   '"' || counted.records || '"^^<http://www.w3.org/2001/XMLSchema#integer>' AS records,

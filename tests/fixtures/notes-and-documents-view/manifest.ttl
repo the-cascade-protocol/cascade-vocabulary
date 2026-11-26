@@ -6,6 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "notes-and-documents-view" ;
   rdfs:comment "A final progress note with its title, text and clinic, from a summary its clinic wrote; and a plan of care note the person entered, its type coded in LOINC and in a clinic's own system; and a letter stating no date and the reason it holds none." ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/notes-and-documents.rq> ;
   mf:entries (
     <#the-notes-and-documents-view>
     <#its-members-absent-values>

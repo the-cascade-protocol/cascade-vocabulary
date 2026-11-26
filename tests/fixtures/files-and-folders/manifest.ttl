@@ -7,6 +7,7 @@
 <> a mf:Manifest ;
   rdfs:label "files-and-folders" ;
   rdfs:comment "A profile naming the storage root, a record, its version and revision in fanned folders, an About in a plain folder naming a profile no file of its own states, and the files the build writes." ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/> ;
   mf:entries (
     <#what-each-folder-holds>
     <#which-file-states-each-thing>

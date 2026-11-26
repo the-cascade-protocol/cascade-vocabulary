@@ -6,6 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "medication-classes-of-a-stopped-medication" ;
   rdfs:comment "A version of a product ingredients table that states precise ingredients: it maps metformin 500 MG Oral Tablet (861007) to metformin (6809) and to its precise ingredient metformin hydrochloride (235743), a form of metformin, and metformin to itself. A version of a drug classes table holds FDA's established pharmacologic class Biguanide (N0000175565) on metformin only. A stopped medication for the tablet." ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/> ;
   mf:entries (
     <#medication-classes-of-every-medication-record>
   ) .

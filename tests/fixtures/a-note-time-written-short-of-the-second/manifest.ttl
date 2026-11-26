@@ -6,6 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "a-note-time-written-short-of-the-second" ;
   rdfs:comment "A progress note its source dated to the hour, 2025060109, which the record holds padded to 09:00:00 with the node saying so." ;
+  ctm:comparesSqlWithSparqlUnderEveryLens <../../../queries/views/> ;
   mf:entries (
     <#its-padded-time>
     <#my-reports-notes-and-documents>
