@@ -6,6 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "every-row-names-its-sources" ;
   rdfs:comment "A record of each kind a pod question lists, from a summary a clinic wrote and an exchange keeps or from a hospital's visit record: a lisinopril prescription from the summary joined to a list entry the person entered, and a glucose from the summary joined to its copy from the visit." ;
+  ctm:comparesSqlBeside <../../../queries/> ;
   mf:entries (
     <#my-active-allergies>
     <#my-active-conditions>

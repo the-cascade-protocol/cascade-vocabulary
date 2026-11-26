@@ -13,7 +13,7 @@ from rdflib import Graph, Namespace, URIRef
 from rdflib.collection import Collection
 from rdflib.namespace import RDF, RDFS, XSD
 
-from contract import QUERIES, named
+from contract import QUERIES, ROOT, named
 from engines import literal
 
 MF = Namespace("http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#")
@@ -56,6 +56,16 @@ def entries(manifest):
             records=tuple(sorted(str(record) for record in graph.objects(action, CTM.boundRecord))),
             comment=str(graph.value(entry, RDFS.comment) or "")))
     return found
+
+
+@cache
+def compared_beside(manifest):
+    """Each query file, and each folder of queries as a path ending in a slash, that the manifest names by
+    ctm:comparesSqlBeside, relative to the repository's root."""
+    graph = Graph().parse(Path(manifest), format="turtle")
+    [head] = graph.subjects(RDF.type, MF.Manifest)
+    return tuple(sorted(path(named).resolve().relative_to(ROOT.resolve()).as_posix() + "/" * str(named).endswith("/")
+                        for named in graph.objects(head, CTM.comparesSqlBeside)))
 
 
 def lens_name(file):

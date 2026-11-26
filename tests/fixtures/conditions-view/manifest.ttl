@@ -6,6 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "conditions-view" ;
   rdfs:comment "An active condition entry of two members, the later naming it, stating two SNOMED CT codes and two ICD-10-CM codes, each as its code IRI, and stating no status and, for its onset and its abatement, the reasons it holds none; and a resolved condition." ;
+  ctm:comparesSqlBeside <../../../queries/views/> ;
   mf:entries (
     <#the-conditions-view>
     <#my-active-conditions>

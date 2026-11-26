@@ -6,6 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "a-finding-of-two-results-joined-by-a-shared-business-identifier-is-not-listed-when-one-is-amended" ;
   rdfs:comment "Two sodiums of 139 and 141 at one instant with a finding of their values, which the matcher joined by a shared business identifier, the second marked as amended." ;
+  ctm:comparesSqlBeside <../../../queries/views/> ;
   mf:entries (
     <#listed-for-review>
   ) .

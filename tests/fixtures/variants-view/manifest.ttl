@@ -6,6 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "variants-view" ;
   rdfs:comment "A variant entry of two members, a panel report on transcript 3 with no ID and an exome report on transcript 4 with an ID; a variant in another gene with one expression and one ID; and a variant in a third gene with no code." ;
+  ctm:comparesSqlBeside <../../../queries/views/variants.rq> ;
   mf:entries (
     <#the-variants-view>
     <#my-genetic-variants>

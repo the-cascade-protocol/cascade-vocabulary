@@ -6,6 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "medication-dispenses-view" ;
   rdfs:comment "A prescription, a completed dispense of it coded in RxNorm and NDC, handed over at a time its pharmacy wrote only to the day, stating a quantity and no days' supply; a dispense of another drug being prepared, which names no prescription, stating a days' supply and no quantity; and a refill of two members, the later stating neither, the earlier both, and no time it was prepared or handed over, the first for one reason, the second for two." ;
+  ctm:comparesSqlBeside <../../../queries/views/medication-dispenses.rq> ;
   mf:entries (
     <#the-medication-dispenses-view>
     <#what-it-shows>

@@ -6,6 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "medications-view" ;
   rdfs:comment "A medication entry joining a prescription and, later, a list entry stating no status and no date; a stopped medication with its end, joined to an older list entry still saying it is active; a completed one without an end; a fish oil on the list, stating no start and the reason it holds none; and a stopped member followed by a newer active one, which takes no end." ;
+  ctm:comparesSqlBeside <../../../queries/views/medications.rq> ;
   mf:entries (
     <#the-medications-view>
     <#my-active-medications>

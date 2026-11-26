@@ -6,6 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "two-kinds-of-machine-sameness" ;
   rdfs:comment "An immunization entry the machine joined through SameCodeAndDate and SameMappedCodeAndDate, and a note entry it joined through SameNoteTypeAndTextGrownWithinOneOrganization, SameNoteTypeAndText and SameNoteOrDocumentMasterIdentifier." ;
+  ctm:comparesSqlBeside <../../../queries/> ;
   mf:entries (
     <#two-kinds-under-everyday>
     <#one-kind-under-export>

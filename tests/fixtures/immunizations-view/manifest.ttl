@@ -6,6 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "immunizations-view" ;
   rdfs:comment "An immunization entry of two members, the later naming it and stating no status and, for its date, a reason it holds none; and one not done; and one given in a year it names alone; and one given at a time its source wrote to the hour." ;
+  ctm:comparesSqlBeside <../../../queries/views/immunizations.rq> ;
   mf:entries (
     <#the-immunizations-view>
     <#my-immunizations>

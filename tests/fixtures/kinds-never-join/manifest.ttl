@@ -6,6 +6,7 @@
 <> a mf:Manifest ;
   rdfs:label "kinds-never-join" ;
   rdfs:comment "A Same naming one of the subject's allergies and one of their conditions." ;
+  ctm:comparesSqlBeside <../../../queries/views/> ;
   mf:entries (
     <#an-entry-each>
   ) .
