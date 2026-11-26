@@ -5,7 +5,7 @@
 
 <> a mf:Manifest ;
   rdfs:label "current-revision-is-the-latest-observation" ;
-  rdfs:comment "One record with two revisions, neither revising the other and neither carrying a source change time, whose times are written in different offsets: the later observation has the smaller clock time. The later is derived from two documents of two hospitals." ;
+  rdfs:comment "One record with two revisions, neither revising the other and neither carrying a source change time, whose times are written in different offsets: the later observation has the smaller clock time. The later is derived from two documents of two hospitals. A second record, of one revision and no document, arrives a day after." ;
   mf:entries (
     <#the-current-revision>
     <#its-revisions>

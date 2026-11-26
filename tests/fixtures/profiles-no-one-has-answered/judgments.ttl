@@ -19,3 +19,10 @@
 :retraction a prov:Activity ; prov:invalidated :aboutRetracted ;
     prov:wasAssociatedWith :parent ; prov:qualifiedAssociation [ prov:agent :parent ; prov:hadRole cascade:PatientRole ] ;
     prov:startedAtTime "2026-03-01T00:00:00Z"^^xsd:dateTime .
+:notAboutFirst a cascade:Judgment ; cascade:verdict cascade:NotAbout ; prov:hadMember :heldBack ; cascade:subject :subject ;
+    prov:wasAttributedTo :parent ; prov:wasGeneratedBy [ prov:qualifiedAssociation [ prov:agent :parent ; prov:hadRole cascade:PatientRole ] ] ;
+    prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime .
+:aboutAsAnImportFilesIt a cascade:Judgment ; cascade:verdict cascade:About ; prov:hadMember :heldBack ; cascade:subject :subject ;
+    cascade:basis cascade:OwnerStatement ;
+    prov:wasAttributedTo :parent ; prov:wasGeneratedBy [ prov:qualifiedAssociation [ prov:agent :parent ; prov:hadRole cascade:PatientRole ] ] ;
+    prov:generatedAtTime "2026-02-02T00:00:00Z"^^xsd:dateTime .

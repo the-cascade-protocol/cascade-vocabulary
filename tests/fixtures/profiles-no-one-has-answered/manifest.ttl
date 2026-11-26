@@ -5,14 +5,14 @@
 
 <> a mf:Manifest ;
   rdfs:label "profiles-no-one-has-answered" ;
-  rdfs:comment "A profile no judgment names, whose records Northgate sent one of and Southview two; a profile a counting About claims; one a counting NotAbout denies; one whose About was retracted; a record naming the subject; and a record whose first version named a profile its current version no longer names." ;
+  rdfs:comment "A profile no judgment names, whose records Northgate sent one of and Southview two; a profile a counting About claims; one a counting NotAbout denies; one whose About was retracted; a record naming the subject; a record whose first version named a profile its current version no longer names; and a profile one parent judged NotAbout and then About." ;
   mf:entries (
     <#what-needs-review>
   ) .
 
 <#what-needs-review> a mf:QueryEvaluationTest ;
   mf:name "what-needs-review" ;
-  rdfs:comment "The profile no judgment names, once for each hospital with how many records it sent, and the one whose About was retracted; not the claimed, the denied, the subject, nor a profile only a superseded version names." ;
+  rdfs:comment "The profile no judgment names, once for each hospital with how many records it sent, and the one whose About was retracted; not the claimed, the denied, the subject, nor a profile only a superseded version names; first, the profile judged both about and not about the subject, whose needs sort before it." ;
   mf:action [ qt:query <../../../queries/questions/profile/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <what-needs-review.tsv> .

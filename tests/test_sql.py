@@ -1417,33 +1417,41 @@ class TestTheSqlCheck:
         Rows ordered by a dateTime pass in either order where SPARQL's `<` does not order them, a value with no zone
         and one with a zone within fourteen hours of it, and where they hold one term; rows it does order fail turned
         round, naming the row. A condition ordering by the value's STR, or a SUBSTR of it, orders by that text, so
-        rows whose texts differ are ordered, and rows whose texts are one are ordered by the next condition. The key
-        columns are those of the ORDER BY's leading conditions that each read one projected variable, alone or in an
-        expression.
+        rows whose texts differ are ordered, and rows whose texts are one are ordered by the next condition. Each
+        condition of the ORDER BY gives a key of the columns whose first bound value it orders by: one projected
+        variable, or a COALESCE of them, alone or in an expression; a condition that is neither is refused by name.
         """
         def at(value):
             return (sql.Term(sql.LITERAL, value, XSD + "dateTime"),)
         unzoned, zoned, later = at("2024-01-01T10:00:00"), at("2024-01-01T05:00:00-08:00"), at("2024-01-03T00:00:00Z")
-        term = [(0, None)]
+        term = [((0,), None)]
         assert compared(["t"], [unzoned, zoned, later], [zoned, unzoned, later], term) == []
         assert compared(["t"], [later, later], [later, later], term) == []
         assert compared(["t"], [unzoned, later], [unzoned, later], term) == []
         assert compared(["t"], [unzoned, later], [later, unzoned], term) == [
             f"the same rows in another order, from row 1: expected ?t={unzoned[0]}, found ?t={later[0]}"]
-        assert compared(["t"], [zoned, unzoned], [unzoned, zoned], [(0, (1, None, False))]) == [
+        assert compared(["t"], [zoned, unzoned], [unzoned, zoned], [((0,), (1, None, False))]) == [
             f"the same rows in another order, from row 1: expected ?t={zoned[0]}, found ?t={unzoned[0]}"]
         day = (1, 10, True)
         assert compared(["t", "u"], [(unzoned[0], zoned[0]), (zoned[0], unzoned[0])],
-                        [(zoned[0], unzoned[0]), (unzoned[0], zoned[0])], [(0, day)]) == []
+                        [(zoned[0], unzoned[0]), (unzoned[0], zoned[0])], [((0,), day)]) == []
         assert compared(["t", "u"], [(unzoned[0], unzoned[0]), (zoned[0], zoned[0])],
-                        [(zoned[0], zoned[0]), (unzoned[0], unzoned[0])], [(0, day), (1, (1, None, False))]) != []
+                        [(zoned[0], zoned[0]), (unzoned[0], unzoned[0])], [((0,), day), ((1,), (1, None, False))]) != []
+        first_bound = [((0, 1), day), ((0, 1), (1, None, True))]
+        assert compared(["t", "u"], [(None, later[0]), (unzoned[0], zoned[0])], [(unzoned[0], zoned[0]), (None, later[0])],
+                        first_bound) != []
+        assert compared(["t", "u"], [(None, later[0]), (unzoned[0], zoned[0])], [(None, later[0]), (unzoned[0], zoned[0])],
+                        first_bound) == []
         assert final_order("SELECT ?a ?b ?c WHERE { } ORDER BY DESC(?b) ?a STR(?c) ?c", ["a", "b", "c"]) == [
-            (1, None), (0, None), (2, (1, None, False)), (2, None)]
+            ((1,), None), ((0,), None), ((2,), (1, None, False)), ((2,), None)]
         assert final_order('SELECT ?a ?b WHERE { } ORDER BY DESC(COALESCE(SUBSTR(STR(?a), 1, 10), "")) ?b',
-                           ["a", "b"]) == [(0, (1, 10, True)), (1, None)]
-        assert final_order("SELECT ?a ?b WHERE { } ORDER BY CONCAT(?a, ?b) ?a", ["a", "b"]) == []
-        assert final_order("SELECT ?a WHERE { } ORDER BY ?z ?a", ["a"]) == []
+                           ["a", "b"]) == [((0,), (1, 10, True)), ((1,), None)]
+        assert final_order('SELECT ?a ?b WHERE { } ORDER BY DESC(COALESCE(SUBSTR(STR(COALESCE(?a, ?b)), 1, 10), ""))',
+                           ["a", "b"]) == [((0, 1), (1, 10, True))]
         assert final_order("SELECT ?a WHERE { } GROUP BY ?a", ["a"]) is None
+        for text in ("CONCAT(?a, ?b) ?a", "?z ?a", "?a COALESCE(?a, ?z)", "COALESCE(?a, ?b, 1)", "?a 1"):
+            with pytest.raises(ValueError, match="ORDER BY condition"):
+                final_order(f"SELECT ?a ?b WHERE {{ }} ORDER BY {text}", ["a", "b"])
 
     def test_loads_only_the_named_graphs_of_the_default_graph_and_refuses_a_default_graph_they_do_not_make(self):
         """loads only the named graphs a store's default graph holds, and refuses a store whose default graph they do not make

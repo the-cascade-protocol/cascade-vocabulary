@@ -9,6 +9,7 @@
   mf:entries (
     <#why-it-is-in-no-view>
     <#what-needs-review>
+    <#how-many-count-everyday>
   ) .
 
 <#why-it-is-in-no-view> a mf:QueryEvaluationTest ;
@@ -24,3 +25,10 @@
   mf:action [ qt:query <../../../queries/questions/profile/What%20needs%20review.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <what-needs-review.tsv> .
+
+<#how-many-count-everyday> a mf:QueryEvaluationTest ;
+  mf:name "how-many-count-everyday" ;
+  rdfs:comment "Under everyday, every judgment counts, a person's: four Abouts and three NotAbouts, the Abouts first." ;
+  mf:action [ qt:query <../../../queries/questions/pod/How%20many%20judgments%20count.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <how-many-count-everyday.tsv> .

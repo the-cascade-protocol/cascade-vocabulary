@@ -527,11 +527,15 @@ def as_text(term, read):
     return "" if text is None and unbound_empty else text
 
 
+FIRST_BOUND = re.compile(r"COALESCE\s*\(\s*(\?\w+(?:\s*,\s*\?\w+)*)\s*\)")
+
+
 def final_order(text, names):
-    """The keys the query's rows are ordered by, after its last brace, each a column's index and how its condition
-    reads it, as read_as_text gives: its ORDER BY's leading conditions that are a projected variable, alone or in an
-    expression of it and of no other variable, such as DESC(COALESCE(STR(?a), "")); the conditions after them order
-    only rows these tie. None when the query has no ORDER BY there."""
+    """The keys the query's rows are ordered by, after its last brace, one for each condition of its ORDER BY, each the
+    columns whose first bound value it orders by and how it reads that, as read_as_text gives: a condition is a
+    projected variable, or a COALESCE of projected variables, alone or in an expression of it and of no other variable,
+    such as DESC(COALESCE(STR(?a), "")) or COALESCE(SUBSTR(STR(COALESCE(?a, ?b)), 1, 10), ""). None when the query has
+    no ORDER BY there; a condition that is not one of these is a ValueError naming it, never a key left out."""
     tail = text[text.rfind("}"):]
     clause = re.search(r"ORDER\s+BY\s", tail)
     if not clause:
@@ -544,17 +548,20 @@ def final_order(text, names):
         else:
             call = re.match(r"\w+\s*\(", rest)
             if not call:
-                break
+                raise ValueError(f"no key can be read from the ORDER BY condition {rest.split()[0]}")
             depth, at = 0, call.end() - 1
             for at in range(call.end() - 1, len(rest)):
                 depth += {"(": 1, ")": -1}.get(rest[at], 0)
                 if depth == 0:
                     break
             condition = rest[:at + 1]
-        mentioned = set(re.findall(r"\?(\w+)", re.sub(r'"[^"]*"', "", condition)))
-        if len(mentioned) != 1 or (found := mentioned.pop()) not in names:
-            break
-        keys.append((names.index(found), read_as_text(condition)))
+        coalesced = FIRST_BOUND.search(condition)
+        shape = FIRST_BOUND.sub("?_", condition, count=1) if coalesced else condition
+        others = set(re.findall(r"\?(\w+)", re.sub(r'"[^"]*"', "", shape)))
+        found = re.findall(r"\w+", coalesced[1]) if coalesced else sorted(others)
+        if others != ({"_"} if coalesced else set(found)) or len(others) != 1 or not set(found) <= set(names):
+            raise ValueError(f"no key can be read from the ORDER BY condition {condition}")
+        keys.append((tuple(names.index(each) for each in found), read_as_text(shape)))
         rest = rest[len(condition):].strip()
     return keys
 
@@ -578,12 +585,13 @@ def tied(left, right):
 def ordered(one, other, keys):
     """Whether an ORDER BY of the keys puts the two rows one way round: the first key whose value differs, a text a
     condition reads or else the term, holds two texts, or two terms SPARQL's `<` orders."""
-    for column, read in keys:
+    for columns, read in keys:
+        left, right = (next((row[column] for column in columns if row[column] is not None), None) for row in (one, other))
         if read is not None:
-            if as_text(one[column], read) != as_text(other[column], read):
+            if as_text(left, read) != as_text(right, read):
                 return True
-        elif one[column] != other[column]:
-            return not tied(one[column], other[column])
+        elif left != right:
+            return not tied(left, right)
     return False
 
 

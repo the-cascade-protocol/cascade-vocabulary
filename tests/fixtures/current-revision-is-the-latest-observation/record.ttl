@@ -11,3 +11,8 @@
 :later a cascade:Revision ; cascade:revisionOf :record ; cascade:version :second ;
     prov:generatedAtTime "2026-03-01T09:30:00-02:00"^^xsd:dateTime ; cascade:observedAsOf "2026-03-01T09:30:00-02:00"^^xsd:dateTime ;
     prov:wasDerivedFrom :north , :south .
+
+:eczema a cascade:ProblemOrDiagnosis .
+:eczemaVersion prov:specializationOf :eczema ; cascade:conditionName "Eczema" .
+:eczemaRevision a cascade:Revision ; cascade:revisionOf :eczema ; cascade:version :eczemaVersion ;
+    prov:generatedAtTime "2026-03-02T10:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-03-02T10:00:00Z"^^xsd:dateTime .

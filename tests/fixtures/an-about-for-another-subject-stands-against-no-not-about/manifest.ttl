@@ -9,6 +9,7 @@
   mf:entries (
     <#what-needs-review>
     <#whose-it-is-counted-as>
+    <#the-person-this-pod-is-about>
   ) .
 
 <#what-needs-review> a mf:QueryEvaluationTest ;
@@ -24,3 +25,10 @@
   mf:action [ qt:query <../../../queries/questions/profile/Whose%20it%20is%20counted%20as.rq> ;
               ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
   mf:result <whose-it-is-counted-as.tsv> .
+
+<#the-person-this-pod-is-about> a mf:QueryEvaluationTest ;
+  mf:name "the-person-this-pod-is-about" ;
+  rdfs:comment "A row for each subject, in the order of their names: the one the About names, with the profile it claims and no value of its own; the other, nothing claims." ;
+  mf:action [ qt:query <../../../queries/questions/pod/The%20person%20this%20pod%20is%20about.rq> ;
+              ctm:lensQueryPath <../../../queries/lenses/everyday.rq> ] ;
+  mf:result <the-person-this-pod-is-about.tsv> .

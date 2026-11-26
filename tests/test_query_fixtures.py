@@ -15,8 +15,9 @@ from rdflib import OWL, RDF, RDFS, XSD, Graph, URIRef
 from contract import CASCADE, PROV, QUERIES, ROOT, built, derivations, named, query, questions
 import engines
 from engines import ENGINES, Oxigraph, Rdflib, bound_to_records, marked_groups
-from manifests import Entry, entries, expected, failure, lens_name, row
+from manifests import Entry, as_term, entries, expected, failure, lens_name, listed, row
 from pods import ADDRESS, FIXTURES, built_once, every_fixture, on_its_worker
+from sql import final_order, runs
 
 LENSES = sorted(named("lenses"))
 JUDGMENT = "https://ns.cascadeprotocol.org/cascade#Judgment"
@@ -276,6 +277,32 @@ class TestWhatEachQueryGives:
                 for lens in LENSES if holds_a_judgment(fixture) else LENSES[:1]:
                     quiet -= steps_a_probe_reads(built_once(fixture, "oxigraph", lens), read)
             assert quiet == set()
+
+        def test_leaves_no_query_with_an_order_by_without_a_fixture_whose_rows_differ_on_its_first_condition(self):
+            """leaves no query with an ORDER BY without a fixture whose expected rows differ on its first condition
+
+            Takes every query whose last ORDER BY stands after its last brace and strikes off each that some manifest
+            entry lists with expected rows of two or more values of its first condition, so a query whose order was
+            reversed is failed by a fixture; a condition `final_order` cannot read fails here, naming the query and the
+            condition; every other condition is read as a key, so none is left out of the comparison.
+            """
+            unproven = {path.relative_to(QUERIES).as_posix() for path in QUERIES.rglob("*.rq")
+                        if (text := path.read_text(encoding="utf-8"))
+                        and re.search(r"ORDER\s+BY\s", text[text.rfind("}"):])}
+            for fixture in FIXTURES:
+                for entry in entries(fixture.manifest):
+                    relative = entry.query and Path(os.path.relpath(entry.query, QUERIES)).as_posix()
+                    if relative not in unproven:
+                        continue
+                    names, rows = listed(entry.result)
+                    try:
+                        keys = final_order(Path(entry.query).read_text(encoding="utf-8"), names)
+                    except ValueError as error:
+                        raise AssertionError(f"{relative}: {error}") from error
+                    found = [tuple(as_term(each[name]) if name in each else None for name in names) for each in rows]
+                    if len(runs(found, keys[:1])) >= 2:
+                        unproven.discard(relative)
+            assert unproven == set()
 
 
 class TestDerivedStateOnTwoEngines:
