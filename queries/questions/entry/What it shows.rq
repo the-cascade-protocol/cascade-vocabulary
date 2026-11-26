@@ -16,7 +16,7 @@
 # the same of its link after a slash: `referenceRangeHigh`, `paddedDateTime onsetDate`, `structuredDosage 2` and
 # `structuredDosage 2/dosageDoseQuantity`. A value is as the view holds it. A node is two links deep at most; the
 # entry's own nodes of these kinds repeat its members' and are not shown. A later kind of node is one more link in the
-# path of the first branch's second pattern and, when one member holds several of it, one more branch of the two IFs
+# path of the second UNION branch and, when one member holds several of it, one more IF in each of the two chains of IFs
 # that tell them apart, which read the node's name, the view having made it of its holder's name, a marker and what
 # tells the node apart.
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
@@ -25,24 +25,30 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 SELECT DISTINCT ?entry ?entryLabel ?view ?field ?value ?valueLabel ?from ?fromLabel ?lead ?part
 WHERE {
   { GRAPH ?view { ?entry cascade:entryMember [] ; cascade:leadMember ?leader ; cascade:memberCurrentValues ?values .
-                  ?values cascade:valuesOfMember ?from .
-                  { ?values ?field ?value FILTER (?field != cascade:valuesOfMember) }
-                  UNION
-                  { ?values (cascade:paddedDateTime|cascade:referenceRangeLow|cascade:referenceRangeHigh|cascade:structuredDosage|cascade:dosageDoseQuantity)+ ?node .
-                    ?holder ?link ?node .
-                    OPTIONAL { ?values ?outer ?holder }
-                    FILTER (?holder = ?values || BOUND(?outer))
-                    BIND (CONCAT(IF(BOUND(?outer),
-                                    CONCAT(STRAFTER(STR(?outer), "#"),
-                                           IF(?outer = cascade:structuredDosage, CONCAT(" ", STRAFTER(STR(?holder), CONCAT(STR(?values), "-dosage-"))),
-                                              IF(?outer = cascade:paddedDateTime, CONCAT(" ", STRAFTER(STR(?holder), CONCAT(STR(?values), "-padded-"))), "")),
-                                           "/"),
-                                    ""),
-                                 STRAFTER(STR(?link), "#"),
-                                 IF(?link = cascade:structuredDosage, CONCAT(" ", STRAFTER(STR(?node), CONCAT(STR(?holder), "-dosage-"))),
-                                    IF(?link = cascade:paddedDateTime, CONCAT(" ", STRAFTER(STR(?node), CONCAT(STR(?holder), "-padded-"))), ""))) AS ?part)
-                    ?node ?field ?value } }
+                  ?values cascade:valuesOfMember ?from ; ?field ?value
+                  FILTER (?field != cascade:valuesOfMember) }
     BIND (?from = ?leader AS ?lead)
+    OPTIONAL { ?from rdfs:label ?fromLabel }
+    OPTIONAL { ?entry rdfs:label ?entryLabel }
+    OPTIONAL { ?value rdfs:label ?valueLabel } }
+  UNION
+  { GRAPH ?view { ?entry cascade:entryMember [] ; cascade:leadMember ?leader ; cascade:memberCurrentValues ?values .
+                  ?values cascade:valuesOfMember ?from ;
+                          (cascade:paddedDateTime|cascade:referenceRangeLow|cascade:referenceRangeHigh|cascade:structuredDosage|cascade:dosageDoseQuantity)+ ?node .
+                  ?holder ?link ?node .
+                  OPTIONAL { ?values ?outer ?holder }
+                  FILTER (?holder = ?values || BOUND(?outer))
+                  ?node ?field ?value }
+    BIND (?from = ?leader AS ?lead)
+    BIND (CONCAT(IF(BOUND(?outer),
+                    CONCAT(STRAFTER(STR(?outer), "#"),
+                           IF(?outer = cascade:structuredDosage, CONCAT(" ", STRAFTER(STR(?holder), CONCAT(STR(?values), "-dosage-"))),
+                              IF(?outer = cascade:paddedDateTime, CONCAT(" ", STRAFTER(STR(?holder), CONCAT(STR(?values), "-padded-"))), "")),
+                           "/"),
+                    ""),
+                 STRAFTER(STR(?link), "#"),
+                 IF(?link = cascade:structuredDosage, CONCAT(" ", STRAFTER(STR(?node), CONCAT(STR(?holder), "-dosage-"))),
+                    IF(?link = cascade:paddedDateTime, CONCAT(" ", STRAFTER(STR(?node), CONCAT(STR(?holder), "-padded-"))), ""))) AS ?part)
     OPTIONAL { ?from rdfs:label ?fromLabel }
     OPTIONAL { ?entry rdfs:label ?entryLabel }
     OPTIONAL { ?value rdfs:label ?valueLabel } }
