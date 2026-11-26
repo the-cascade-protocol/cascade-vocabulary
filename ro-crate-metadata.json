@@ -1625,7 +1625,7 @@
       "@id": "conformance/martin-okafor/",
       "@type": "Dataset",
       "name": "Martin Okafor",
-      "description": "Martin Okafor's story, replayed by a runtime: one variant in two FHIR reports, each saved as a pull, joined by the matcher and shown beside what ClinVar says of it. His story and the planted cases M1 to M6 in martin-okafor.feature, which are the scenario's and not the matcher's rules M1 to M17; his two saved pulls, the Bridge's saved output, his judgments and the story's subset of the ClinVar series, in scripted-input/; the views a correct runtime builds, and the handles, in expected/.",
+      "description": "Martin Okafor's story, replayed by a runtime: one variant in two FHIR reports, each saved as a pull, joined by the matcher and shown beside what ClinVar says of it. His story and the planted cases M1 to M6 in martin-okafor.feature, which are the scenario's and not the matcher's rules M1 to M17; his two saved pulls, his judgments and the story's subset of the ClinVar series, in scripted-input/; the views a correct runtime builds, and the handles, in expected/.",
       "hasPart": [
         { "@id": "conformance/martin-okafor/expected/conditions.ttl" },
         { "@id": "conformance/martin-okafor/expected/handles.json" },
@@ -1643,20 +1643,7 @@
         { "@id": "conformance/martin-okafor/scripted-input/martin/judgments/J2.ttl" },
         { "@id": "conformance/martin-okafor/scripted-input/martin/tables/clinvar-story/66efd56704fb4024cae72dad76d10a7b96a05c5ffdea1d255ce74a84f979a372.ttl" },
         { "@id": "conformance/martin-okafor/scripted-input/martin/tables/clinvar-story/references.ttl" },
-        { "@id": "conformance/martin-okafor/scripted-input/people.ttl" },
-        { "@id": "conformance/martin-okafor/scripted-input/martin/bridge/" }
-      ],
-      "mentions": [{ "@id": "#martin-okafor-conversions" }]
-    },
-    {
-      "@id": "conformance/martin-okafor/scripted-input/martin/bridge/",
-      "@type": "Dataset",
-      "name": "The Bridge's saved output, for each import step",
-      "hasPart": [
-        { "@id": "conformance/martin-okafor/scripted-input/martin/bridge/E3/bundle/findings.ttl" },
-        { "@id": "conformance/martin-okafor/scripted-input/martin/bridge/E3/bundle/graph.ttl" },
-        { "@id": "conformance/martin-okafor/scripted-input/martin/bridge/E5/bundle/findings.ttl" },
-        { "@id": "conformance/martin-okafor/scripted-input/martin/bridge/E5/bundle/graph.ttl" }
+        { "@id": "conformance/martin-okafor/scripted-input/people.ttl" }
       ]
     },
     {
@@ -1934,10 +1921,6 @@
     { "@id": "conformance/martin-okafor/expected/variant-interpretations.ttl", "@type": "File", "encodingFormat": "text/turtle" },
     { "@id": "conformance/martin-okafor/expected/variants.ttl", "@type": "File", "encodingFormat": "text/turtle" },
     { "@id": "conformance/martin-okafor/martin-okafor.feature", "@type": "File", "encodingFormat": "text/x-gherkin" },
-    { "@id": "conformance/martin-okafor/scripted-input/martin/bridge/E3/bundle/findings.ttl", "@type": "File", "encodingFormat": "text/turtle" },
-    { "@id": "conformance/martin-okafor/scripted-input/martin/bridge/E3/bundle/graph.ttl", "@type": "File", "encodingFormat": "text/turtle" },
-    { "@id": "conformance/martin-okafor/scripted-input/martin/bridge/E5/bundle/findings.ttl", "@type": "File", "encodingFormat": "text/turtle" },
-    { "@id": "conformance/martin-okafor/scripted-input/martin/bridge/E5/bundle/graph.ttl", "@type": "File", "encodingFormat": "text/turtle" },
     { "@id": "conformance/martin-okafor/scripted-input/martin/downloads/harbourline-2022/bundle.json", "@type": "File", "encodingFormat": "application/json", "isBasedOn": { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-fhir-r4/blob/198410eb992d2380e0111c8c8da3ea0c03cafb92/fixtures/in/martin-okafor-harbourline-panel-2022-with-lab.json" } },
     { "@id": "conformance/martin-okafor/scripted-input/martin/downloads/harbourline-2022/pull.json", "@type": "File", "encodingFormat": "application/json" },
     { "@id": "conformance/martin-okafor/scripted-input/martin/downloads/st-columba-2024/bundle.json", "@type": "File", "encodingFormat": "application/json", "isBasedOn": { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-fhir-r4/blob/198410eb992d2380e0111c8c8da3ea0c03cafb92/fixtures/in/martin-okafor-st-columba-exome-2024-with-lab.json" } },
@@ -1972,10 +1955,6 @@
     { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-fhir-r4/tree/3e152b06853d831436e3a1da91332a374b414f6e", "@type": "SoftwareSourceCode", "name": "cascade-bridge-adapter-fhir-r4", "codeRepository": { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-fhir-r4" }, "version": "3e152b06853d831436e3a1da91332a374b414f6e", "description": "The adapter of each FHIR document, in its #envelope-resource envelope.", "conformsTo": { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-spec/tree/e94d8c9e78bfd1ea8e6c0817e16bff763cb6fa96" } },
     { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-ccda/tree/11c37935a8015637cf470c5230672b2081628e2d", "@type": "SoftwareSourceCode", "name": "cascade-bridge-adapter-ccda", "codeRepository": { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-ccda" }, "version": "11c37935a8015637cf470c5230672b2081628e2d", "description": "The adapter of each C-CDA document.", "conformsTo": { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-spec/tree/e94d8c9e78bfd1ea8e6c0817e16bff763cb6fa96" } },
     { "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js/tree/3e21ba4abcb259422c7510498ee02d32aa705632", "@type": "SoftwareSourceCode", "name": "cascade-runtime-js", "codeRepository": { "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js" }, "version": "3e21ba4abcb259422c7510498ee02d32aa705632", "description": "Its importers, which handed each document on with its facts at its step's time." },
-    { "@id": "#martin-okafor-conversions", "@type": "CreateAction", "name": "The Bridge's conversions of the two saved pulls, as the runtime's pull importer hands them on", "instrument": [{ "@id": "https://github.com/the-cascade-protocol/cascade-bridge-rs/tree/1751e00fe4ec6d3d0374e002d10de1ac22344ffb" }, { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-fhir-r4/tree/b6f9657a6797913befe238fca4bdea8723dd4868" }, { "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js/tree/a218adc63d8d376ccb3acb826e203b5ebc520308" }], "result": { "@id": "conformance/martin-okafor/scripted-input/martin/bridge/" } },
-    { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-rs/tree/1751e00fe4ec6d3d0374e002d10de1ac22344ffb", "@type": "SoftwareSourceCode", "name": "cascade-bridge-rs", "codeRepository": { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-rs" }, "version": "1751e00fe4ec6d3d0374e002d10de1ac22344ffb", "description": "The Bridge, its WebAssembly build released for this commit, which ran both conversions.", "conformsTo": { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-spec/tree/510ba7d73bf8c6b406a82f2d357260eac45bd699" } },
-    { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-fhir-r4/tree/b6f9657a6797913befe238fca4bdea8723dd4868", "@type": "SoftwareSourceCode", "name": "cascade-bridge-adapter-fhir-r4", "codeRepository": { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-adapter-fhir-r4" }, "version": "b6f9657a6797913befe238fca4bdea8723dd4868", "description": "The adapter of each Bundle, in its #envelope-bundle envelope, at the commit that gave the St Columba input's two conditions a clinicalStatus of active.", "conformsTo": { "@id": "https://github.com/the-cascade-protocol/cascade-bridge-spec/tree/510ba7d73bf8c6b406a82f2d357260eac45bd699" } },
-    { "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js/tree/a218adc63d8d376ccb3acb826e203b5ebc520308", "@type": "SoftwareSourceCode", "name": "cascade-runtime-js", "codeRepository": { "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js" }, "version": "a218adc63d8d376ccb3acb826e203b5ebc520308", "description": "Its pull importer, which handed each Bundle on with its facts at its step's time." },
     { "@id": "#tamsin-vale-pulls", "@type": "CreateAction", "name": "The two pulls, as the runtime's generator made them from the demo hospital's versions", "instrument": [{ "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js/tree/a8e89e31e2bd7aaf1d03ef8d5328b2cae0157b01" }], "result": [{ "@id": "conformance/tamsin-vale/scripted-input/tamsin/downloads/north-2024-02/" }, { "@id": "conformance/tamsin-vale/scripted-input/tamsin/downloads/north-2025-02/" }] },
     { "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js/tree/a8e89e31e2bd7aaf1d03ef8d5328b2cae0157b01", "@type": "SoftwareSourceCode", "name": "cascade-runtime-js", "codeRepository": { "@id": "https://github.com/the-cascade-protocol/cascade-runtime-js" }, "version": "a8e89e31e2bd7aaf1d03ef8d5328b2cae0157b01", "description": "Its story:pulls generator, which signed in to the demo hospital and pulled Tamsin's record as it stood at each pull's date, saving that date as the pull's asOf." },
     { "@id": "runtime/scripted-input/gus/entries/lab-quantities.ttl", "@type": "File", "encodingFormat": "text/turtle" },
