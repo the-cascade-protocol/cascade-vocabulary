@@ -23,8 +23,9 @@
 # system and "route <system IRI> <code>" for each in another, and last "dose <comparator><number as written> <unit>", the unit being
 # its text as its source wrote it, else its UCUM code. Each is as the record states it, none computed or rounded, and a time its source
 # wrote short of the second is as written. A dosage that states nothing is "<record> dosage <n>" alone. The dose is last because its
-# unit text may hold anything; a route is read as a reason is, by the token after "route " (a code in another system as written).
-# Items are in code point order of the record, then by n. `prescriptionDetails` has one item for each record that states any of its
+# unit text may hold anything but U+001F; a route is read as a reason is, by the token after "route " (a code in another system as
+# written). A dosage has one route, and each `route` item is one code a source gave for it: two `route` items are two codes, never two routes.
+# Items are in code point order of the record, then by n (none when no record states a dosage). `prescriptionDetails` has one item for each record that states any of its
 # intent, course of therapy and dispensing window, as "<record> intent <intent>, course <course>, dispense request valid from
 # <start>, dispense request valid until <end>" with the parts it states (none when no record states one).
 PREFIX cascade: <https://ns.cascadeprotocol.org/cascade#>
