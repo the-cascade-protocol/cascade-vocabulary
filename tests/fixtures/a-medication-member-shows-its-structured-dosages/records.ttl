@@ -79,3 +79,22 @@
 :warfarinSecondRevision a cascade:Revision ; cascade:revisionOf :warfarin ; cascade:version :warfarinSecondVersion ;
     prov:wasRevisionOf :warfarinFirstRevision ;
     prov:generatedAtTime "2026-03-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-03-01T00:00:00Z"^^xsd:dateTime .
+
+:ibuprofen a cascade:PrescribedOrReportedMedication .
+:ibuprofenVersion prov:specializationOf :ibuprofen ; cascade:patient :subject ; cascade:drugName "ibuprofen 200 MG Oral Tablet" ;
+    cascade:prescribedOrReported "prescribed" ; cascade:workflowStatus "active" ;
+    cascade:structuredDosage <urn:x:ibuprofenVersion#dosage-1> , <urn:x:ibuprofenVersion#dosage-2> , <urn:x:ibuprofenVersion#dosage-3> ,
+        <urn:x:ibuprofenVersion#dosage-4> , <urn:x:ibuprofenVersion#dosage-5> , <urn:x:ibuprofenVersion#dosage-6> .
+<urn:x:ibuprofenVersion#dosage-1> cascade:dosageDoseQuantity <urn:x:ibuprofenVersion#dosage-1-dose-quantity> .
+<urn:x:ibuprofenVersion#dosage-1-dose-quantity> cascade:decimalValue "200"^^xsd:decimal ; cascade:writtenValue "200" ; cascade:ucumUnit "mg" .
+<urn:x:ibuprofenVersion#dosage-2> cascade:dosageDoseQuantity <urn:x:ibuprofenVersion#dosage-2-dose-quantity> .
+<urn:x:ibuprofenVersion#dosage-2-dose-quantity> cascade:decimalValue "3"^^xsd:decimal ; cascade:writtenValue "3" .
+<urn:x:ibuprofenVersion#dosage-3> cascade:dosageRepeatPeriodUnit "d" .
+<urn:x:ibuprofenVersion#dosage-4> cascade:dosageRepeatFrequency 2 ; cascade:dosageRepeatPeriodUnit "h" .
+<urn:x:ibuprofenVersion#dosage-5> cascade:dosageBoundsPeriodStart "2026-04-01T08:30:00Z"^^xsd:dateTime ;
+    cascade:paddedDateTime <urn:x:ibuprofenVersion#dosage-5-padded-dosageBoundsPeriodStart> .
+<urn:x:ibuprofenVersion#dosage-5-padded-dosageBoundsPeriodStart> cascade:paddedDateTimeProperty cascade:dosageBoundsPeriodStart ;
+    cascade:timeAsWritten "2026-04-01T08:30Z" .
+<urn:x:ibuprofenVersion#dosage-6> cascade:dosageRepeatPeriod "2"^^xsd:decimal .
+:ibuprofenRevision a cascade:Revision ; cascade:revisionOf :ibuprofen ; cascade:version :ibuprofenVersion ;
+    prov:generatedAtTime "2026-02-01T00:00:00Z"^^xsd:dateTime ; cascade:observedAsOf "2026-02-01T00:00:00Z"^^xsd:dateTime .
