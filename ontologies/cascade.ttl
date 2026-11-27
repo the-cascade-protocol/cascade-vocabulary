@@ -1697,7 +1697,7 @@ cascade:TableKind a owl:Class ;
     rdfs:label "table kind"@en ;
     rdfs:comment "What a table's rows say, whatever source fills it: the shape every row conforms to and the property a row is found by. A row is a subject of a version's rows with every triple it is the subject of, and holds no blank node."@en .
 
-cascade:rowShape a owl:ObjectProperty ;
+cascade:rowShapeRenamedForScratcha owl:ObjectProperty ;
     rdfs:label "row shape"@en ;
     rdfs:comment "The SHACL shape every subject of a version's rows conforms to."@en ;
     rdfs:domain cascade:TableKind .
@@ -1710,27 +1710,27 @@ cascade:foundBy a owl:ObjectProperty ;
 cascade:VaccineGroups a cascade:TableKind ;
     rdfs:label "vaccine groups"@en ;
     rdfs:comment "An SSSOM mapping kind: a vaccine code and a group it is a member of (obo:RO_0002350). A code in several groups has a row for each, and a group's own code is a member of itself."@en ;
-    cascade:rowShape cascade:VaccineGroupRowShape ;
+    cascade:rowShapeRenamedForScratchcascade:VaccineGroupRowShape ;
     cascade:foundBy owl:annotatedSource .
 
 cascade:CodeNames a cascade:TableKind ;
     rdfs:label "code names"@en ;
     rdfs:comment "A code's names in SKOS, as its publisher gives them."@en ;
-    cascade:rowShape cascade:CodeNameRowShape ;
+    cascade:rowShapeRenamedForScratchcascade:CodeNameRowShape ;
     cascade:foundBy cascade:RowSubject ;
     cascade:readByAppPages true .
 
 cascade:RetiredCodes a cascade:TableKind ;
     rdfs:label "retired codes"@en ;
     rdfs:comment "A retired code, with each replacement its publisher gives. A code that is not retired has no row; a mapping kind keeps a retired code's rows."@en ;
-    cascade:rowShape cascade:RetiredCodeRowShape ;
+    cascade:rowShapeRenamedForScratchcascade:RetiredCodeRowShape ;
     cascade:foundBy cascade:RowSubject ;
     cascade:readByAppPages true .
 
 cascade:ProductIngredients a cascade:TableKind ;
     rdfs:label "product ingredients"@en ;
     rdfs:comment "An SSSOM mapping kind: an RxNorm concept and its active ingredient (obo:RO_0002248), its one ingredient or, with several, the multiple ingredient concept of exactly those. An ingredient has itself as its ingredient. A concept also has a row to each distinct precise ingredient RxNorm ties to it (cascade:hasPreciseIngredient). A version holding any precise ingredient row holds one for each concept whose RxNorm relations reach a precise ingredient, a brand name, a drug, a component and a dose form or dose form group version of one alike, so a concept such a version gives none holds its ingredient itself."@en ;
-    cascade:rowShape cascade:ProductIngredientRowShape ;
+    cascade:rowShapeRenamedForScratchcascade:ProductIngredientRowShape ;
     cascade:foundBy owl:annotatedSource .
 
 cascade:hasPreciseIngredient a owl:ObjectProperty ;
@@ -1741,13 +1741,13 @@ cascade:hasPreciseIngredient a owl:ObjectProperty ;
 cascade:BrandGenerics a cascade:TableKind ;
     rdfs:label "brand generics"@en ;
     rdfs:comment "An SSSOM mapping kind: a branded RxNorm concept and its generic."@en ;
-    cascade:rowShape cascade:BrandGenericRowShape ;
+    cascade:rowShapeRenamedForScratchcascade:BrandGenericRowShape ;
     cascade:foundBy owl:annotatedSource .
 
 cascade:DrugProducts a cascade:TableKind ;
     rdfs:label "drug products"@en ;
     rdfs:comment "A code that names one drug product, generic or branded, a clinical drug or a pack (RxNorm's SCD, SBD, GPCK and BPCK), with its term type as its publisher gives it. A code with no row is not known to name one product: an ingredient, a strength, a dose form, a brand name or a salt has none."@en ;
-    cascade:rowShape cascade:DrugProductRowShape ;
+    cascade:rowShapeRenamedForScratchcascade:DrugProductRowShape ;
     cascade:foundBy cascade:RowSubject .
 
 cascade:termType a owl:DatatypeProperty ;
@@ -1758,27 +1758,27 @@ cascade:termType a owl:DatatypeProperty ;
 cascade:CodeConversions a cascade:TableKind ;
     rdfs:label "code conversions"@en ;
     rdfs:comment "An SSSOM mapping kind: a retired code and each code in effect its publisher converts its data to, one dct:isReplacedBy row each, with its cardinality. The cardinality is counted along each conversion on the way, not over the table as SSSOM counts it: n:… when, at any step of the path from the retired code to the code in effect, the publisher gives the step's code anything but the step's own predecessor as a previous code, …:n when any code on the path before the end converts into more than one code, so a pure chain A to B to C is published as A to C as 1:1. A row of the earlier form, skos:exactMatch with no cardinality, is still read."@en ;
-    cascade:rowShape cascade:CodeConversionRowShape ;
+    cascade:rowShapeRenamedForScratchcascade:CodeConversionRowShape ;
     cascade:foundBy owl:annotatedSource , owl:annotatedTarget .
 
 cascade:VariantClassifications a cascade:TableKind ;
     rdfs:label "variant classifications"@en ;
     rdfs:comment "What a source such as ClinVar says of a variant: a row for each variation, found by its variation IRI and by each coding NM_ expression a submitter used or its ClinVar name holds, holding the aggregate germline classification and review status as concepts, the day it was last evaluated and how many submitters contribute. A join through these rows is identity and reads no classification. A version states the genes it covers (cascade:coversGene), so a page can tell a variant in a gene the series does not cover from a covered one the rows do not hold."@en ;
-    cascade:rowShape cascade:VariantClassificationRowShape ;
+    cascade:rowShapeRenamedForScratchcascade:VariantClassificationRowShape ;
     cascade:foundBy cascade:RowSubject , cascade:hgvsExpression ;
     cascade:readByAppPages true .
 
 cascade:PanelMembers a cascade:TableKind ;
     rdfs:label "panel members"@en ;
     rdfs:comment "An SSSOM mapping kind: a LOINC panel and each member it directly has (obo:RO_0002351), both LOINC codes, with the member's place in the panel (cascade:panelSequence) and whether the panel requires it (cascade:observationRequiredInPanel) as LOINC gives them. A nested panel is a member of its parent and has its own members as rows of its own, so nesting is the rows, never a flattened tree. A member listed at two places in one panel is two rows. OMOP's relationship Panel contains is the same relation, and has no IRI. A row is found by its panel and by its member."@en ;
-    cascade:rowShape cascade:PanelMemberRowShape ;
+    cascade:rowShapeRenamedForScratchcascade:PanelMemberRowShape ;
     cascade:foundBy owl:annotatedSource , owl:annotatedTarget ;
     cascade:readByAppPages true .
 
 cascade:DrugClasses a cascade:TableKind ;
     rdfs:label "drug classes"@en ;
     rdfs:comment "An SSSOM mapping kind: an RxNorm code and a class it is in, one predicate for each relation: its established pharmacologic class (cascade:establishedPharmacologicClass), its mechanism of action (cascade:mechanismOfActionClass), its physiologic effect (cascade:physiologicEffectClass) or its chemical structure (cascade:chemicalStructureClass). The rows are FDA's (Authority FDASPL) as MED-RT indexes them, on an ingredient, a precise ingredient or a code outside the prescribable set; a class is a MED-RT code, and a chemical structure also a MeSH code."@en ;
-    cascade:rowShape cascade:DrugClassRowShape ;
+    cascade:rowShapeRenamedForScratchcascade:DrugClassRowShape ;
     cascade:foundBy owl:annotatedSource ;
     cascade:readByAppPages true .
 
