@@ -32,8 +32,7 @@ fixture also runs the test files that go over every fixture, `tests/test_shapes.
 
 All of it must be green before a merge.
 
-- **`vocabulary`**: the test command above, then the check that the tests read as a specification. It runs in CI only,
-  so a new or renamed test class needs its heading added to [`tests/spec.json`](tests/spec.json) by hand.
+- **`vocabulary`**: the test command above. Name a test to read as behaviour; nothing checks the grammar of a name.
 - **`compatibility`**: the reference runtime, [cascade-runtime-js](https://github.com/the-cascade-protocol/cascade-runtime-js),
   run over your checkout.
 - **`ready-to-merge`**: waits for every pull request yours depends on, and needs a `## Breaking` section listing each

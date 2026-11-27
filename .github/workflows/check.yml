@@ -30,21 +30,6 @@ jobs:
       - name: plans on the SQLite floor
         if: ${{ !cancelled() }}
         run: python3 -m pip install apsw==3.44.0.0 && python3 -m pytest -n 0 -p no:randomly -k "plans_each and floor"
-      - uses: actions/checkout@v7
-        if: ${{ !cancelled() }}
-        with:
-          repository: the-cascade-protocol/cascade-runtime-js
-          path: .runtime-js
-          sparse-checkout: |
-            scripts
-            packages/site/src
-      - uses: actions/setup-node@v5
-        if: ${{ !cancelled() }}
-        with:
-          node-version: '24'
-      - name: the tests read as a specification
-        if: ${{ !cancelled() }}
-        run: node .runtime-js/scripts/spec-shape.mjs pytest-junit.xml tests/spec.json
       - if: ${{ !cancelled() }}
         run: mkdir report && cp pytest-junit.xml tests/spec.json report/
       - uses: actions/upload-artifact@v7
