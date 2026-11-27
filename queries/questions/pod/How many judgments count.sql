@@ -1,4 +1,4 @@
-WITH
+SELECT verdict, CASE WHEN justification = '<https://ns.cascadeprotocol.org/cascade#SameMappedCode>' THEN NULL ELSE justification END AS justification, madeBy, judgments FROM (WITH
   counting (judgment) AS (
     SELECT DISTINCT c.s FROM quad c
     WHERE c.p = (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#countsUnderLens>')
@@ -26,4 +26,4 @@ JOIN term made_by ON made_by.id = said.kind
 LEFT JOIN term verdict ON verdict.id = said.verdict
 LEFT JOIN term justification ON justification.id = said.justification
 GROUP BY said.verdict, said.justification, said.kind
-ORDER BY verdict.kind, verdict.lex, justification.kind, justification.lex, made_by.kind, made_by.lex
+ORDER BY verdict.kind, verdict.lex, justification.kind, justification.lex, made_by.kind, made_by.lex)
