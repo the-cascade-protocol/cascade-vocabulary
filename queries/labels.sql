@@ -11,8 +11,7 @@
 -- common table expression, which SQLite 3.54.1 refuses as nested too deep.
 
 -- part: fill
-DROP VIEW IF EXISTS temp.label_terms;
-CREATE TEMP VIEW label_terms AS SELECT
+CREATE TEMP VIEW IF NOT EXISTS label_terms AS SELECT
   (SELECT id FROM term WHERE nt = '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>') AS type,
   (SELECT id FROM term WHERE nt = '<http://www.w3.org/2000/01/rdf-schema#label>') AS label,
   (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#recordKind>') AS record_kind,
@@ -67,38 +66,38 @@ CREATE TEMP VIEW label_terms AS SELECT
 
 -- The statements of each predicate a branch starts from, once, so no later statement searches the whole of `quad` by that
 -- predicate in a loop.
-DROP TABLE IF EXISTS temp.label_record_kinds;
-CREATE TEMP TABLE label_record_kinds (record INTEGER NOT NULL, kind INTEGER NOT NULL, PRIMARY KEY (record, kind)) STRICT, WITHOUT ROWID;
+CREATE TEMP TABLE IF NOT EXISTS label_record_kinds (record INTEGER NOT NULL, kind INTEGER NOT NULL, PRIMARY KEY (record, kind)) STRICT, WITHOUT ROWID;
+DELETE FROM label_record_kinds;
 INSERT OR IGNORE INTO label_record_kinds SELECT s, o FROM quad WHERE p = (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#recordKind>');
-DROP TABLE IF EXISTS temp.label_specializations;
-CREATE TEMP TABLE label_specializations (record INTEGER NOT NULL, version INTEGER NOT NULL, PRIMARY KEY (record, version)) STRICT, WITHOUT ROWID;
+CREATE TEMP TABLE IF NOT EXISTS label_specializations (record INTEGER NOT NULL, version INTEGER NOT NULL, PRIMARY KEY (record, version)) STRICT, WITHOUT ROWID;
+DELETE FROM label_specializations;
 INSERT OR IGNORE INTO label_specializations SELECT o, s FROM quad WHERE p = (SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/prov#specializationOf>');
-DROP TABLE IF EXISTS temp.label_derivations;
-CREATE TEMP TABLE label_derivations (doc INTEGER NOT NULL, rev INTEGER NOT NULL, PRIMARY KEY (doc, rev)) STRICT, WITHOUT ROWID;
-CREATE INDEX label_derivations_rev ON label_derivations (rev);
+CREATE TEMP TABLE IF NOT EXISTS label_derivations (doc INTEGER NOT NULL, rev INTEGER NOT NULL, PRIMARY KEY (doc, rev)) STRICT, WITHOUT ROWID;
+CREATE INDEX IF NOT EXISTS label_derivations_rev ON label_derivations (rev);
+DELETE FROM label_derivations;
 INSERT OR IGNORE INTO label_derivations SELECT o, s FROM quad WHERE p = (SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/prov#wasDerivedFrom>');
-DROP TABLE IF EXISTS temp.label_retrievals;
-CREATE TEMP TABLE label_retrievals (doc INTEGER NOT NULL, source INTEGER NOT NULL, PRIMARY KEY (doc, source)) STRICT, WITHOUT ROWID;
+CREATE TEMP TABLE IF NOT EXISTS label_retrievals (doc INTEGER NOT NULL, source INTEGER NOT NULL, PRIMARY KEY (doc, source)) STRICT, WITHOUT ROWID;
+DELETE FROM label_retrievals;
 INSERT OR IGNORE INTO label_retrievals SELECT s, o FROM quad WHERE p = (SELECT id FROM term WHERE nt = '<http://purl.org/pav/retrievedFrom>');
-DROP TABLE IF EXISTS temp.label_generations;
-CREATE TEMP TABLE label_generations (subject INTEGER NOT NULL, activity INTEGER NOT NULL, PRIMARY KEY (subject, activity)) STRICT, WITHOUT ROWID;
+CREATE TEMP TABLE IF NOT EXISTS label_generations (subject INTEGER NOT NULL, activity INTEGER NOT NULL, PRIMARY KEY (subject, activity)) STRICT, WITHOUT ROWID;
+DELETE FROM label_generations;
 INSERT OR IGNORE INTO label_generations SELECT s, o FROM quad WHERE p = (SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/prov#wasGeneratedBy>');
-DROP TABLE IF EXISTS temp.label_invalidations;
-CREATE TEMP TABLE label_invalidations (retracted INTEGER NOT NULL, activity INTEGER NOT NULL, PRIMARY KEY (retracted, activity)) STRICT, WITHOUT ROWID;
+CREATE TEMP TABLE IF NOT EXISTS label_invalidations (retracted INTEGER NOT NULL, activity INTEGER NOT NULL, PRIMARY KEY (retracted, activity)) STRICT, WITHOUT ROWID;
+DELETE FROM label_invalidations;
 INSERT OR IGNORE INTO label_invalidations SELECT o, s FROM quad WHERE p = (SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/prov#invalidated>');
-DROP TABLE IF EXISTS temp.label_patients;
-CREATE TEMP TABLE label_patients (patient INTEGER NOT NULL, version INTEGER NOT NULL, PRIMARY KEY (patient, version)) STRICT, WITHOUT ROWID;
+CREATE TEMP TABLE IF NOT EXISTS label_patients (patient INTEGER NOT NULL, version INTEGER NOT NULL, PRIMARY KEY (patient, version)) STRICT, WITHOUT ROWID;
+DELETE FROM label_patients;
 INSERT OR IGNORE INTO label_patients SELECT o, s FROM quad WHERE p = (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#patient>');
 
 -- The names of what made a document: of each agent in an association of its generating activity, in a role, its
 -- rdfs:label and the foaf:name of its current version.
-DROP TABLE IF EXISTS temp.label_doc_party;
-CREATE TEMP TABLE label_doc_party (
+CREATE TEMP TABLE IF NOT EXISTS label_doc_party (
   doc INTEGER NOT NULL,
   role INTEGER NOT NULL,
   name TEXT NOT NULL,
   PRIMARY KEY (doc, role, name)
 ) STRICT, WITHOUT ROWID;
+DELETE FROM label_doc_party;
 INSERT OR IGNORE INTO label_doc_party
 SELECT g.subject, r.o, n.lex
 FROM label_terms k CROSS JOIN label_generations g
@@ -120,36 +119,36 @@ CROSS JOIN term n ON n.id = f.o
 WHERE n.lex IS NOT NULL;
 
 -- The same for a revision, of each document it derives from.
-DROP TABLE IF EXISTS temp.label_rev_party;
-CREATE TEMP TABLE label_rev_party (
+CREATE TEMP TABLE IF NOT EXISTS label_rev_party (
   rev INTEGER NOT NULL,
   role INTEGER NOT NULL,
   name TEXT NOT NULL,
   PRIMARY KEY (rev, role, name)
 ) STRICT, WITHOUT ROWID;
+DELETE FROM label_rev_party;
 INSERT OR IGNORE INTO label_rev_party
 SELECT d.rev, p.role, p.name
 FROM label_doc_party p CROSS JOIN label_derivations d ON d.doc = p.doc;
 
 -- What a document or a revision says it was made by: its authors, else its custodians; none stated gives no row.
-DROP TABLE IF EXISTS temp.label_doc_author;
-CREATE TEMP TABLE label_doc_author (
+CREATE TEMP TABLE IF NOT EXISTS label_doc_author (
   doc INTEGER NOT NULL,
   author TEXT NOT NULL,
   PRIMARY KEY (doc, author)
 ) STRICT, WITHOUT ROWID;
+DELETE FROM label_doc_author;
 INSERT OR IGNORE INTO label_doc_author
 SELECT c.doc, c.name
 FROM label_terms k CROSS JOIN label_doc_party c
 WHERE c.role = k.author_role
    OR (c.role = k.custodian_role
        AND NOT EXISTS (SELECT 1 FROM label_doc_party a WHERE a.doc = c.doc AND a.role = k.author_role));
-DROP TABLE IF EXISTS temp.label_rev_author;
-CREATE TEMP TABLE label_rev_author (
+CREATE TEMP TABLE IF NOT EXISTS label_rev_author (
   rev INTEGER NOT NULL,
   author TEXT NOT NULL,
   PRIMARY KEY (rev, author)
 ) STRICT, WITHOUT ROWID;
+DELETE FROM label_rev_author;
 INSERT OR IGNORE INTO label_rev_author
 SELECT c.rev, c.name
 FROM label_terms k CROSS JOIN label_rev_party c
@@ -158,34 +157,34 @@ WHERE c.role = k.author_role
        AND NOT EXISTS (SELECT 1 FROM label_rev_party a WHERE a.rev = c.rev AND a.role = k.author_role));
 
 -- Where a revision's documents were retrieved from, as the last segment of the address.
-DROP TABLE IF EXISTS temp.label_rev_from;
-CREATE TEMP TABLE label_rev_from (
+CREATE TEMP TABLE IF NOT EXISTS label_rev_from (
   rev INTEGER NOT NULL,
   name TEXT NOT NULL,
   PRIMARY KEY (rev, name)
 ) STRICT, WITHOUT ROWID;
+DELETE FROM label_rev_from;
 INSERT OR IGNORE INTO label_rev_from
 SELECT d.rev, sparql_replace(f.lex, '^.*/', '')
 FROM label_retrievals r CROSS JOIN label_derivations d ON d.doc = r.doc CROSS JOIN term f ON f.id = r.source
 WHERE f.lex IS NOT NULL;
 
 -- Where a document was retrieved from, as the last two segments of the address.
-DROP TABLE IF EXISTS temp.label_doc_from;
-CREATE TEMP TABLE label_doc_from (
+CREATE TEMP TABLE IF NOT EXISTS label_doc_from (
   doc INTEGER NOT NULL,
   name TEXT NOT NULL,
   PRIMARY KEY (doc, name)
 ) STRICT, WITHOUT ROWID;
+DELETE FROM label_doc_from;
 INSERT OR IGNORE INTO label_doc_from
 SELECT r.doc, sparql_replace(f.lex, '^.*/([^/]+/[^/]+)$', '$1')
 FROM label_retrievals r CROSS JOIN term f ON f.id = r.source
 WHERE f.lex IS NOT NULL;
 
 -- The documents: what a revision derives from, and each entity that is no version and no revision.
-DROP TABLE IF EXISTS temp.label_documents;
-CREATE TEMP TABLE label_documents (
+CREATE TEMP TABLE IF NOT EXISTS label_documents (
   doc INTEGER PRIMARY KEY
 ) STRICT;
+DELETE FROM label_documents;
 INSERT OR IGNORE INTO label_documents
 SELECT d.doc FROM label_terms k CROSS JOIN quad r CROSS JOIN label_derivations d ON d.rev = r.s
 WHERE r.p = k.type AND r.o = k.revision;
@@ -197,12 +196,12 @@ WHERE e.p = k.type AND e.o = k.entity
 
 -- What a retraction's retracted thing says of itself, or of the judgment it asserts: its verdict, and the name of what
 -- the judgment is about.
-DROP TABLE IF EXISTS temp.label_retracted_verdict;
-CREATE TEMP TABLE label_retracted_verdict (
+CREATE TEMP TABLE IF NOT EXISTS label_retracted_verdict (
   retracted INTEGER NOT NULL,
   verdict TEXT NOT NULL,
   PRIMARY KEY (retracted, verdict)
 ) STRICT, WITHOUT ROWID;
+DELETE FROM label_retracted_verdict;
 INSERT OR IGNORE INTO label_retracted_verdict
 SELECT i.retracted, sparql_replace(n.lex, '^.*#', '')
 FROM label_terms k CROSS JOIN (SELECT DISTINCT retracted FROM label_invalidations) i
@@ -214,12 +213,12 @@ FROM label_terms k CROSS JOIN (SELECT DISTINCT retracted FROM label_invalidation
 CROSS JOIN quad a ON a.s = i.retracted AND a.p = k.asserted_judgment
 CROSS JOIN quad v ON v.s = a.o AND v.p = k.verdict CROSS JOIN term n ON n.id = v.o
 WHERE n.lex IS NOT NULL;
-DROP TABLE IF EXISTS temp.label_retracted_about;
-CREATE TEMP TABLE label_retracted_about (
+CREATE TEMP TABLE IF NOT EXISTS label_retracted_about (
   retracted INTEGER NOT NULL,
   about TEXT NOT NULL,
   PRIMARY KEY (retracted, about)
 ) STRICT, WITHOUT ROWID;
+DELETE FROM label_retracted_about;
 INSERT OR IGNORE INTO label_retracted_about
 SELECT i.retracted, n.lex
 FROM label_terms k CROSS JOIN (SELECT DISTINCT retracted FROM label_invalidations) i
@@ -238,16 +237,16 @@ WHERE n.lex IS NOT NULL;
 
 -- The entries each screen holds, by the entry as its view names it and by its lead, and each patient entry, named after
 -- the patient profile view's address.
-DROP TABLE IF EXISTS temp.label_entries;
-CREATE TEMP TABLE label_entries (
+CREATE TEMP TABLE IF NOT EXISTS label_entries (
   iri TEXT NOT NULL,
   lead INTEGER NOT NULL,
   PRIMARY KEY (iri, lead)
 ) STRICT, WITHOUT ROWID;
-DROP TABLE IF EXISTS temp.label_patient_entries;
-CREATE TEMP TABLE label_patient_entries (
+DELETE FROM label_entries;
+CREATE TEMP TABLE IF NOT EXISTS label_patient_entries (
   iri TEXT PRIMARY KEY
 ) STRICT, WITHOUT ROWID;
+DELETE FROM label_patient_entries;
 INSERT OR IGNORE INTO label_entries
 SELECT iri, lead FROM allergy UNION ALL SELECT iri, lead FROM condition
 UNION ALL SELECT iri, lead FROM immunization UNION ALL SELECT iri, lead FROM lab_result
@@ -261,12 +260,12 @@ FROM label_terms k CROSS JOIN patient_profile_member m
 WHERE k.patient_address IS NOT NULL;
 
 -- Each thing's label, the least of those its combinations give, by the thing as N-Triples; a branch of labels.rq each.
-DROP TABLE IF EXISTS temp.label_named;
-CREATE TEMP TABLE label_named (
+CREATE TEMP TABLE IF NOT EXISTS label_named (
   thing TEXT NOT NULL,
   label TEXT NOT NULL,
   PRIMARY KEY (thing, label)
 ) STRICT, WITHOUT ROWID;
+DELETE FROM label_named;
 
 -- a record
 INSERT OR IGNORE INTO label_named
@@ -363,11 +362,11 @@ SELECT thing, label FROM (
   GROUP BY st.nt) WHERE label IS NOT NULL;
 
 -- The name of each agent a judgment is attributed to, the least of its rdfs:labels outside the labels file.
-DROP TABLE IF EXISTS temp.label_attributed_names;
-CREATE TEMP TABLE label_attributed_names (
+CREATE TEMP TABLE IF NOT EXISTS label_attributed_names (
   agent INTEGER PRIMARY KEY,
   name TEXT
 ) STRICT;
+DELETE FROM label_attributed_names;
 INSERT INTO label_attributed_names (agent)
 SELECT DISTINCT o FROM quad WHERE p = (SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/prov#wasAttributedTo>');
 UPDATE label_attributed_names SET name = (
