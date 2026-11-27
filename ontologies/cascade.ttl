@@ -734,7 +734,7 @@ cascade:prescriptionWrittenDate a owl:DatatypeProperty ;
 
 cascade:medicationRequestIntent a owl:DatatypeProperty ;
     rdfs:label "medication request intent"@en ;
-    rdfs:comment "Of a version of a prescribed medication, how far the source's request goes, as FHIR's MedicationRequest.intent: one of proposal, plan, order, original-order, reflex-order, filler-order, instance-order, option. Read only on a prescribed version; absent where the source gave none, as every C-CDA source does."@en ;
+    rdfs:comment "Of a version of a medication that comes from a MedicationRequest, prescribed or reported, how far the source's request goes, as FHIR's MedicationRequest.intent: one of proposal, plan, order, original-order, reflex-order, filler-order, instance-order, option. Absent where the source gave none, as every C-CDA source and every MedicationStatement does."@en ;
     rdfs:domain cascade:PrescribedOrReportedMedication ;
     rdfs:range xsd:string ;
     rdfs:seeAlso <https://hl7.org/fhir/R4/medicationrequest-definitions.html#MedicationRequest.intent> , <https://hl7.org/fhir/R4/valueset-medicationrequest-intent.html> .
