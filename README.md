@@ -37,11 +37,11 @@ Beside them, [`tests/fixtures/`](tests/fixtures) holds the small hand-made pods 
 
 ## Docs
 
-- [The Cascade hub](https://the-cascade-protocol.github.io/cascade-runtime-js/): where to go for each thing, and every repository.
-- [Term reference](https://the-cascade-protocol.github.io/cascade-runtime-js/terms/): every term the vocabulary defines or copies.
-- [The rules](https://the-cascade-protocol.github.io/cascade-runtime-js/spec/): the rules, feature by feature.
-- [Latest conformance run](https://the-cascade-protocol.github.io/cascade-runtime-js/conformance/): the reference runtime's result for every example of the features and conformance kits.
-- [Unit-test reports](https://the-cascade-protocol.github.io/cascade-runtime-js/conformance/tests/cascade-vocabulary/): each case of the vocabulary's tests, with its result, from the newest run on main; [the runtime's](https://the-cascade-protocol.github.io/cascade-runtime-js/conformance/tests/cascade-runtime-js/) are beside it.
+- [The Cascade hub](https://reference.cascadeprotocol.org/): where to go for each thing, and every repository.
+- [Term reference](https://reference.cascadeprotocol.org/terms/): every term the vocabulary defines or copies.
+- [The rules](https://reference.cascadeprotocol.org/spec/): the rules, feature by feature.
+- [Latest conformance run](https://reference.cascadeprotocol.org/conformance/): the reference runtime's result for every example of the features and conformance kits.
+- [Unit-test reports](https://reference.cascadeprotocol.org/conformance/tests/cascade-vocabulary/): each case of the vocabulary's tests, with its result, from the newest run on main; [the runtime's](https://reference.cascadeprotocol.org/conformance/tests/cascade-runtime-js/) are beside it.
 
 ## How a runtime proves it conforms
 
