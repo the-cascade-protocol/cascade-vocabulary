@@ -104,4 +104,3 @@ ORDER BY entry_label.kind, entry_label.lex, substr(labelled.entry, 2, length(lab
   substr(labelled.from_member, 2, length(labelled.from_member) - 2),
   substr(labelled.part, 2, length(labelled.part) - 2)
 -- part: cleanup
-DROP TABLE IF EXISTS temp.view_statements;
