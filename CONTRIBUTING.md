@@ -30,11 +30,13 @@ fixture also runs the test files that go over every fixture, `tests/test_shapes.
 
 A `.sql` is compared with its `.rq` by the reference runtime, not by these tests. To check one while you write it, run
 this in a [cascade-runtime-js](https://github.com/the-cascade-protocol/cascade-runtime-js) checkout with this repository
-cloned beside it, after its `npm ci` (about 2 seconds for one fixture, 8 for one query), naming a fixture's folder or a
-`.sql` path from the root of this repository:
+cloned beside it, after its `npm ci` (about 1 second for one fixture, 4 for one query), naming a fixture or a `.sql` path
+from the root of this repository. Build, then run the built command, which takes a path with spaces on every system
+(`npm run conformance -- --sql-only <fixture name>` does both steps, but cmd on Windows breaks a path with spaces):
 
 ```sh
-npm run conformance -- --sql-only allergies-view
+npx tsc -b packages/runtime packages/cascade-runtime
+node packages/runtime/dist/src/node/cli.js conformance --sql-only "queries/questions/pod/How many judgments count.sql"
 ```
 
 ## What a pull request must pass

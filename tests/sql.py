@@ -4,6 +4,7 @@ each term as N-Triples. What a runtime's SQLite gives for each `.sql` is compare
 check, in the `compatibility` job, not here."""
 
 import hashlib
+import json
 import re
 import sqlite3
 import unicodedata
@@ -205,7 +206,7 @@ QUANTIFIER = re.compile(r"\{[0-9]+(,[0-9]*)?\}")
 # What Rust's regex reads as white space under the x flag: Unicode's White_Space property
 WHITE_SPACE = frozenset(map(chr, (*range(0x09, 0x0E), 0x20, 0x85, 0xA0, 0x1680, *range(0x2000, 0x200B), 0x2028, 0x2029,
                                   0x202F, 0x205F, 0x3000)))
-CASE_APART = {"İ", "ı"}
+CASE_APART = {"\u0130", "\u0131"}
 
 
 def refused(text):
@@ -434,8 +435,19 @@ def sparql_compare(left, right):
     return None
 
 
-FUNCTIONS = {"sparql_replace": sparql_replace, "sparql_sha256": sparql_sha256,
-             "sparql_encode_for_uri": sparql_encode_for_uri, "sparql_compare": sparql_compare}
+FUNCTION_NAMES = frozenset(json.loads((QUERIES / "sql-functions.json").read_text(encoding="utf-8"))["functions"])
+
+
+def not_modelled(name):
+    def refuse(*_):
+        raise NotImplementedError(f"{name} is not modelled in Python: the plan checks only plan it, and an empty pod "
+                                  "never calls it; the runtime's conformance check runs it")
+    return refuse
+
+
+MODELLED = {"sparql_replace": sparql_replace, "sparql_sha256": sparql_sha256,
+            "sparql_encode_for_uri": sparql_encode_for_uri, "sparql_compare": sparql_compare}
+FUNCTIONS = {name: MODELLED.get(name) or not_modelled(name) for name in sorted(FUNCTION_NAMES)}
 
 
 # The order of rows
