@@ -28,6 +28,17 @@ python3 -m pytest -n auto --dist loadgroup
 While you work, run only what you touched: a file, or `-k <words from a test name>`. A change to a class, a shape or a
 fixture also runs the test files that go over every fixture, `tests/test_shapes.py` among them.
 
+A `.sql` is compared with its `.rq` by the reference runtime, not by these tests. To check one while you write it, run
+this in a [cascade-runtime-js](https://github.com/the-cascade-protocol/cascade-runtime-js) checkout with this repository
+cloned beside it, after its `npm ci` (about 1 second for one fixture, 4 for one query), naming a fixture or a `.sql` path
+from the root of this repository. Build, then run the built command, which takes a path with spaces on every system
+(`npm run conformance -- --sql-only <fixture name>` does both steps, but cmd on Windows breaks a path with spaces):
+
+```sh
+npx tsc -b packages/runtime packages/cascade-runtime
+node packages/runtime/dist/src/node/cli.js conformance --sql-only "queries/questions/pod/How many judgments count.sql"
+```
+
 ## What a pull request must pass
 
 All of it must be green before a merge.

@@ -18,3 +18,7 @@ Only what no check catches and the files do not show. The number after each rule
   come from [the scenario](https://github.com/the-cascade-protocol/cascade-vocabulary/issues/4), and a rule's examples
   under `runtime/` from the rule they sit under. A query's expected rows come from what the query says it does, on a
   fixture under [`tests/fixtures/`](tests/fixtures) made for that behaviour. (6)
+- **A `.sql` is compared with its `.rq` once, by the reference runtime.** To check one while writing it, run
+  `npx tsc -b packages/runtime packages/cascade-runtime`, then
+  `node packages/runtime/dist/src/node/cli.js conformance --sql-only "<fixture name or .sql path>"`, in a
+  cascade-runtime-js checkout beside this one (`npm run conformance` does both but breaks a path with spaces on Windows). (6)

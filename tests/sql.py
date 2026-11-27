@@ -1,13 +1,14 @@
-"""A pod in SQLite, as queries/statements.sql lays it out: the loader that fills it from a built fixture, the six functions
-a `.sql` calls where SQLite has no answer of its own, as queries/sql-functions.json gives their vectors, and the rows a
-`.sql` gives, each term as N-Triples."""
+"""A pod in SQLite, as queries/statements.sql lays it out: the loader that fills it from an Oxigraph store, the functions a
+`.sql` calls where SQLite has no answer of its own, and the comparison of the rows a query gives with the rows wanted,
+each term as N-Triples. What a runtime's SQLite gives for each `.sql` is compared with its `.rq` by the runtime's own
+check, in the `compatibility` job, not here."""
 
 import hashlib
+import json
 import re
 import sqlite3
 import unicodedata
 from collections import Counter
-from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import cache
 from urllib.parse import quote
@@ -83,16 +84,6 @@ def from_oxigraph(term):
     if term.language:
         return Term(LITERAL, term.value, LANG_STRING, term.language)
     return Term(LITERAL, term.value, term.datatype.value)
-
-
-def to_oxigraph(term):
-    if term.kind == IRI:
-        return pyoxigraph.NamedNode(term.value)
-    if term.kind == BLANK:
-        return pyoxigraph.BlankNode(term.value)
-    if term.lang:
-        return pyoxigraph.Literal(term.value, language=term.lang)
-    return pyoxigraph.Literal(term.value, datatype=pyoxigraph.NamedNode(term.datatype))
 
 
 # The calendar keys
@@ -208,7 +199,7 @@ def day_key(term):
     return (DATE_TIME if term.datatype == XSD + "dateTime" else DATE).fullmatch(term.value).expand(r"\1-\2-\3")
 
 
-# The six functions
+# The functions a `.sql` calls
 
 ESCAPED_ALIKE = set(r"\|.-^?*+{}()[]$nrt")
 QUANTIFIER = re.compile(r"\{[0-9]+(,[0-9]*)?\}")
@@ -218,16 +209,9 @@ WHITE_SPACE = frozenset(map(chr, (*range(0x09, 0x0E), 0x20, 0x85, 0xA0, 0x1680, 
 CASE_APART = {"\u0130", "\u0131"}
 
 
-# What Unicode 16.0 case-maps that Python 3.12's Unicode 15.0 leaves unassigned, as Oxigraph's LCASE reads it
-NEWLY_CASED = ((0x1C89, 0x1C89), (0xA7CB, 0xA7CC), (0xA7CE, 0xA7CE), (0xA7D2, 0xA7D2), (0xA7D4, 0xA7D4),
-               (0xA7DA, 0xA7DA), (0xA7DC, 0xA7DC), (0x10D50, 0x10D65), (0x16EA0, 0x16EB8))
-
-
-def refused(text, only_cased=False):
-    """Why the text has a character that Python's Unicode does not assign and Oxigraph's newer one may, or None; given
-    only_cased, only a character that Oxigraph's newer Unicode lower-cases."""
-    found = next((c for c in text if (any(low <= ord(c) <= high for low, high in NEWLY_CASED) if only_cased
-                                      else unicodedata.category(c) == "Cn")), None)
+def refused(text):
+    """Why the text has a character that Python's Unicode does not assign and Oxigraph's newer one may, or None."""
+    found = next((c for c in text if unicodedata.category(c) == "Cn"), None)
     return None if found is None else f"U+{ord(found):04X}, which this Python's Unicode does not assign"
 
 
@@ -358,14 +342,6 @@ def sparql_encode_for_uri(text):
     return None if text is None else quote(text, safe="")
 
 
-def sparql_lcase(text):
-    """SPARQL's LCASE: Unicode's full lower-case mapping, a final capital sigma to a final small one. A character Python's
-    Unicode does not assign and Oxigraph's newer Unicode lower-cases raises ValueError; any other unassigned one is kept."""
-    if text is not None and (why := refused(text, only_cased=True)):
-        raise ValueError(f"sparql_lcase meets {why}")
-    return None if text is None else text.lower()
-
-
 DECIMAL = re.compile(r"([+-]?)([0-9]*)(?:\.([0-9]*))?")
 INTEGER_LIMIT = 2 ** 127
 
@@ -382,47 +358,6 @@ def scaled(lexical):
     value = int(whole) * SCALE + int(fraction.ljust(18, "0") or "0")
     value = -value if sign == "-" else value
     return value if -INTEGER_LIMIT <= value < INTEGER_LIMIT else None
-
-
-def decimal_text(value):
-    """An xsd:decimal as Oxigraph writes it: no trailing zero after the point, and no point for a whole number."""
-    sign, value = ("-" if value < 0 else ""), abs(value)
-    whole, fraction = divmod(value, SCALE)
-    fraction = f"{fraction:018d}".rstrip("0")
-    return f"{sign}{whole}" + (f".{fraction}" if fraction else "")
-
-
-def towards_zero(numerator, denominator):
-    quotient = abs(numerator) // abs(denominator)
-    return quotient if (numerator < 0) == (denominator < 0) else -quotient
-
-
-def sparql_decimal(operator, left, right=None):
-    """Exact xsd:decimal arithmetic as SPARQL 1.1 gives it, on lexical forms, with eighteen fractional digits: `+`, `-`,
-    `*` and `/`, a quotient's further digits cut off towards zero, and `floor` of the left alone. None where it raises an
-    error: division by zero, a product that needs more digits, an ill-typed operand, or a value outside a signed 128-bit
-    count of 10^-18. Where Oxigraph's own answer is another, queries/sql-functions.json marks the vector."""
-    a = scaled(left)
-    b = None if operator == "floor" else scaled(right)
-    if a is None or (operator != "floor" and b is None):
-        return None
-    if operator == "+":
-        value = a + b
-    elif operator == "-":
-        value = a - b
-    elif operator == "*":
-        value, lost = divmod(a * b, SCALE)
-        if lost:
-            return None
-    elif operator == "/":
-        if b == 0:
-            return None
-        value = towards_zero(a * SCALE, b)
-    elif operator == "floor":
-        value = (a // SCALE) * SCALE
-    else:
-        raise ValueError(f"{operator!r} is no operator sparql_decimal knows")
-    return decimal_text(value) if -INTEGER_LIMIT <= value < INTEGER_LIMIT else None
 
 
 INTEGERS = {XSD + name for name in ("integer", "nonPositiveInteger", "negativeInteger", "long", "int", "short", "byte",
@@ -500,9 +435,19 @@ def sparql_compare(left, right):
     return None
 
 
-FUNCTIONS = {"sparql_replace": sparql_replace, "sparql_sha256": sparql_sha256,
-             "sparql_encode_for_uri": sparql_encode_for_uri, "sparql_lcase": sparql_lcase,
-             "sparql_decimal": sparql_decimal, "sparql_compare": sparql_compare}
+FUNCTION_NAMES = frozenset(json.loads((QUERIES / "sql-functions.json").read_text(encoding="utf-8"))["functions"])
+
+
+def not_modelled(name):
+    def refuse(*_):
+        raise NotImplementedError(f"{name} is not modelled in Python: the plan checks only plan it, and an empty pod "
+                                  "never calls it; the runtime's conformance check runs it")
+    return refuse
+
+
+MODELLED = {"sparql_replace": sparql_replace, "sparql_sha256": sparql_sha256,
+            "sparql_encode_for_uri": sparql_encode_for_uri, "sparql_compare": sparql_compare}
+FUNCTIONS = {name: MODELLED.get(name) or not_modelled(name) for name in sorted(FUNCTION_NAMES)}
 
 
 # The order of rows
@@ -644,7 +589,7 @@ COMPILED = 1024
 
 
 def connected():
-    """An empty pod in memory, the schema made and the six functions registered, keeping enough statements compiled
+    """An empty pod in memory, the schema made and the functions registered, keeping enough statements compiled
     that a refill of every screen compiles none again."""
     connection = sqlite3.connect(":memory:", cached_statements=COMPILED)
     connection.executescript(SCHEMA.read_text(encoding="utf-8"))
@@ -658,140 +603,34 @@ ENTRY_MEMBER = "https://ns.cascadeprotocol.org/cascade#entryMember"
 RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 
 
-LABEL = pyoxigraph.NamedNode("http://www.w3.org/2000/01/rdf-schema#label")
-LABELS = QUERIES / "labels.sql"
-
-
-def labels_file(store):
-    """The graph of the file the layout says labels.rq writes, or None where the store holds no layout of it."""
-    for placement in store.quads_for_pattern(None, pyoxigraph.NamedNode(
-            "https://ns.cascadeprotocol.org/cascade#writtenByQueryPath"), pyoxigraph.Literal("labels.rq"), None):
-        for instance in store.quads_for_pattern(placement.subject, pyoxigraph.NamedNode(
-                "http://www.w3.org/ns/solid/terms#instance"), None, None):
-            return instance.object
-    return None
-
-
 def loaded(store, fingerprint):
-    """The pod of an Oxigraph store's named graphs in its default graph, every record and entry in scope, as a whole run
-    fills it, and the ledger's one row naming what it was made from. A named graph with a statement outside the default
-    graph, as a table version's rows are, is left out, and the default graph must be the union of those kept. The
-    labels file's rdfs:label statements are left out too: a fill makes them from labels.sql, and the file's other
-    statements, which a runtime writes, are kept."""
+    """The pod of an Oxigraph store's named graphs, every record and entry in scope, as a whole run fills it, and the
+    ledger's one row naming what it was made from."""
     connection = connected()
-    default = {quad.triple for quad in store.quads_for_pattern(None, None, None, pyoxigraph.DefaultGraph())}
-    named = [quad for quad in store.quads_for_pattern(None, None, None, None)
-             if not isinstance(quad.graph_name, pyoxigraph.DefaultGraph)]
-    outside = {quad.graph_name for quad in named if quad.triple not in default}
-    kept = [quad for quad in named if quad.graph_name not in outside]
-    if missing := default - {quad.triple for quad in kept}:
-        raise ValueError(f"{len(missing)} statements of the default graph are in no named graph it holds, such as "
-                         f"{next(iter(missing))}")
-    file = labels_file(store)
-    kept = [quad for quad in kept if not (quad.graph_name == file and quad.predicate == LABEL)]
     ids, terms = {}, []
 
     def term_id(node):
         found = ids.get(node)
         if found is None:
             term = from_oxigraph(node)
-            if str(term) != str(node):
-                raise ValueError(f"{node} is written {term} here, not as Oxigraph writes it")
             found = ids[node] = len(ids) + 1
             terms.append((found, str(term), term.kind, None if term.kind == BLANK else term.value, term.datatype,
                           term.lang, instant_key(term), day_key(term)))
         return found
 
-    quads = [(term_id(q.subject), term_id(q.predicate), term_id(q.object), term_id(q.graph_name)) for q in kept]
+    quads = [(term_id(q.subject), term_id(q.predicate), term_id(q.object), term_id(q.graph_name))
+             for q in store.quads_for_pattern(None, None, None, None)
+             if not isinstance(q.graph_name, pyoxigraph.DefaultGraph)]
     connection.executemany("INSERT INTO term (id, nt, kind, lex, datatype, lang, instant, day) "
                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)", terms)
     connection.executemany("INSERT INTO quad (s, p, o, g) VALUES (?, ?, ?, ?)", quads)
     connection.execute("INSERT INTO ledger (built, fingerprint) VALUES ('pod', ?)", (fingerprint,))
-    return whole(connection)
-
-
-def whole(connection):
-    """The connection with every record and entry in scope, as a whole run fills it, and a question asked of the whole
-    pod."""
-    connection.execute("DELETE FROM asked")
-    connection.execute("DELETE FROM scope")
     connection.execute("INSERT INTO scope (term) SELECT s FROM quad WHERE p = (SELECT id FROM term WHERE nt = ?) "
                        "AND o = (SELECT id FROM term WHERE nt = ?) "
                        "UNION SELECT s FROM quad WHERE p = (SELECT id FROM term WHERE nt = ?)",
                        (f"<{RDF_TYPE}>", f"<{RECORD}>", f"<{ENTRY_MEMBER}>"))
-    settled(connection)
-    return connection
-
-
-def scoped(connection, records):
-    """The connection with its scope the records alone, as a keyed run fills it."""
-    connection.execute("DELETE FROM scope")
-    connection.executemany("INSERT INTO scope (term) SELECT id FROM term WHERE nt = ?",
-                           [(str(Term(IRI, record)),) for record in records])
-    settled(connection)
-    return connection
-
-
-def asked(connection, records):
-    """The connection with a question asked of the records alone, as a runtime asks it bound to them; None, the
-    question left unasked, where the pod has a term for none of them, as a runtime gives no rows for them without
-    running the `.sql`, which would read the empty `asked` as the whole pod."""
-    connection.execute("DELETE FROM asked")
-    connection.executemany("INSERT INTO asked (term) SELECT id FROM term WHERE nt = ?",
-                           [(str(Term(IRI, record)),) for record in records])
-    settled(connection)
-    return connection if connection.execute("SELECT 1 FROM asked").fetchone() else None
-
-
-def copied(connection):
-    """A copy of the pod in memory, its tables and the six functions registered."""
     connection.commit()
-    copy = sqlite3.connect(":memory:", cached_statements=COMPILED)
-    connection.backup(copy)
-    for name, function in FUNCTIONS.items():
-        copy.create_function(name, -1, function, deterministic=True)
-    return copy
-
-
-HELD = {}
-
-
-def settled(connection):
-    """Commits the connection's work, unless it is held by undone."""
-    if not HELD.get(id(connection)):
-        connection.commit()
-
-
-@contextmanager
-def undone(connection):
-    """Holds the connection's work in a savepoint, nested in any it is already held by, and rolls it back after, so a
-    change to a pod costs no copy of it."""
-    depth = HELD.get(id(connection), 0)
-    if not depth:
-        connection.commit()
-    name = f"undone_{depth}"
-    connection.execute(f"SAVEPOINT {name}")
-    HELD[id(connection)] = depth + 1
-    try:
-        yield connection
-    finally:
-        connection.execute(f"ROLLBACK TO {name}")
-        connection.execute(f"RELEASE {name}")
-        HELD[id(connection)] = depth
-        if not depth:
-            del HELD[id(connection)]
-            connection.commit()
-
-
-SCHEMA_TABLES = {"term", "quad", "scope", "asked", "ledger"}
-
-
-def screen_tables(connection):
-    """The rows of each table a screen made, by table, each table's rows sorted."""
-    names = [name for (name,) in connection.execute(
-        r"SELECT name FROM sqlite_schema WHERE type = 'table' AND name NOT LIKE 'sqlite\_%' ESCAPE '\' ORDER BY name")
-             if name not in SCHEMA_TABLES]
-    return {name: sorted(connection.execute(f"SELECT * FROM {name}").fetchall(), key=repr) for name in names}
+    return connection
 
 
 PART = re.compile(r"^-- part: (\w+)[ \t]*$", re.MULTILINE)
@@ -832,23 +671,10 @@ def statement(text):
     return found.get("triples", found.get("answer", text))
 
 
-def answering(text):
-    """What the check gives `keyed`: a question's whole `.sql`, whose prepare part it runs, a view's triples part, or the
-    whole text of any other."""
-    found = parts(text)
-    return text if "answer" in found else found.get("triples", text)
-
-
 def prepared(text):
     """The statements a question's `.sql` runs before its answer, in order: those of its prepare part, none for a `.sql`
     with none."""
     return statements(parts(text).get("prepare", ""))
-
-
-def cleaned(text):
-    """The statements a question's `.sql` runs after its answer, also when the answer fails: those of its cleanup part,
-    none for a `.sql` with none."""
-    return statements(parts(text).get("cleanup", ""))
 
 
 def screened(connection, views):
@@ -856,96 +682,10 @@ def screened(connection, views):
     view's fill before any view's finish."""
     for found in views:
         connection.executescript(parts(found)["tables"])
-    return refilled(connection, views)
-
-
-def refilled(connection, views):
-    """The connection with each view's screen filled again for the entries in scope, every view's fill before the labels
-    are made and those before any view's finish, each statement run alone, so the connection compiles each once."""
     texts = [parts(text) for text in views]
     for name in PARTS[1:3]:
         for found in texts:
             for each in statements(found[name]):
                 connection.execute(each)
-        if name == "fill":
-            labelled(connection)
-    settled(connection)
+    connection.commit()
     return connection
-
-
-LABELS_FILE = """
-SELECT g.id FROM quad w JOIN quad x ON x.s = w.s JOIN term i ON i.id = x.o JOIN term g ON g.nt = '<' || i.lex || '>'
-WHERE w.p = (SELECT id FROM term WHERE nt = '<https://ns.cascadeprotocol.org/cascade#writtenByQueryPath>')
-  AND w.o = (SELECT id FROM term WHERE nt = '"labels.rq"')
-  AND x.p = (SELECT id FROM term WHERE nt = '<http://www.w3.org/ns/solid/terms#instance>')"""
-
-
-def labelled(connection):
-    """The connection with the rdfs:label statements of the labels file, the graph the layout names for labels.rq, made
-    again from labels.sql, as a runtime writes the file; it is left as it is where the pod has no such graph."""
-    found = connection.execute(LABELS_FILE).fetchone()
-    if found is None:
-        return connection
-    made = parts(LABELS.read_text(encoding="utf-8"))
-    for each in statements(made["fill"]):
-        connection.execute(each)
-    rows = sorted(connection.execute(made["triples"]).fetchall())
-    label = f"<{LABEL.value}>"
-    connection.execute("DELETE FROM quad WHERE g = ? AND p = (SELECT id FROM term WHERE nt = ?)", (found[0], label))
-
-    def term_id(text):
-        term = parsed(text)
-        nt = str(term)
-        row = connection.execute("SELECT id FROM term WHERE nt = ?", (nt,)).fetchone()
-        if row is not None:
-            return row[0]
-        return connection.execute(
-            "INSERT INTO term (nt, kind, lex, datatype, lang, instant, day) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (nt, term.kind, None if term.kind == BLANK else term.value, term.datatype, term.lang, instant_key(term),
-             day_key(term))).lastrowid
-
-    for s, p, o in rows:
-        connection.execute("INSERT OR IGNORE INTO quad (s, p, o, g) VALUES (?, ?, ?, ?)",
-                           (term_id(s), term_id(p), term_id(o), found[0]))
-    return connection
-
-
-PAGE_KEY = "page_key"
-
-
-def keyed(connection, text, page_size=None, after=None):
-    """A `.sql`'s columns and its rows, each value the term its N-Triples text writes, or None where it is unbound, and
-    each row's page key: a list question's last column, dropped from its columns, or None for any other `.sql`. A
-    list question is given the page size and the key to continue after; any other `.sql` names neither."""
-    for each in prepared(text):
-        connection.execute(each)
-    try:
-        cursor = connection.execute(statement(text), {"page_size": page_size, "after": after})
-        names = [column[0] for column in cursor.description]
-        rows = cursor.fetchall()
-    finally:
-        for each in cleaned(text):
-            connection.execute(each)
-    if names[-1:] == [PAGE_KEY]:
-        return names[:-1], [(tuple(parsed(value) for value in found[:-1]), found[-1]) for found in rows]
-    return names, [(tuple(parsed(value) for value in found), None) for found in rows]
-
-
-def answer(connection, text, page_size=None, after=None):
-    """A `.sql`'s columns and its rows, each value the term its N-Triples text writes, or None where it is unbound; a
-    list question's rows of the page given, its page key dropped."""
-    names, rows = keyed(connection, text, page_size, after)
-    return names, [found for found, _ in rows]
-
-
-def paged(connection, text, size):
-    """A list question's rows and their keys, asked a page of the size at a time, each page after the last row of the
-    one before, until a page gives none. A page of more entries than the size, or one not after the key it was
-    given, raises ValueError."""
-    found, after = [], None
-    while page := keyed(connection, text, size, after)[1]:
-        if len({key for _, key in page}) > size or (after is not None and page[0][1] <= after):
-            raise ValueError(f"a page of {size} after {after!r} gives the keys {[key for _, key in page]}")
-        found += page
-        after = page[-1][1]
-    return found

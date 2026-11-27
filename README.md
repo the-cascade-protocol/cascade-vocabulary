@@ -107,7 +107,8 @@ python3 -m pytest -n auto --dist loadgroup
 
 They check the ontologies, the shapes and the crate; the naming and snapshot vectors and the reference tables; the people
 the kits are about; that every feature file uses only the steps `runtime/steps.md` lists; and each query, over the
-fixtures, on two SPARQL engines, and through its `.sql` in SQLite. [`tests/sql-pins.json`](tests/sql-pins.json) holds the
+fixtures, on two SPARQL engines, and the plan of its `.sql` on SQLite; the runtime's `compatibility` check compares each
+`.sql` with its `.rq`. [`tests/sql-pins.json`](tests/sql-pins.json) holds the
 hash of the `.rq` each `.sql` was last checked against: a port, or a `.rq` changed and its `.sql` checked again, updates
 it. The tests are classes named for what the files are held to, and they run in random
 order; the tests page takes the first paragraph of a top-level class's docstring as a heading, and nothing checks its
