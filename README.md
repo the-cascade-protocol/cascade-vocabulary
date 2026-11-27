@@ -110,7 +110,8 @@ the kits are about; that every feature file uses only the steps `runtime/steps.m
 fixtures, on two SPARQL engines, and through its `.sql` in SQLite. [`tests/sql-pins.json`](tests/sql-pins.json) holds the
 hash of the `.rq` each `.sql` was last checked against: a port, or a `.rq` changed and its `.sql` checked again, updates
 it. The tests are classes named for what the files are held to, and they run in random
-order; `tests/spec.json` lists the headings of the tests page, each one a top-level class.
+order; the tests page takes the first paragraph of a top-level class's docstring as a heading, and nothing checks its
+wording.
 
 A run prints its seed. To repeat a red run's order, pass it back with `-p randomly --randomly-seed=N`; `-p no:randomly`
 turns the shuffle off.
