@@ -339,6 +339,29 @@ class TestPlansOfTheQuestions:
         assert found == [], f"on SQLite {ran}"
 
     @pytest.mark.parametrize("engine", ["sqlite3", "apsw", "apsw-floor"])
+    def test_registers_each_function_queries_sql_functions_json_names_so_a_new_call_plans(self, engine):
+        """registers each function queries/sql-functions.json names on the pod the plans are made on
+
+        That file is the one list of the functions a `.sql` may call, and the runtime registers each. A function the
+        list names and the pod here lacks fails the plan of any correct `.sql` that calls it, with SQLite's `no such
+        function` and no word of what to add.
+        """
+        engine_ran(engine)
+        _, run, _ = planning_pod(engine)
+        registered = {name for (name,) in run("SELECT name FROM pragma_function_list")}
+        assert sorted(sql.FUNCTION_NAMES - registered) == []
+
+    def test_names_in_queries_sql_functions_json_each_function_a_sql_calls(self):
+        """names in queries/sql-functions.json each `sparql_` function a `.sql` calls
+
+        A function a `.sql` calls that the list lacks is added under `functions` in queries/sql-functions.json, with its
+        vectors, before the runtime can register it.
+        """
+        called = {(relative, name) for relative in ported() for name in re.findall(r"\bsparql_\w+(?=\s*\()", sql_text(relative))}
+        assert sorted((relative, name) for relative, name in called if name not in sql.FUNCTION_NAMES) == [], (
+            "add each to `functions` in queries/sql-functions.json")
+
+    @pytest.mark.parametrize("engine", ["sqlite3", "apsw", "apsw-floor"])
     def test_plans_each_answer_that_reads_a_temporary_table_its_prepare_part_makes_with_the_table_holding_rows(self, engine):
         """plans each answer that reads a table its prepare part makes with that table holding rows, and no scan in a loop of a table or a CTE it reads
 
