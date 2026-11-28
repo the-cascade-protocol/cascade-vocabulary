@@ -173,7 +173,7 @@ cascade:onsetDate a owl:DatatypeProperty ;
 
 cascade:addedNoteText a owl:DatatypeProperty ;
     rdfs:label "added note text"@en ;
-    rdfs:comment "Of a version of an allergy or intolerance, a condition, a vaccination or a lab result, the text of one note a person added to it, as FHIR's note, one for each note; an allergy's also each note a person added to one of its reactions, as FHIR's reaction note, which does not say which reaction it is about. The text a source wrote for the record itself is cascade:narrativeText."@en ;
+    rdfs:comment "Of a version of an allergy or intolerance, a condition, a vaccination or a lab result, the text of one note a person added to it, as FHIR's note, one for each note; an allergy's also each note a person added to one of its reactions, as FHIR's reaction note; the value does not say which reaction it is about. The text a source wrote for the record itself is cascade:narrativeText."@en ;
     rdfs:domain [ a owl:Class ; owl:unionOf ( cascade:LaboratoryTestResult cascade:ProblemOrDiagnosis cascade:AllergyOrIntolerance cascade:Vaccination ) ] ;
     rdfs:range xsd:string ;
     rdfs:seeAlso <https://hl7.org/fhir/R4/allergyintolerance-definitions.html#AllergyIntolerance.note> , <https://hl7.org/fhir/R4/allergyintolerance-definitions.html#AllergyIntolerance.reaction.note> , <https://hl7.org/fhir/R4/condition-definitions.html#Condition.note> , <https://hl7.org/fhir/R4/immunization-definitions.html#Immunization.note> , <https://hl7.org/fhir/R4/observation-definitions.html#Observation.note> .
